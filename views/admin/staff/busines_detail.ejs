@@ -1,0 +1,135 @@
+<%- include('../../layout/header') %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="card p-4">
+  <h4>Chi tiết nhân viên kinh doanh</h4>
+  <div>
+    <select id="yearSelect" class="form-control" style="width: fit-content;">
+    </select>
+    <canvas id="myChart" width="400" height="200"></canvas>
+  </div>
+  <script>
+    const data = JSON.parse('<%- JSON.stringify(staffsBusines) %>');
+    data.reverse()
+    const years = [...new Set(data.map(item => item.year))];
+    years.reverse()
+    const yearSelect = document.getElementById('yearSelect');
+    years.forEach(year => {
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = year;
+      yearSelect.appendChild(option);
+    });
+    // Chọn năm mặc định
+    let selectedYear = years[0];
+    const chartData = filterDataByYear(selectedYear);
+    const myChart = new Chart(document.getElementById('myChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: chartData.months,
+        datasets: [{
+          label: `Số dự án theo năm`,
+          data: chartData.counts,
+          backgroundColor: 'rgba(75, 192, 192)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Hàm lọc dữ liệu theo năm
+    function filterDataByYear(year) {
+      const filteredData = data.filter(item => item.year == year);
+      console.log(filteredData);
+      const months = filteredData.map(item => `Tháng ${item.month}`);
+      const counts = filteredData.map(item => item.count);
+      return {
+        months,
+        counts
+      };
+    }
+    // Lắng nghe sự kiện chọn năm từ dropdown
+    yearSelect.addEventListener('change', (event) => {
+      selectedYear = event.target.value;
+      const newData = filterDataByYear(selectedYear);
+      myChart.data.labels = newData.months;
+      myChart.data.datasets[0].data = newData.counts;
+      selectedYear = selectedYear;
+      myChart.update();
+    });
+  </script>
+  </div>
+  <div class="card mt-3 p-3">
+  <h4>Thống kê số lượng dự án theo tháng</h4>
+  <div class="tab-pane preview-tab-pane active" role="tabpanel" aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5" id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
+    <div id="tableExample3" data-list='{"valueNames":["name","phone","tongcv","hoanthanh","bolo","danglam","chitiet"],"page":10,"pagination":true}'>
+      <div class="row justify-content-end g-0">
+        <div class="col-auto col-sm-5 mb-3">
+          <form>
+            <div class="input-group">
+              <input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
+              <div class="input-group-text bg-transparent">
+                <span class="fa fa-search fs-10 text-600"></span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="table-responsive scrollbar">
+        <table class="table table-bordered table-hover table-striped fs-10 mb-0">
+          <thead class="bg-200">
+            <tr>
+              <th class="text-900 sort" data-sort="name">STT</th>
+              <th class="text-900 sort" data-sort="name">Thời gian</th>
+              <th class="text-900 sort" data-sort="tongcv">Tổng dự án</th>
+              <th class="text-900 sort" data-sort="hoanthanh">Dự án</th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <% staffsBusines.forEach(function(staff, key) { %>
+            <tr>
+              <td class="name"><%= key+1 %></td>
+              <td class="name">Tháng : <%= staff.month %> / <%= staff.year %></td>
+              <td class="tongcv"><%= staff.count %></td>
+              <td class="hoanthanh">
+                <%
+                if (staff.projects && staff.projects.length > 0) {
+                staff.projects.forEach((project, index) => {
+                %>
+                <a class=" <%= project.projectStatus ? 'text-success' : 'text-warning' %>" href="/client/task/<%= project.projectId %>"> <%= project.projectName
+                  %> ( Mã: <%= project.projectCode %> ) </a>
+                <br>
+                <%
+                });
+                } else {
+                %>
+                <span class="text-danger">Không có dự án</span>
+                <%
+                }
+                %>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center mt-3">
+        <button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev">
+          <span class="fas fa-chevron-left"></span>
+        </button>
+        <ul class="pagination mb-0"></ul>
+        <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next">
+          <span class="fas fa-chevron-right"> </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../../layout/footer') %>

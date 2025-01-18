@@ -1,0 +1,560 @@
+<%- include('../../layout/header') %>
+<style>
+  .infor-staff:hover {
+    opacity: 0.7;
+    background-color: rgb(45, 145, 227);
+    color: white;
+  }
+
+  .infor-staff {
+    border-bottom: 0.5px solid rgb(77, 211, 229);
+  }
+
+  #itemList {
+    display: none;
+  }
+
+  .itemList {
+    display: none;
+  }
+</style>
+<div class="card p-4">
+  <div class>
+    <div class="m-b-30">
+      <h4>Thông tin danh sách lịch bảo trì</h4>
+      <button
+        class="btn btn-primary m-3"
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#error-modal"
+      >
+        + Thêm bảo trì
+      </button>
+      <div
+        class="modal fade"
+        id="error-modal"
+        tabindex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <div
+          class="modal-dialog modal-dialog-centered"
+          role="document"
+          style="max-width: 500px"
+        >
+          <div class="modal-content position-relative">
+            <div class="position-absolute top-0 end-0 mt-2 me-2 z-1">
+              <button
+                class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body p-0">
+              <div class="rounded-top-3 py-3 ps-4 pe-6 bg-body-tertiary">
+                <h4 class="mb-1" id="modalExampleDemoLabel">
+                  Đề xuất thêm bảo trì
+                </h4>
+              </div>
+              <div class="p-4 pb-0">
+                <form class="myForm2" method="post" action="/maintenance/add">
+                  <div class="mb-3">
+                    <label class="col-form-label" for="recipient-name2"
+                      >Thông tin:</label
+                    >
+                    <input
+                      class="form-control recipient-name2"
+                      type="text"
+                      oninput="filterList2(event)"
+                    />
+                    <ul class="itemList itemList2">
+                      <% projects.forEach(function(project) { %>
+                      <li
+                        class="btn w-100 infor-staff"
+                        onclick="clickProject2('<%= project.full_name %>- <%= project.number_phone %>','<%=project.id%>')"
+                      >
+                        <%= project.full_name %>- <%= project.number_phone %>
+                      </li>
+                      <% }) %>
+                      <li
+                        class="btn w-100 infor-staff"
+                        onclick="clickProject2('!',0)"
+                      >
+                        ! Không có công trình
+                      </li>
+                    </ul>
+                  </div>
+                  <div
+                    class="mb-3"
+                    id="recipient-nameProject2"
+                    style="display: none"
+                  >
+                    <label class="col-form-label" for="recipient-name"
+                      >Tên chủ dự án:</label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="projectName"
+                    />
+                    <input type="hidden" name="confirmSuccess" value="1" />
+                  </div>
+                  <div class="mb-3">
+                    <label class="col-form-label" for="recipient-time2"
+                      >Thời gian bảo trì:</label
+                    >
+                    <input
+                      class="form-control"
+                      id="recipient-time2"
+                      type="date"
+                      name="time"
+                      disabled
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="col-form-label" for="message-reason2"
+                      >Mô tả:</label
+                    >
+                    <input
+                      class="form-control"
+                      id="recipient-reason2"
+                      type="text"
+                      name="reason"
+                      disabled
+                    />
+                  </div>
+                  <input
+                    type="submit"
+                    class="btn btn-primary"
+                    value="Xác nhận"
+                  />
+                </form>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                type="button"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="tab-pane preview-tab-pane active"
+        role="tabpanel"
+        aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5"
+        id="dom-da4be276-f13c-47d6-be82-655bc6452fd5"
+      >
+        <div
+          id="tableExample3"
+          data-list='{"valueNames":["duan","noidung","thoigian","nhanvien","trangthai"],"page":20,"pagination":true}'
+        >
+          <div class="row justify-content-end g-0">
+            <div class="col-auto col-sm-5 mb-3">
+              <form>
+                <div class="input-group">
+                  <input
+                    class="form-control form-control-sm shadow-none search"
+                    type="search"
+                    placeholder="Search..."
+                    aria-label="search"
+                  />
+                  <div class="input-group-text bg-transparent">
+                    <span class="fa fa-search fs-10 text-600"></span>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="table-responsive scrollbar">
+            <table
+              class="table table-bordered table-hover table-striped fs-10 mb-0"
+            >
+              <thead class="bg-200">
+                <tr>
+                  <th class="text-900 sort" data-sort="duan">Công trình</th>
+                  <th class="text-900 sort" data-sort="noidung">
+                    Nội dung bảo trì
+                  </th>
+                  <th class="text-900 sort" data-sort="thoigian">Thời gian</th>
+                  <th class="text-900 sort" data-sort="nhanvien">
+                    Nhân viên thực hiện
+                  </th>
+                  <th class="text-900 sort" data-sort="trangthai">
+                    Trạng thái
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="list">
+                <% maintenanceWProjects.forEach(function(item,index) { %>
+                <tr>
+                  <td class="duan">
+                    <%= item.project && item.project.full_name ?
+                    item.project.full_name :item.projectName %>
+                  </td>
+                  <td class="noidung"><%=item.reason%></td>
+                  <td class="thoigian"><%=item.time%></td>
+                  <td class="nhanvien">
+                    <% item.maintenanceActions.forEach(function(action) { %>
+                    <img
+                      src="/images/avatar/<%=  action.staff.avatar %>"
+                      alt
+                      height="30px"
+                      width="30px"
+                      style="border-radius: 50%"
+                    />
+                    <%= action.staff.full_name %>
+                    <br />
+                    <br />
+                    <% }) %>
+                    <p
+                      class="btn btn-primary add-staff"
+                      idProject="<%=  item.project && item.project.id ?  item.project.id :'0'  %>"
+                      idValue="<%=item.id%>"
+                    >
+                      +
+                    </p>
+                  </td>
+                  <td class="trangthai" style="width: fit-content">
+                    <p
+                      style="width: fit-content"
+                      id="maintenance-<%= index %>"
+                      class
+                    >
+                      <span class="font__weight-semibold">
+                        <% if (item.maintenanceActions.length === 0) { %>
+                        <span class="badge rounded badge-subtle-warning false">
+                          Chưa bảo trì
+                        </span>
+
+                        <% } else { let allCompleted =
+                        item.maintenanceActions.every(function(action) { return
+                        action.status != null; }); %> <% if(allCompleted) { %>
+                        <span class="badge rounded badge-subtle-success false">
+                          Đã hoàn thành
+                        </span>
+
+                        <% } else { %>
+                        <span class="badge rounded badge-subtle-danger false">
+                          Chưa hoàn thành
+                        </span>
+
+                        <% } %> <% } %>
+                      </span>
+                    </p>
+                  </td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-center mt-3">
+            <button
+              class="btn btn-sm btn-falcon-default me-1"
+              type="button"
+              title="Previous"
+              data-list-pagination="prev"
+            >
+              <span class="fas fa-chevron-left"></span>
+            </button>
+            <ul class="pagination mb-0"></ul>
+            <button
+              class="btn btn-sm btn-falcon-default ms-1"
+              type="button"
+              title="Next"
+              data-list-pagination="next"
+            >
+              <span class="fas fa-chevron-right"> </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function clickProject2(value, id) {
+    var form = document.querySelector('.myForm2')
+    var hiddenInput = form.querySelector("input[name='project']")
+    if (id == 0) {
+      document.querySelector('#recipient-nameProject2').style.display = 'block'
+    }
+    if (hiddenInput) {
+      hiddenInput.value = id
+    } else {
+      hiddenInput = document.createElement('input')
+      hiddenInput.type = 'hidden'
+      hiddenInput.name = 'project'
+      hiddenInput.value = id
+      form.appendChild(hiddenInput)
+    }
+    document.getElementById('recipient-time2').disabled = false
+    document.getElementById('recipient-reason2').disabled = false
+    document.querySelector('.recipient-name2').value = value
+    document.querySelector('.itemList2').style.display = 'none'
+  }
+
+  function filterList2(event) {
+    var input = event.target.value.toLowerCase()
+    var items = document.querySelector('.itemList2').getElementsByTagName('li')
+    var list = document.querySelector('.itemList2')
+    if (input) {
+      list.style.display = 'block'
+    } else {
+      list.style.display = 'none'
+    }
+
+    for (var i = 0; i < items.length; i++) {
+      var itemText = items[i].textContent || items[i].innerText
+      if (itemText.toLowerCase().includes(input)) {
+        items[i].style.display = ''
+      } else {
+        items[i].style.display = 'none'
+      }
+    }
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    const today = new Date()
+    const threeDaysFromNow = new Date(today)
+    threeDaysFromNow.setDate(today.getDate() + 3)
+    const maintenanceWProjects = JSON.parse(
+      '<%- JSON.stringify(maintenanceWProjects).replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t") %>',
+    )
+    maintenanceWProjects.forEach(function (item, index) {
+      const itemDate = new Date(item.time)
+      const element = document.getElementById(`maintenance-${index}`)
+      if (itemDate >= today && itemDate <= threeDaysFromNow) {
+        element.classList.add('alert-warning')
+      }
+    })
+  })
+  $(document).ready(function () {
+    $('.add-staff').click(function () {
+      $('#newPositionModal').remove()
+      var id = $(this).attr('idValue')
+      var idProject = $(this).attr('idProject')
+      var form =
+        `<form action="/maintenance-actions/${idProject}" method="POST" class="modal fade" id="newPositionModal" tabindex="-1" aria-labelledby="newPositionModalLabel" aria-hidden="true">` +
+        '<div class="modal-dialog">' +
+        '<div class="modal-content">' +
+        '<div class="modal-header">' +
+        '<div class="d-flex justify-content-between w-100" >' +
+        `<h5 class="modal-title" id="newPositionModalLabel">Chọn người bảo trì</h5>
+        <input type="hidden" id="staffId" name="staff">
+        <input type="hidden" value="${id}" name="maintenance">
+        ` +
+        '<button class="btn btn-primary clickXN" disable onclick="clickXN()" disabled>Xác nhận</button>' +
+        '</div>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<div >' +
+        '<div class="form-group">' +
+        '<label for="date-time">Chọn thời gian hết hạn:</label>' +
+        '<input type="datetime-local" class="form-control" id="date-time" name="time" onchange="changeDate()">' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label for="date-time">Chọn trọng số:</label>' +
+        `<select name="weight" id="weight-select" class="form-control">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+        ` +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label for="staff">Thêm nhân viên:</label>' +
+        '<input disabled type="text" class="form-control" id="staff-search" oninput="filterList()" autocomplete="off">' +
+        `<ul id="itemList">
+  <% staffs.forEach(function(staff) { %>
+        <li class="btn w-100 infor-staff" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>')"><%=staff.full_name%> - <%=staff.number_phone%></li>
+        <% }) %>
+</ul>`
+      '</div>' +
+        '</div>' +
+        '</div>' +
+        '</form>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>'
+      $('body').append(form)
+      $('#newPositionModal').modal('show')
+      $('#date-time').val('')
+      $('#staff-search').val('')
+    })
+    $('#add-maintenance').click(function () {
+      $('#newPositionModal').remove()
+      var id = $(this).attr('idValue')
+      var form =
+        '<form action="/maintenance/0" method="POST" class="modal fade" id="newPositionModal" tabindex="-1" aria-labelledby="newPositionModalLabel" aria-hidden="true">' +
+        '<div class="modal-dialog">' +
+        '<div class="modal-content">' +
+        '<div class="modal-header">' +
+        '<input type="hidden" id="staffId" name="project" value= "">' +
+        '<div class="d-flex justify-content-between w-100" >' +
+        `<h5 class="modal-title" id="newPositionModalLabel">Thêm bảo trì</h5>` +
+        '<button class="btn btn-success clickXN" disable onclick="clickXN()" disabled>Xác nhận</button>' +
+        '</div>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<div >' +
+        '<div class="form-group">' +
+        '<label for="date-time">Chọn thời gian hết hạn:</label>' +
+        '<input type="datetime-local" class="form-control" id="date-time" name="time" onchange="changeDate()">' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label for="staff">Nội dung bảo trì:</label>' +
+        '<input disabled type="text" class="form-control" id="staff-search" oninput="onpenSubmit()" name="reason" autocomplete="off">' +
+        `<ul id="itemList">
+  <% staffs.forEach(function(staff) { %>
+        <li class="btn w-100 infor-staff" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>')"><%=staff.full_name%> - <%=staff.number_phone%></li>
+        <% }) %>
+</ul>`
+      '</div>' +
+        '</div>' +
+        '</div>' +
+        '</form>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>'
+      $('body').append(form)
+      $('#newPositionModal').modal('show')
+      $('#date-time').val('')
+      $('#staff-search').val('')
+    })
+  })
+
+  function pushStaff(value, id) {
+    if ($('#date-time').val() != '') {
+      $('.clickXN').prop('disabled', false)
+      $('#staffId').attr('value', id)
+    } else {
+      $('.clickXN').prop('disabled', true)
+    }
+    document.getElementById('staff-search').value = value
+    document.getElementById('itemList').style.display = 'none'
+  }
+
+  function onpenSubmit() {
+    $('.clickXN').prop('disabled', false)
+  }
+
+  function filterList() {
+    document.getElementById('itemList').style.display = 'block'
+    var input = document.getElementById('staff-search').value.toLowerCase()
+    var items = document.getElementById('itemList').getElementsByTagName('li')
+    var list = document.getElementById('itemList')
+    console.log(input)
+    if (input) {
+      list.style.display = 'block'
+    } else {
+      list.style.display = 'none'
+    }
+    for (var i = 0; i < items.length; i++) {
+      var itemText = items[i].textContent || items[i].innerText
+      var dataId = $(items[i]).attr('data-id')
+      var stepId = $(items[i]).attr('data-stepId')
+      if (itemText.toLowerCase().includes(input)) {
+        items[i].style.display = ''
+      } else {
+        items[i].style.display = 'none'
+      }
+    }
+  }
+
+  function changeDate() {
+    if ($('#date-time').val() != '') {
+      $('#staff-search').prop('disabled', false)
+    } else {
+      $('#staff-search').prop('disabled', true)
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const baoTriInput = document.getElementById('baoTri')
+    const monthInput = document.getElementById('month')
+    const resultDiv = document.getElementById('result')
+    baoTriInput.addEventListener('change', renderInputs)
+    monthInput.addEventListener('input', renderInputs)
+
+    function renderInputs() {
+      const today = new Date()
+      const endDate = new Date(baoTriInput.value)
+      const monthInterval = parseInt(monthInput.value)
+      if (isNaN(monthInterval) || !baoTriInput.value || endDate <= today) {
+        resultDiv.innerHTML = ''
+        return
+      }
+      const resultHtml = []
+      let currentDate = new Date(today)
+      while (currentDate < endDate) {
+        currentDate.setMonth(currentDate.getMonth() + monthInterval)
+        if (currentDate <= endDate) {
+          resultHtml.push(`<div class="input-group" style="margin-bottom: 2px;"> <input type="date" class="form-control" name="timeMaintenance[]" value="${currentDate
+            .toISOString()
+            .slice(
+              0,
+              10,
+            )}"><input type="text" value="Bảo trì định kì" name="reason[]" class="form-control" >
+ <span class="remove-btn btn btn-danger" onclick="removeInput(this)">x</span></div> `)
+        }
+      }
+      resultDiv.innerHTML = resultHtml.join('')
+    }
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    const minDate = `${year}-${month}-${day}`
+    baoTriInput.min = minDate
+  })
+
+  function addInput() {
+    const resultDiv = document.getElementById('result')
+    const newInput = document.createElement('div')
+    newInput.style.marginBottom = '2px'
+    newInput.className = 'input-group'
+    newInput.innerHTML = `<input type="date" class="form-control" name="timeMaintenance[]"> <input type="text" value="Bảo trì định kì" name="reason[]" class="form-control" > <span class="remove-btn btn btn-danger" onclick="removeInput(this)">x</span>`
+    resultDiv.appendChild(newInput)
+  }
+
+  function removeInput(element) {
+    element.parentElement.remove()
+  }
+  document
+    .getElementById('AddBaotriBtn')
+    .addEventListener('click', function () {
+      const form = document.getElementById('baotriForm')
+      if (form.style.display === 'none') {
+        form.style.display = 'block'
+      } else {
+        form.style.display = 'none'
+      }
+    })
+
+  function toggleWarrantyStyle() {
+    const warrantyDiv = document.getElementById('add-warranty')
+
+    if (warrantyDiv.style.display === 'none') {
+      warrantyDiv.style.display = 'block'
+    } else {
+      warrantyDiv.style.display = 'none'
+    }
+  }
+</script>
+<%- include('../../layout/footer') %>
