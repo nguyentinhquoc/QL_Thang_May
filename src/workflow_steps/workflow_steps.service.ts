@@ -41,11 +41,18 @@ export class WorkflowStepsService {
       relations: ['step', 'workflow'],
     })
   }
-  findAll () {
+
+  findAll() {
     return this.workflowStepRepository.find({
-      relations: ['workflow', 'step'],
+      relations: [
+        'workflow',
+        'step',
+        'step.departmentsSteps',
+        'step.departmentsSteps.department'
+      ],
     })
   }
+
   async findOne (id: number) {
     return this.workflowStepRepository.findOne({
       where: { id },

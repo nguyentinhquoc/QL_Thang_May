@@ -168,12 +168,30 @@
             <div class="step step<%= workflowStep.workflow.id %> mt-2">
               <div
                 class="d-flex justify-content-between btn btn-primary btn-lg btn-block mb-2 notification">
-                <span class="w-75" style="text-align: start">
+                <span class="w-75" style="text-align: start;">
                   <%= workflowStep.step.name %>
-                  <br />
-                  <span class="w-75" style="opacity: 0.5">
+                  <br>
+                  <span class="w-75" style="opacity: 0.5;">
                     <%= workflowStep.step.description %>
                   </span>
+                  <br>
+                  <span class="w-75 text-danger">
+                    Phòng ban:
+                    <%
+                    let departmentCan = [];
+                    let showIcon = false;
+                    workflowStep.step.departmentsSteps.forEach(function(departmentStep, index, array) {
+                      departmentCan.push(departmentStep.department.id);
+                    %>
+                    <%= departmentStep.department.name %><%= index < array.length - 1 ? ', ' : '' %>
+                    <%
+                      if (departmentStep.department.id === 1) {
+                      showIcon = true;
+                      }
+                    });
+                    %>
+                  </span>
+
                 </span>
                 <div class="d-flex justify-content-center align-items-center">
                   <div id="imgStep<%= workflowStep.id %>" class="imgStep"></div>

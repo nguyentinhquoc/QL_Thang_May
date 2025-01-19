@@ -11,6 +11,8 @@ import {
 export class Customer {
   @PrimaryGeneratedColumn()
   id: number
+  @Column({ default: null, nullable: true })
+  status: Date
   @Column({ length: 255 })
   full_name: string
   @Column({ length: 15 })

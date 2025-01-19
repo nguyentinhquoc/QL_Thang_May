@@ -165,6 +165,7 @@ export class MaintenanceController {
     let maintenanceWProjects = null
     let projects = null
     if (inforAccount.role_admin || (inforAccount.department.id == 1 && inforAccount.position.id == 1)) {
+      console.log(12333333333333)
       maintenanceWProjects = await this.maintenanceService.findAll()
        projects = await this.projectService.findAll()
     } else {

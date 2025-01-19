@@ -344,13 +344,24 @@ export class ProjectController {
     @Query('number_phone') numberPhone: string,
     @Query('email') email: string,
     @Query('address') address: string,
-    @Query('description') description: string
+    @Query('description') description: string,
+    @Req() req: Request
   ) {
     const departments = await this.departmensService.findAll()
     const workflows = await this.workflowsService.findAll()
     const steps = await this.stepsService.findAll()
     const workflowSteps = await this.workflowStepsService.findAll()
-    const staffs = await this.staffsService.findAll()
+    const token = req.cookies['token']
+    const payload = await this.staffsService.payload(token)
+    const inforAccount = await this.staffsService.findOne(payload.id)
+    let staffs = null
+    if (inforAccount.role_admin) {
+      staffs = await this.staffsService.findAll()
+    } else {
+      staffs = await this.staffsService.findStaffsByDepartment(
+        inforAccount.department.id
+      )
+    }
     return {
       departments,
       workflows,

@@ -397,6 +397,7 @@
   <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
     <div class="navbar-vertical-content scrollbar">
       <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
+        <% if(busines){ %>
         <li class="nav-item">
           <a class="nav-link" href="/" role="button">
             <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fas fa-home"></i></span><span class="nav-link-text ps-1">Trang
@@ -411,6 +412,7 @@
               </span></div>
           </a>
         </li>
+        <% } %>
         <li class="nav-item">
           <a class="nav-link" href="/client/list-task" role="button">
             <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-table-list"></i></span><span class="nav-link-text ps-1">Danh
@@ -452,12 +454,14 @@
               <span class="nav-link-text ps-1">Danh sách dự án dự kiến</span>
             </div>
           </a>
+             <% if(manager){ %>
           <a class="nav-link" href="/staffs/busines" role="button">
             <div class="d-flex align-items-center">
               <span class="nav-link-icon"><i class="fa-solid fa-rectangle-list"></i></span>
               <span class="nav-link-text ps-1">Quản lý nhân viên kinh doanh</span>
             </div>
           </a>
+ <% } %>
         </li>
         <li class="nav-item">
           <!-- label-->
@@ -490,7 +494,18 @@
           </a>
         </li>
         <%}%>
-
+ <li class="nav-item">
+          <!-- label-->
+          <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+            <div class="col-auto navbar-vertical-label">Quy trình làm việc</div>
+            <div class="col ps-0">
+              <hr class="mb-0 navbar-vertical-divider" />
+            </div>
+          </div><!-- parent pages-->
+          <a class="nav-link" href="/quy-trinh-lam-viec" role="button">
+            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-user-gear"></i></span><span class="nav-link-text ps-1">Quy trình làm việc</span></div>
+          </a>
+        </li>
         </ul>
       </div>
     </div>

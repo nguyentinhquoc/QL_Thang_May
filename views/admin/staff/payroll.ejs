@@ -5,12 +5,10 @@
     class="tab-pane preview-tab-pane active"
     role="tabpanel"
     aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5"
-    id="dom-da4be276-f13c-47d6-be82-655bc6452fd5"
-  >
+    id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
     <div
       id="tableExample3"
-      data-list='{"valueNames":["name","phone","tongcv","hoanthanh","bolo","danglam","chitiet"],"page":20,"pagination":true}'
-    >
+      data-list='{"valueNames":["name","phone","tongcv","hoanthanh","bolo","danglam","chitiet"],"page":20,"pagination":true}'>
       <div class="row justify-content-end g-0">
         <div class="col-auto col-sm-5 mb-3">
           <form>
@@ -19,8 +17,7 @@
                 class="form-control form-control-sm shadow-none search"
                 type="search"
                 placeholder="Search..."
-                aria-label="search"
-              />
+                aria-label="search" />
               <div class="input-group-text bg-transparent">
                 <span class="fa fa-search fs-10 text-600"></span>
               </div>
@@ -30,8 +27,7 @@
       </div>
       <div class="table-responsive scrollbar">
         <table
-          class="table table-bordered table-hover table-striped fs-10 mb-0"
-        >
+          class="table table-bordered table-hover table-striped fs-10 mb-0">
           <thead class="bg-200">
             <tr>
               <th class="text-900 sort" data-sort="name">Họ tên</th>
@@ -46,8 +42,7 @@
           </thead>
           <tbody class="list">
             <% staffs.forEach(function(staff, key) { %>
-            <tr
-            >
+            <tr>
               <td class="name"><%= staff.staff.full_name %></td>
               <td class="phone"><%= staff.staff.number_phone %></td>
               <td class="tongcv"><%= staff.totalTasks %></td>
@@ -66,8 +61,7 @@
           class="btn btn-sm btn-falcon-default me-1"
           type="button"
           title="Previous"
-          data-list-pagination="prev"
-        >
+          data-list-pagination="prev">
           <span class="fas fa-chevron-left"></span>
         </button>
         <ul class="pagination mb-0"></ul>
@@ -75,12 +69,13 @@
           class="btn btn-sm btn-falcon-default ms-1"
           type="button"
           title="Next"
-          data-list-pagination="next"
-        >
+          data-list-pagination="next">
           <span class="fas fa-chevron-right"> </span>
         </button>
       </div>
     </div>
   </div>
+
+
 </div>
 <%- include('../../layout/footer') %>

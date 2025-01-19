@@ -6,7 +6,8 @@ import {
   Render,
   Req,
   Res,
-  SetMetadata
+  SetMetadata,
+  UseGuards
 } from '@nestjs/common'
 import { AppService } from './app.service'
 import { LoginDto } from './staffs/dto/create-staff-logindto'
@@ -18,13 +19,16 @@ import { ProjectEditService } from './project_edit/project_edit.service'
 import { MaintenanceService } from './maintenance/maintenance.service'
 import { ProjectStaffService } from './project_staff/project_staff.service'
 import { ProjectService } from './project/project.service'
+import { BusinessGuard } from './guards/auth/busines.guard'
+import { WorkflowStepsService } from './workflow_steps/workflow_steps.service'
 @Controller()
 export class AppController {
   constructor (
     private staffsService: StaffsService,
     private projectEditService: ProjectEditService,
     private maintenanceService: MaintenanceService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private workflowStepsService: WorkflowStepsService
   ) {}
   // @Get('sendmail')
   // @SetMetadata('isPublic', true)
@@ -44,7 +48,32 @@ export class AppController {
   //       return { message: 'Gửi mail thất bại!', error: error.message }
   //     })
   // }
+  @Get('quy-trinh-lam-viec')
+  @Render('client/quytrinhmau')
+  async quytrinhmau() {
+    const allWorkflowSteps = await this.workflowStepsService.findAll()
+    const workflowSteps = allWorkflowSteps.reduce((acc, workflowStep) => {
+      const workflow = workflowStep.workflow
+      const id = workflow.id
+      if (!acc[id]) {
+        acc[id] = {
+          name: workflow.name,
+          steps: []
+        }
+      }
+      acc[id].steps.push(workflowStep)
+      return acc
+    }, {})
+
+    console.log('🔱  WaveBear  ---------------------------------------------------------------------------------🔱  WaveBear ')
+    console.log('🔱  WaveBear  ~ AppController ~ quytrinhmau ~ workflowSteps⚡ ⚡ ⚡  :', workflowSteps)
+    console.log('🔱  WaveBear  ---------------------------------------------------------------------------------🔱  WaveBear ')
+    return { workflowSteps }
+
+  }
+
   @Get()
+  @UseGuards(BusinessGuard)
   @Render('admin/index')
   async renderIndexadmin (@Req() req: Request) {
     const token = req.cookies['token']
@@ -55,9 +84,13 @@ export class AppController {
     let maintenanceYc = null
     let maintenanceYcHt = null
     let countProject = null
-    if (inforAccount.role_admin || (inforAccount.department.id == 1 && inforAccount.position.id == 1)) {
+    if (
+      inforAccount.role_admin ||
+      (inforAccount.department.id == 1 && inforAccount.position.id == 1)
+    ) {
       projectEdits = await this.projectEditService.findAll()
-      maintenanceComing = await this.maintenanceService.findAllMaintenanceComing()
+      maintenanceComing =
+        await this.maintenanceService.findAllMaintenanceComing()
       maintenanceYc = await this.maintenanceService.maintenanceYc()
       maintenanceYcHt = await this.maintenanceService.maintenanceYcHt()
       countProject = await this.projectService.countProjectByMonth()
@@ -65,9 +98,10 @@ export class AppController {
       projectEdits = await this.projectEditService.findProjectEditByBusines(
         +inforAccount.id
       )
-      maintenanceComing = await this.maintenanceService.findAllMaintenanceComingByBusines(
-        +inforAccount.id
-      )
+      maintenanceComing =
+        await this.maintenanceService.findAllMaintenanceComingByBusines(
+          +inforAccount.id
+        )
       maintenanceYc = await this.maintenanceService.maintenanceYcByBusines(
         +inforAccount.id
       )
@@ -78,17 +112,6 @@ export class AppController {
         +inforAccount.id
       )
     }
-
-    console.log(
-      '🔱  WaveBear  ------------------------------------------------------------------------------------🔱  WaveBear '
-    )
-    console.log(
-      '🔱  WaveBear  ~ AppController ~ renderIndexadmin ~ projectEdits⚡ ⚡ ⚡  :',
-      projectEdits
-    )
-    console.log(
-      '🔱  WaveBear  ------------------------------------------------------------------------------------🔱  WaveBear '
-    )
     return {
       projectEdits,
       activeMenu: 'home',

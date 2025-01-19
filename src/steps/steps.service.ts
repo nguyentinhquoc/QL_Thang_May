@@ -8,24 +8,27 @@ import { Repository } from 'typeorm'
 export class StepsService {
   constructor (
     @InjectRepository(Step)
-    private stepsRepository: Repository<Step>,
+    private stepsRepository: Repository<Step>
   ) {}
   async create (createStepDto: CreateStepDto) {
     return await this.stepsRepository.save(createStepDto)
   }
   findAll () {
     return this.stepsRepository.find({
-      relations: ['departmentsSteps', 'departmentsSteps.department'],
+      relations: ['departmentsSteps', 'departmentsSteps.department']
     })
   }
   findOne (id: number) {
     return this.stepsRepository.findOne({
       where: { id },
-      relations: ['departmentsSteps', 'departmentsSteps.department'],
+      relations: ['departmentsSteps', 'departmentsSteps.department']
     })
   }
-  update (id: number, updateStepDto: UpdateStepDto) {
-    return `This action updates a #${id} step`
+  async update (id: number, updateStepDto: UpdateStepDto) {
+    return await this.stepsRepository.update(id, {
+      name: updateStepDto.name,
+      description: updateStepDto.description
+    })
   }
   remove (id: number) {
     return `This action removes a #${id} step`

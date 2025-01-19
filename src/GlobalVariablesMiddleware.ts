@@ -22,8 +22,9 @@ export class GlobalVariablesMiddleware implements NestMiddleware {
         res.locals.avatarLocal = payload.avatar
         res.locals.emailLocal = payload.email
         res.locals.role_admin = payload.role_admin
-        res.locals.manager = payload.manager // check quản lý
-        res.locals.busines = payload.busines // check phòng kinh doanh
+        res.locals.manager = payload.manager
+        res.locals.busines = payload.busines
+        res.locals.id = payload.id
         res.locals.notifications =
           await this.notificationService.findNotificationMax6(payload.id)
         res.locals.countUnreadNotifications =

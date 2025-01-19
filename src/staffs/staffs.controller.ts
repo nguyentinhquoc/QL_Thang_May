@@ -48,19 +48,7 @@ export class StaffsController {
     const staffsBusiness = await this.staffsService.findAllBusines()
     return { staffsBusiness }
   }
-  @Get('/detailAccount')
-  @Render('admin/staff/detail')
-  async detailAccount (@Req() req: Request) {
-    const token = req.cookies['token']
-    if (token) {
-      const payload = await this.staffsService.payload(token)
-      const Staff = await this.staffsService.findOne(payload.id)
-      return {
-        Staff,
-        activeMenu: 'staff'
-      }
-    }
-  }
+
   @Get('/add')
   @SetMetadata('role_admin', true)
   @Render('admin/staff/add')
@@ -221,17 +209,19 @@ export class StaffsController {
     return this.staffsService.findOne(+id)
   }
   @Get('/payroll/:id')
-  @UseGuards(ManagerGuard)
   @Render('admin/staff/payroll_detail')
   async findPayrollDetail (@Param('id') id: string) {
     const infoStaffs = await this.staffsService.findPayrollWStaff(+id)
     const staff = await this.staffsService.findOne(+id)
+    const Staff = await this.staffsService.findOne(+id)
     return {
+      Staff,
       staff,
       infoStaffs,
-      activeMenu: 'staff'
     }
   }
+
+
   @Patch(':id')
   @SetMetadata('role_admin', true)
   update (@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto) {
