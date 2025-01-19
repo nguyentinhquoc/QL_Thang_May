@@ -1,0 +1,282 @@
+<%- include('../layout/header') %>
+<% function formatDate(dateString) {
+const date = new Date(dateString);
+const day = String(date.getDate()).padStart(2, '0');
+const month = String(date.getMonth() + 1).padStart(2, '0');
+const year = date.getFullYear();
+const hours = String(date.getHours()).padStart(2, '0');
+const minutes = String(date.getMinutes()).padStart(2, '0');
+const seconds = String(date.getSeconds()).padStart(2, '0');
+return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+} %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- MAIN CONTENT-->
+<style>
+  .mhOver {
+    max-height: 450px;
+    overflow-y: auto;
+  }
+</style>
+<div class="row">
+  <div class="col-lg-6">
+    <div class="list-group">
+      <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4 active" data-bs-theme="light">
+        <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
+          <h4 class="mb-1 text-white">Yêu cầu cập nhập dữ liệu công trình</h4>
+        </div>
+      </a>
+      <div class="card card-body mhOver">
+        <% projectEdits.forEach(function(projectEdit, index) { %>
+        <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4" href="/project/checkEdit/<%= projectEdit.id %>">
+          <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
+            <h5 class="mb-1">Công trình: <%= projectEdit.project.full_name %></h5>
+          </div>
+          <p class="mb-1">Người đề xuất: <%= projectEdit.staff.full_name %></p>
+          <small class="text-500 dark__text-500"><%= formatDate(projectEdit.createdAt)
+            %></small>
+        </a>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="list-group">
+      <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4 active" data-bs-theme="light">
+        <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
+          <h4 class="mb-1 text-white">Lịch bảo trì sắp tới</h4>
+        </div>
+      </a>
+      <div class="card card-body mhOver">
+        <% maintenanceComing.forEach(function(item, index) { %>
+        <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4" href="/maintenance/project/<%= item.project && item.project.id ? item.project.id : '' %>">
+          <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
+            <h5 class="mb-1"> Công trình: <%= item.project && item.project.full_name ?
+              item.project.full_name : item.projectName %></h5>
+          </div>
+          <p class="mb-1">Thời gian bảo trì: <%=
+            formatDate(item.time)
+            %></p>
+          <small class="mb-1">Nội dung: <%=
+            item.reason
+            %></small>
+        </a>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row mt-3">
+  <div class="col-lg-6">
+    <div class="list-group">
+      <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4 active" data-bs-theme="light">
+        <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
+          <h4 class="mb-1 text-white">Yêu cầu thêm bảo trì</h4>
+        </div>
+      </a>
+      <div class="card card-body mhOver">
+        <% maintenanceYc.forEach(function(item, index) { %>
+        <div class="mb-2">
+          <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4" href="/maintenance/project/<%= item.project && item.project.id ? item.project.id : '' %>">
+            <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
+              <h5 class="mb-1"> Công trình: <%= item.project && item.project.full_name ?
+                item.project.full_name : item.projectName %></h5>
+            </div>
+            <p class="mb-1">Thời gian bảo trì: <%=
+              formatDate(item.time)
+              %></p>
+            <small class="mb-1">Nội dung: <%=
+              item.reason
+              %></small>
+          </a>
+          <div class="d-flex justify-content-between">
+            <button onclick="confirmMantenanceSc('<%=item.id%>',this)" class="btn w-50 btn-primary"><i class="fas fa-check"></i></button>
+            <button onclick="confirmMantenanceEr('<%=item.id%>',this)" class="btn w-50 btn-danger" style="font-weight: bolder;">X</button>
+          </div>
+        </div>
+
+        <% }); %>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="list-group">
+      <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4 active" data-bs-theme="light">
+        <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
+          <h4 class="mb-1 text-white">Yêu cầu xác nhận công việc đã bảo trì</h4>
+        </div>
+      </a>
+      <div class="card card-body mhOver">
+        <% maintenanceYcHt.forEach(function(item, index) { %>
+        <div class="mb-2">
+          <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4" href="/maintenance/project/<%= item.project && item.project.id ? item.project.id : '' %>">
+            <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
+              <h5 class="mb-1"> Công trình: <%= item.project && item.project.full_name ?
+                item.project.full_name : item.projectName %></h5>
+            </div>
+            <p class="mb-1">Thời gian bảo trì: <%=
+              formatDate(item.time)
+              %></p>
+            <small class="mb-1">Nội dung: <%=
+              item.reason
+              %></small>
+          </a>
+          <div class="d-flex justify-content-between">
+            <button onclick="confirmMantenanceSc('<%=item.id%>',this)" class="btn w-50 btn-primary"><i class="fas fa-check"></i></button>
+            <button onclick="confirmMantenanceEr('<%=item.id%>',this)" class="btn w-50 btn-danger" style="font-weight: bolder;">X</button>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card p-3 mt-3">
+  <!-- Select cho năm cho Biểu đồ 1 -->
+  <h4>Biểu đồ thể hiện số lượng dự án theo năm</h4>
+  <hr>
+  <select id="yearSelect" class="form-control" style="width: fit-content;">
+  </select>
+  <!-- Biểu đồ 1 -->
+  <canvas id="myChart1" width="400" height="200"></canvas>
+  <hr>
+  <h4>Biểu đồ thể hiện doanh số theo năm</h4>
+  <!-- Select cho năm cho Biểu đồ 2 -->
+  <select id="yearSelect2" class="form-control" style="width: fit-content;">
+  </select>
+  <!-- Biểu đồ 2 -->
+  <canvas id="myChart2" width="400" height="200"></canvas>
+</div>
+
+<script>
+  // Dữ liệu từ server
+  const data = JSON.parse('<%- JSON.stringify(countProject) %>');
+  const years = [...new Set(data.map(item => item.year))];
+  years.reverse();
+  const yearSelect1 = document.getElementById('yearSelect');
+  const yearSelect2 = document.getElementById('yearSelect2');
+  years.forEach(year => {
+    const option1 = document.createElement('option');
+    option1.value = year;
+    option1.textContent = year;
+    yearSelect1.appendChild(option1);
+
+    const option2 = document.createElement('option');
+    option2.value = year;
+    option2.textContent = year;
+    yearSelect2.appendChild(option2);
+  });
+
+  // Biểu đồ thứ nhất: Số lượng dự án
+  let selectedYear1 = years[0];
+  const chartData1 = filterDataByYear(selectedYear1, data, 'count');
+  const myChart1 = new Chart(document.getElementById('myChart1').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: chartData1.months,
+      datasets: [{
+        label: `Số lượng dự án theo năm`,
+        data: chartData1.values,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Biểu đồ thứ hai: Tổng giá trị
+  let selectedYear2 = years[0];
+  const chartData2 = filterDataByYear(selectedYear2, data, 'totalValue');
+  const myChart2 = new Chart(document.getElementById('myChart2').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: chartData2.months,
+      datasets: [{
+        label: `Tổng giá trị dự án theo năm`,
+        data: chartData2.values,
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+        borderColor: 'rgba(153, 102, 255, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Hàm lọc dữ liệu theo năm và loại dữ liệu (`count` hoặc `totalValue`)
+  function filterDataByYear(year, data, key) {
+    const filteredData = data.filter(item => item.year == year);
+    const months = filteredData.map(item => `Tháng ${item.month}`);
+    const values = filteredData.map(item => item[key]);
+    return {
+      months,
+      values
+    };
+  }
+
+  // Lắng nghe sự kiện thay đổi năm cho biểu đồ thứ nhất
+  yearSelect1.addEventListener('change', (event) => {
+    selectedYear1 = event.target.value;
+    const newData1 = filterDataByYear(selectedYear1, data, 'count');
+    myChart1.data.labels = newData1.months;
+    myChart1.data.datasets[0].data = newData1.values;
+    myChart1.update();
+  });
+
+  // Lắng nghe sự kiện thay đổi năm cho biểu đồ thứ hai
+  yearSelect2.addEventListener('change', (event) => {
+    selectedYear2 = event.target.value;
+    const newData2 = filterDataByYear(selectedYear2, data, 'totalValue');
+    myChart2.data.labels = newData2.months;
+    myChart2.data.datasets[0].data = newData2.values;
+    myChart2.update();
+  });
+</script>
+
+
+
+<script>
+  confirmMantenanceSc = (id, element) => {
+    $.ajax({
+      url: '/maintenance/confirm',
+      type: 'PATCH',
+      data: {
+        id: id
+      },
+      success: function(response) {
+        element.parentElement.parentElement
+          .remove();
+      },
+    });
+  };
+
+
+  confirmMantenanceEr = (id, element) => {
+    $.ajax({
+      url: '/maintenance/confirmEr',
+      type: 'DELETE',
+      data: {
+        id: id
+      },
+      success: function(data) {
+        element.parentElement.parentElement
+          .remove();
+      }
+    })
+  }
+</script>
+<%- include('../layout/footer') %>

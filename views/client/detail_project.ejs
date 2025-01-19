@@ -1,0 +1,650 @@
+<%- include('../layout/header') %>
+<% function formatDate(dateString) { const date=new Date(dateString); const
+day=String(date.getDate()).padStart(2, '0'
+); const month=String(date.getMonth() + 1).padStart(2, '0' ); const
+year=date.getFullYear(); const
+hours=String(date.getHours()).padStart(2, '0' ); const
+minutes=String(date.getMinutes()).padStart(2, '0' ); const
+seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${year}
+${hours}:${minutes}:${seconds}`; } %>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+  }
+
+  .timeline {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .timeline-event {
+    display: flex;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+
+  .timeline-icon {
+    margin-left: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #4caf50;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    font-size: 20px;
+    margin-right: 20px;
+  }
+
+  .timeline-icon-none {
+    margin-left: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #aea0a0;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    font-size: 20px;
+    margin-right: 20px;
+  }
+
+  .timeline-content {
+    background-color: #fff;
+    border: 1px solid green;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 3px 7px rgba(42, 54, 74, 0.1);
+    flex: 1;
+  }
+
+  .timeline-date {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .timeline-description {
+    margin-bottom: 0;
+  }
+
+  .btn-complete {
+    display: block;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .container {}
+
+  input[type="file"] {
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  .image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .image-item {
+    position: relative;
+  }
+
+  .image-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .remove-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .hoanthanhcv {
+    background-color: #00ff6a;
+    border-radius: 50%;
+    padding: 2px;
+  }
+
+  .chuahoanthanhcv {
+    background-color: #ff0000;
+    border-radius: 50%;
+    padding: 2px;
+  }
+</style>
+<div class="row  m-b-15 ">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-body">
+        <form action="/project/SuccessProject/<%= project.id %>?_method=PATCH"
+          method="post" class="d-flex">
+          <h2 class="m-3">Thông tin công trình</h2>
+          <% if(projectStaff.length != 0 && project.status == 0){ %>
+          <button class="btn btn-primary mt-3 mb-3"
+            onclick="return confirm('Bạn có chắc chắn công trình này đã hoàn thành ?')">Xác
+            nhận hoàn
+            thành</button>
+          <%} %>
+        </form>
+        <div class="m-3 d-flex align-items-center">
+          Nhân viên phụ trách:
+          <% project.projectStaff.forEach(function(item, index) { %>
+          <div class="col-auto">
+            <div class="avatar avatar-2xl imgMainStaff" data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              data-bs-original-title="<%= item.staff.full_name %>">
+              <img class="rounded-circle " src="/images/avatar/<%= item.staff.avatar %>"
+                alt>
+            </div>
+          </div>
+          <% })
+          if (project.projectStaff.length === 0) { %>
+          Không có
+          <% } %>
+        </div>
+        <form action="/project-edit/<%= project.id %>" method="POST" id="FormAdd">
+          <div class="card-body text-secondary">
+
+            <div class="d-flex justify-content-between">
+              <div class="form-group col-7">
+                <label for="full_name">Tên công trình <span
+                    style="color: red;">*</span></label>
+                <input type="text" id="full_name" name="full_name" class="form-control"
+                  required maxlength="255" value="<%= project.full_name %>" disabled>
+              </div>
+              <div class="form-group col-3">
+                <label for="code_project">Mã công trình <span
+                    style="color: red;">*</span></label>
+                <input type="text" placeholder="Enter code" id="code_project"
+                  name="code_project" class="form-control" required maxlength="255"
+                  value="<%= project.code_project %>" disabled>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="number_phone">Số điện thoại <span
+                  style="color: red">*</span></label>
+              <input type="tel" id="number_phone" name="number_phone" class="form-control"
+                required maxlength="15" value="<%= project.number_phone %>" disabled />
+            </div>
+            <div class="form-group">
+              <label for="email">Địa chỉ email</label>
+              <input type="email" id="email" name="email" class="form-control"
+                maxlength="255" value="<%= project.email %>" disabled />
+            </div>
+            <div class="form-group">
+              <label for="address">Địa chỉ lắp đặt <span
+                  style="color: red">*</span></label>
+              <textarea id="address" name="address" class="form-control"
+                disabled><%= project.address %></textarea>
+            </div>
+            <div class="d-flex" style="justify-content: space-between;">
+              <div class="form-group">
+                <label for="price">Giá trị hợp đồng: <span
+                    style="color: red;">*</span></label>
+                <input type="number" value="<%= project.price %>"
+                  placeholder="Enter Address price" id="price" name="price"
+                  class="form-control" disabled>
+              </div>
+              <div class="form-group">
+                <label for="tax">Thuế:</label>
+                <input type="number" value="<%= project.tax %>"
+                  placeholder="Enter Address tax" id="tax" name="tax" class="form-control"
+                  disabled>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="description">Ghi chú</label>
+              <textarea id="description" name="description" class="form-control"
+                maxlength="225" disabled><%= project.description %></textarea>
+            </div>
+            <div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Thông tin</th>
+                    <th scope="col">Giá trị</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><label for="dongCo">Động cơ <span style="font-size: 10px;">(Nhật
+                          Bản)</span></label></td>
+                    <td><input type="text" id="dongCo" name="dongCo"
+                        value="<%= project.infor_product.dongCo %>" disabled></td>
+                  </tr>
+                  <tr>
+                    <td><label for="tuDien">Tủ điện <span style="font-size: 10px;">(Hàn
+                          Quốc)</span></label></td>
+                    <td><input type="text" id="tuDien" name="tuDien"
+                        value="<%= project.infor_product.tuDien %>" disabled></td>
+                  </tr>
+                  <tr>
+                    <td><label for="capTai">Cáp Tải <span style="font-size: 10px;">(Hàn
+                          Quốc)</span></label></td>
+                    <td><input type="text" id="capTai" name="capTai"
+                        value="<%= project.infor_product.capTai %>" disabled></td>
+                  </tr>
+                  <tr>
+                    <td><label for="congSuat">Công suất <span
+                          style="font-size: 10px;">(3.3
+                          Kw)</span></label></td>
+                    <td><input type="text" id="congSuat" name="congSuat"
+                        value="<%= project.infor_product.congSuat %>" disabled></td>
+                  </tr>
+                  <tr>
+                    <td><label for="hoThang">Hố thang <span
+                          style="font-size: 10px;">(1600x
+                          1600 mm)</span></label></td>
+                    <td><input type="text" id="hoThang" name="hoThang"
+                        value="<%= project.infor_product.hoThang %>" disabled></td>
+                  </tr>
+                  <tr>
+                    <td><label for="cabin">Cabin <span style="font-size: 10px;">(1200 x
+                          1000
+                          mm)</span></label></td>
+                    <td><input type="text" id="cabin" name="cabin"
+                        value="<%= project.infor_product.cabin %>" disabled></td>
+                  </tr>
+                  <tr>
+                    <td><label for="cua">Cửa <span style="font-size: 10px;">(700 x 2100
+                          mm)</span></label></td>
+                    <td><input type="text" id="cua" name="cua"
+                        value="<%= project.infor_product.cua %>" disabled></td>
+                  </tr>
+                  <tr>
+                    <td><label for="pit">Pít <span style="font-size: 10px;">(1400
+                          mm)</span></label></td>
+                    <td><input type="text" id="pit" name="pit"
+                        value="<%= project.infor_product.pit %>" disabled></td>
+                  </tr>
+                  <tr>
+                    <td><label for="oh">OH <span style="font-size: 10px;">(3300 + 1300
+                          mm)</span></label></td>
+                    <td><input type="text" id="oh" name="oh"
+                        value="<%= project.infor_product.oh %>" disabled></td>
+                  </tr>
+                  <tr>
+                    <td><label for="phongMay">Phòng máy<span
+                          style="font-size: 10px;">(Có/Không)</span></label></td>
+                    <td><input type="text" id="phongMay" name="phongMay"
+                        value="<%= project.infor_product.phongMay %>" disabled></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="btn btn-primary w-100" onclick="enableInputs()" id="editBtn">Tạo yêu
+              cầu chỉnh sửa</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5 card">
+    <div class="d-flex j justify-content-center align-items-center mt-3 mb-2">
+      <button id="timelineBtn" class="btn btn-primary btnbt mr">Lắp đặt</button> <button
+        class="btn btn-secondary btnbt" id="maintenanceBtn">Bảo
+        trì</button>
+    </div>
+    <div class="maintenance w-100  mt-5">
+      <%
+      const groupedActions = maintenanceActions.reduce((acc, action) => {
+      const maintenanceId = action.maintenance.id;
+      if (!acc[maintenanceId]) {
+      acc[maintenanceId] = [];
+      }
+      acc[maintenanceId].push(action);
+      return acc;
+      }, {});
+      let count = 0;
+      Object.keys(groupedActions).forEach(maintenanceId => {
+      const actions = groupedActions[maintenanceId];
+      const allCompleted = actions.every(action => action.status === true);
+      count+=1;
+      %>
+      <div class="timeline-content">
+
+        <p><strong>Trạng thái:</strong> <%= allCompleted ? "Đã hoàn thành" :
+          "Chưa hoàn thành" %></p>
+        <p><strong>Lý do:</strong> <%= actions[0].maintenance.reason %></p>
+        <% actions.forEach(action => { %>
+        <div class="d-flex align-items-center mb-2">
+          <p class="m-1 avatar avatar-2xl <%= action.status ? "hoanthanhcv" :
+            "chuahoanthanhcv" %>" data-bs-toggle="tooltip" data-bs-placement="top"
+            data-bs-original-title="<%= action.staff.full_name %>">
+            <img class="rounded-circle" src="/images/avatar/<%= action.staff.avatar %>"
+              alt>
+          </p>
+          <% if (idStaff == action.staff.id && !action.status) { %>
+          <button class="btn btn-primary ms-2" id="openFormBtnBt"
+            maintenanceActionId="<%= action.id %>">Hoàn thành</button>
+          <% } %>
+        </div>
+        <% }); %>
+        <div class="tab-pane preview-tab-pane active mb-2" role="tabpanel"
+          aria-labelledby="tab-dom-ef933485-2037-43bf-a15c-76422c818e39"
+          id="dom-ef933485-2037-43bf-a15c-76422c818e39">
+          <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop<%=count%>">Chi tiết</button>
+          <div class="modal fade" id="staticBackdrop<%=count%>" data-bs-keyboard="false"
+            data-bs-backdrop="static" tabindex="-1" aria-labelledby="staticBackdropLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg mt-6" role="document">
+              <div class="modal-content border-0">
+                <div class="position-absolute top-0 end-0 mt-3 me-3 z-1">
+                  <button
+                    class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                  <div class="rounded-top-3 bg-body-tertiary py-3 ps-4 pe-6">
+                    <h4 class="mb-1" id="staticBackdropLabel">Lịch sử công việc</h4>
+                    <p class="fs-11 mb-0"><%= actions[0].maintenance.reason %> - <a
+                        class="link-600 fw-semi-bold" href="#!"><%= allCompleted ?
+                        "Đã hoàn thành" : "Chưa hoàn thành" %></a></p>
+                  </div>
+                  <% actions.forEach(action => { %>
+                  <div class="p-4">
+                    <div class="row">
+                      <div class="col-lg-9">
+                        <div class="d-flex">
+                          <span class="fa-stack ms-n1 me-3 m-1 avatar">
+                            <img class="rounded-soft"
+                              src="/images/avatar/<%= action.staff.avatar %>" alt>
+                          </span>
+                          <div class="flex-1">
+                            <h5 class="mb-2 fs-9"><%= action.staff.full_name %></h5>
+                            <% if (action.image && Array.isArray(action.image)) { %>
+                            <div class="d-flex">
+                              <% action.image.forEach(img => { %>
+                              <span class="fa-stack ms-n1 me-3 m-1 avatar">
+                                <img class="rounded-soft" src="/images/project/<%= img %>"
+                                  alt="Hình ảnh" />
+                              </span>
+                              <% }) %>
+                            </div>
+                            <% } else { %>
+                            <p style="opacity: 0.5;">Không có ảnh.</p>
+                            <% } %>
+                            <p class="text-break fs-10"><%= action.feedback %></p>
+                            <span
+                              class="text-<%= action.status ? 'success' : 'warning' %> fs-10">
+                              Ngày hoàn thành: <%= action.status ?
+                              formatDate(action.status) : 'Chưa hoàn thành' %>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <hr>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%
+      });
+      %>
+    </div>
+    <div class="timeline w-100  mt-5">
+      <!-- idStaff  -->
+      <%
+      let count2 = 0;
+      let next = true;
+      let isButtonShown=false; let displayedIds=new Set();
+      projectSteps.forEach(function(step) {
+      if(step.staff){
+      count2 +=1
+      if
+      (!displayedIds.has(step.workflowStep.id)) { displayedIds.add(step.workflowStep.id);
+      let none = false;
+      projectSteps.filter(s=> s.workflowStep.id ===
+      step.workflowStep.id).forEach(s => {
+      if(s.status == null) {
+      none = true;
+      }
+      %>
+      <% }) %>
+      %>
+      <div class="timeline-event">
+        <div class="timeline-icon<%= none ? '-none': '' %>">
+          ✔
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-description">
+            <%= step.step.name %>
+            <p style="opacity: 0.5">
+              <%= step.step.description %>
+            </p>
+            <div class="tab-pane preview-tab-pane active" role="tabpanel"
+              aria-labelledby="tab-dom-ef933485-2037-43bf-a15c-76422c818e39"
+              id="dom-ef933485-2037-43bf-a15c-76422c818e39"><button
+                class="btn btn-primary" type="button" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop<%=count2%>">Chi
+                tiết</button>
+              <div class="modal fade" id="staticBackdrop<%=count2%>"
+                data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg mt-6" role="document">
+                  <div class="modal-content border-0">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3 z-1"><button
+                        class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                        data-bs-dismiss="modal" aria-label="Close"></button></div>
+                    <div class="modal-body p-0">
+                      <div class="rounded-top-3 bg-body-tertiary py-3 ps-4 pe-6">
+                        <h4 class="mb-1" id="staticBackdropLabel">Lịch sử công việc</h4>
+                        <p class="fs-11 mb-0"> <%= %> - <a class="link-600 fw-semi-bold"
+                            href="#!"><%=
+                            %></a></p>
+                      </div>
+                      <% projectSteps.filter(s=> s.workflowStep.id ===
+                      step.workflowStep.id).forEach(s => {
+                      if(s.staff){
+                      %>
+                      <div class="p-4">
+                        <div class="row">
+                          <div class="col-lg-9">
+                            <div class="d-flex"><span
+                                class="fa-stack ms-n1 me-3 m-1 avatar ">
+                                <img class="rounded-soft"
+                                  src="/images/avatar/<%= s.staff.avatar %>" alt>
+                              </span>
+                              <div class="flex-1">
+                                <h5 class="mb-2 fs-9"><%= s.staff.full_name %></h5>
+                                <% if (s.image && Array.isArray(s.image)) { %>
+                                <div class="d-flex">
+                                  <% s.image.forEach(img => { %>
+                                  <span class="fa-stack ms-n1 me-3 m-1 avatar">
+                                    <img class="rounded-soft"
+                                      src="/images/project/<%= img %>" alt="Hình ảnh" />
+                                  </span>
+                                  <% }) %>
+                                </div>
+                                <% } else { %>
+                                <p style="opacity: 0.5;">Không có ảnh.</p>
+                                <% } %>
+                                <span class="fw-bold">Phản hồi: <%= s.feedback %>
+                                </span>
+                                <br>
+                                <span
+                                  class="text-<%= s.status ? 'success' : 'warning' %> fs-10">
+                                  Thời gian hoàn thành: <%= s.status ?
+                                  formatDate(s.status)
+                                  : 'Chưa hoàn thành' %>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <hr>
+                      <% }}) %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="text-align: end">
+              <%
+              projectSteps.filter(s=> s.workflowStep.id ===
+              step.workflowStep.id).forEach(s => {
+              if(s.staff){
+              %>
+              <div class="d-flex justify-content-between">
+                <% if(s.status!=null) {
+                %>
+                <div></div>
+                <% } else if (!isButtonShown && s.staff.id==idStaff && s.status==null
+                &&
+                next && project.status == 0) {
+                isButtonShown=true;
+                %>
+                <p class="btn btn-primary" id="openFormBtn"
+                  projectId="<%= s.project.id %>"
+                  workflowStepId="<%= s.workflowStep.id %>">Hoàn thành</p>
+                <% } else {
+                %>
+                <div></div>
+                <% } %>
+                <div class="d-flex">
+                  <p class="m-1 avatar avatar-m <%= s.status ? "hoanthanhcv" :
+                    "chuahoanthanhcv" %>" data-bs-toggle="tooltip" data-bs-placement="top"
+                    data-bs-original-title="<%= s.staff.full_name %>">
+                    <img class="rounded-circle" src="/images/avatar/<%= s.staff.avatar %>"
+                      alt>
+                  </p>
+                </div>
+              </div>
+              <%} }); %>
+              <% if(none){next=false;} %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% } }}); %>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+    $("#openFormBtnBt").click(function() {
+      const maintenanceActionId = this.getAttribute('maintenanceActionId');
+      const workflowStepId = this.getAttribute('workflowStepId');
+      const form = `
+                <div class="w-50">
+                  <div id="formContainer" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Xác nhận công việc</h5>
+                        </div>
+                        <div class="modal-body">
+                          <form action="/maintenance-actions/confirmSuccessMaintenace/${maintenanceActionId}" method="post" enctype="multipart/form-data">
+                            <div class="form-group"> <label for="feedback">Phản hồi</label> <input type="text" name="feedback" id="feedback" class="form-control" placeholder="Nhập phản hồi"> </div>
+                            <div class="form-group"> <label for="file">Tệp đính kèm</label> <input type="file" name="image" id="file" class="form-control"> </div>
+                             <button name="workflowStepId" value="${workflowStepId}" class="btn btn-primary btn-block" onclick="return confirm('Bạn có chắc chắn đã hoàn thành công việc ?')">Hoàn thành</button>
+                          </form>
+                          <div id="preview" class="mt-3"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+      `
+      $('body').append(form);
+      $("#formContainer").modal('show');
+    });
+
+    $('.maintenance').hide();
+    $('#timelineBtn').click(function() {
+      $('.maintenance').hide();
+      $('.timeline').slideDown();
+    });
+    $('#maintenanceBtn').click(function() {
+      $('.timeline').hide();
+      $('.maintenance').slideDown();
+    });
+    $("#openFormBtn").click(function() {
+      const projectId = this.getAttribute('projectId');
+      const workflowStepId = this.getAttribute('workflowStepId');
+      const form = `
+                <div class="w-50">
+                  <div id="formContainer" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Xác nhận công việc</h5>
+                        </div>
+                        <div class="modal-body">
+                          <form action="/client/confirmSuccessJob/${projectId}" method="post" enctype="multipart/form-data">
+                            <div class="form-group"> <label for="feedback">Phản hồi</label> <input type="text" name="feedback" id="feedback" class="form-control" placeholder="Nhập phản hồi"> </div>
+                            <div class="form-group"> <label for="file">Tệp đính kèm</label> <input type="file" name="image" id="file" class="form-control"> </div> <button name="workflowStepId" value="${workflowStepId}" class="btn btn-primary btn-block" onclick="return confirm('Bạn có chắc chắn đã hoàn thành công việc ?')">Hoàn thành</button>
+                          </form>
+                          <div id="preview" class="mt-3"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+      `
+      $('body').append(form);
+      $("#formContainer").modal('show');
+
+    });
+
+  });
+
+  function enableInputs() {
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+      input.removeAttribute('disabled');
+      if (!input.classList.contains('form-control')) {
+        input.classList.add('form-control');
+      }
+    });
+    const scrollDuration = 500;
+    const scrollStep = -window.scrollY / (scrollDuration / 15);
+    const scrollInterval = setInterval(function() {
+      if (window.scrollY !== 0) {
+        window.scrollBy(0, scrollStep);
+      } else {
+        clearInterval(scrollInterval);
+      }
+    }, 15);
+    const editBtn = document.getElementById('editBtn');
+    const newButton = document.createElement('button');
+    newButton.className = editBtn.className;
+    newButton.textContent = 'Gửi yêu cầu';
+    newButton.classList.remove('btn-primary');
+    newButton.classList.add('btn-primary');
+    editBtn.parentNode.replaceChild(newButton, editBtn);
+  }
+</script>
+<%- include('../layout/footer') %>

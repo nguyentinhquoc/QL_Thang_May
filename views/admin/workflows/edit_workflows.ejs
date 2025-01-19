@@ -1,0 +1,257 @@
+<%- include('../../layout/header') %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<div class="kanban-container scrollbar me-n3 w-100">
+  <div class="kanban-column w-50">
+    <div class="kanban-column-header">
+      <h5 class="fs-9 mb-0">Các bước chưa dùng</h5> <br>
+    </div>
+    <div class="kanban-column-header">
+      <input type="text" class="form-control m-1" id="search-input"
+        oninput="filterSteps()" placeholder="Tìm tên bước">
+    </div>
+    <form class="add-card-form" action="/steps" method="post">
+      <div>
+        <label class="form-label" for="name">Tên bước:</label>
+        <input type="text" class="form-control" id="name" name="name"
+          placeholder="Tên bước">
+      </div>
+      <div>
+        <label class="form-label" for="description">Mô tả:</label>
+        <textarea class="form-control" id="description" name="description"
+          placeholder="Mô tả"></textarea>
+      </div>
+      <div>
+        <label class="form-label" for="description">Phòng ban thực hiện:</label>
+        <% departmens.forEach(function(departmen) { %>
+        <div class="form-check">
+          <input class="form-check-input" id="departmen<%= departmen.id %>"
+            type="checkbox" value="<%= departmen.id %>" name="departmen[]" /><label
+            class="form-check-label" for="departmen<%= departmen.id %>"><%= departmen.name
+            %></label>
+        </div>
+        <% }); %>
+      </div>
+      <div class="row gx-2 mt-2">
+        <div class="col"><button class="btn btn-primary btn-sm d-block w-100"
+            onclick="addStep()" type="button">Thêm</button></div>
+        <div class="col"><button
+            class="btn btn-outline-secondary btn-sm d-block w-100 border-400"
+            id="btn-hide" type="button" data-btn-form="hide">Thoát</button></div>
+      </div>
+    </form>
+    <div class="kanban-items-container scrollbar NonePickerIn"
+      data-sortable="data-sortable">
+      <% NonePickerIn.forEach(function(step) { %>
+      <div class="kanban-item sortable-item-wrapper">
+        <div class="card sortable-item kanban-item-card hover-actions-trigger">
+          <div class="card-body">
+            <p class="mb-0 fw-medium font-sans-serif stretched-link"
+              data-bs-toggle="modal" data-bs-target="#kanban-modal-1"><strong><%=
+                step.name %></strong> <br> <%= step.description %></p>
+            <% if (step.departmentsSteps && step.departmentsSteps.length > 0) { %>
+            <span>Phòng ban:
+              <% step.departmentsSteps.forEach(function(departmentStep, index) { %>
+              <%= departmentStep.department.name %><%= index <
+              step.departmentsSteps.length - 1 ? ', ' : '' %>
+              <% }); %>
+            </span>
+            <% } %>
+            <input type="hidden" name="listStep[]" value="<%= step.id %>">
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <div class="kanban-column-footer"><button
+        class="btn btn-link btn-sm d-block w-100 btn-add-card text-decoration-none text-600"
+        type="button"><span class="fas fa-plus me-2"></span>Add another
+        card</button></div>
+  </div>
+  <form action="?_method=PATCH" method="post" class="kanban-column w-50">
+    <div class="kanban-column-header">
+      <h5 class="fs-9 mb-0">Quy trình hiện tại</h5>
+      <input <%=!canEdit ? 'disabled' : '' %> class="btn btn-info" type="submit"
+      value="Lưu quy trình" id="save-workflow" />
+    </div>
+    <div class="kanban-items-container scrollbar" data-sortable="data-sortable">
+      <% PickerIn.forEach(function(step) { %>
+      <div class="kanban-item sortable-item-wrapper">
+        <div class="card sortable-item kanban-item-card hover-actions-trigger">
+          <div class="card-body">
+            <p class="mb-0 fw-medium font-sans-serif stretched-link"
+              data-bs-toggle="modal" data-bs-target="#kanban-modal-1"><strong><%=
+                step.name %> </strong> <br> <%= step.description %></p>
+            <% if (step.departmentsSteps && step.departmentsSteps.length > 0) { %>
+            <span>Phòng ban:
+              <% step.departmentsSteps.forEach(function(departmentStep, index) { %>
+              <%= departmentStep.department.name %><%= index <
+              step.departmentsSteps.length - 1 ? ', ' : '' %>
+              <% }); %>
+            </span>
+            <% } %>
+            <input type="hidden" name="listStep[]" value="<%= step.id %>">
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </form>
+  </div>
+
+  <div class="modal fade" id="authentication-modal" tabindex="-1" role="dialog"
+    aria-labelledby="authentication-modal-label" aria-hidden="true">
+    <div class="modal-dialog mt-6" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-header px-5 position-relative modal-shape-header bg-shape">
+          <div class="position-relative z-1">
+            <h4 class="mb-0 text-white" id="authentication-modal-label">Register</h4>
+            <p class="fs-10 mb-0 text-white">Please create your free Falcon account</p>
+          </div>
+          <div data-bs-theme="dark"><button
+              class="btn-close position-absolute top-0 end-0 mt-2 me-2"
+              data-bs-dismiss="modal" aria-label="Close"></button></div>
+        </div>
+        <div class="modal-body py-4 px-5">
+          <form>
+            <div class="mb-3"><label class="form-label"
+                for="modal-auth-name">Name</label><input class="form-control" type="text"
+                autocomplete="on" id="modal-auth-name" /></div>
+            <div class="mb-3"><label class="form-label" for="modal-auth-email">Email
+                address</label><input class="form-control" type="email" autocomplete="on"
+                id="modal-auth-email" /></div>
+            <div class="row gx-2">
+              <div class="mb-3 col-sm-6"><label class="form-label"
+                  for="modal-auth-password">Password</label><input class="form-control"
+                  type="password" autocomplete="on" id="modal-auth-password" /></div>
+              <div class="mb-3 col-sm-6"><label class="form-label"
+                  for="modal-auth-confirm-password">Confirm Password</label><input
+                  class="form-control" type="password" autocomplete="on"
+                  id="modal-auth-confirm-password" /></div>
+            </div>
+            <div class="form-check"><input class="form-check-input" type="checkbox"
+                id="modal-auth-register-checkbox" /><label class="form-label"
+                for="modal-auth-register-checkbox">I accept the <a href="#!">terms </a>and
+                <a class="white-space-nowrap" href="#!">privacy policy</a></label></div>
+            <div class="mb-3"><button class="btn btn-primary d-block w-100 mt-3"
+                type="submit" name="submit">Register</button></div>
+          </form>
+          <div class="position-relative mt-5">
+            <hr />
+            <div class="divider-content-center">or register with</div>
+          </div>
+          <div class="row g-2 mt-2">
+            <div class="col-sm-6"><a
+                class="btn btn-outline-google-plus btn-sm d-block w-100" href="#"><span
+                  class="fab fa-google-plus-g me-2" data-fa-transform="grow-8"></span>
+                google</a></div>
+            <div class="col-sm-6"><a class="btn btn-outline-facebook btn-sm d-block w-100"
+                href="#"><span class="fab fa-facebook-square me-2"
+                  data-fa-transform="grow-8"></span> facebook</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  function filterSteps() {
+    console.log(123);
+    const input = document.querySelector('#search-input');
+    const filter = input.value.toLowerCase();
+    const kanbanContainer = document.querySelector('.kanban-items-container');
+    const steps = kanbanContainer.querySelectorAll('.sortable-item-wrapper');
+    for (let i = 0; i < steps.length; i++) {
+      const stepNameElement = steps[i].querySelector('strong');
+      const stepName = stepNameElement.textContent || stepNameElement.innerText;
+      if (stepName.toLowerCase().indexOf(filter) > -1) {
+        steps[i].style.display = "";
+      } else {
+        steps[i].style.display = "none";
+      }
+    }
+  }
+  let steps = JSON.parse('<%- JSON.stringify(steps).replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t") %>');
+  let stepIds = steps.map(step => step.id);
+
+  function generateUniqueRandom(min, max, existingIds) {
+    let randomNumber;
+    do {
+      randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (existingIds.includes(randomNumber));
+    return randomNumber;
+  }
+  let MaxIdStep = parseInt('<%= MaxIdStep %>');
+
+  function addStep() {
+    ++MaxIdStep;
+    const selectedDepartments = [];
+    const selectedDepartmentsName = [];
+
+    const checkboxes = document.querySelectorAll('input[name="departmen[]"]:checked');
+
+    checkboxes.forEach(function(checkbox) {
+      selectedDepartments.push(checkbox.value);
+
+      const departmentName = checkbox.nextElementSibling.textContent.trim();
+      selectedDepartmentsName.push(departmentName);
+    });
+    console.log(selectedDepartments);
+    console.log(selectedDepartmentsName);
+    let id = generateUniqueRandom(1, MaxIdStep, stepIds);
+    let name = document.getElementById("name").value;
+    let description = document.getElementById("description").value;
+    if (name == "" || description == "" || selectedDepartments.length == 0) {
+      alert("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    let data = {
+      id: id,
+      name: name,
+      description: description,
+      department: selectedDepartments,
+    }
+    fetch("/steps", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then()
+      .then(data => {
+        if (data.status == 200) {
+          let elements22 = document.getElementsByClassName("NonePickerIn");
+          stepIds.push(id);
+          Array.from(elements22).forEach(element => {
+            element.insertAdjacentHTML(
+              "afterbegin",
+              `
+                        <div class="kanban-item sortable-item-wrapper">
+                <div class="card sortable-item kanban-item-card hover-actions-trigger">
+                  <div class="card-body">
+                    <p class="mb-0 fw-medium font-sans-serif stretched-link" data-bs-toggle="modal" data-bs-target="#kanban-modal-1"><strong>${name}</strong> <br> ${description}</p>
+          <span>Phòng ban: ${selectedDepartmentsName.join(', ')}</span>
+                    <input type="hidden" name="listStep[]" value="${id}">
+                  </div>
+                </div>
+              </div>
+                      `
+            );
+          });
+
+          var elements = document.getElementsByClassName("form-added");
+          while (elements.length > 0) {
+            elements[0].classList.remove("form-added");
+          }
+          checkboxes.forEach((checkbox) => {
+            checkbox.checked = false;
+          });
+          document.getElementById("name").value = "";
+          document.getElementById("description").value = "";
+        }
+
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+</script>
+  <%- include('../../layout/footer') %>

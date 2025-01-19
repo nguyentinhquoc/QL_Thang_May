@@ -1,0 +1,344 @@
+<% function formatDate(dateString) { const date=new Date(dateString); const
+  day=String(date.getDate()).padStart(2, '0'
+  ); const month=String(date.getMonth() + 1).padStart(2, '0' ); const
+  year=date.getFullYear(); const
+  hours=String(date.getHours()).padStart(2, '0' ); const
+  minutes=String(date.getMinutes()).padStart(2, '0' ); const
+  seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${year}
+  ${hours}:${minutes}:${seconds}`;
+  } %>
+<nav class="navbar navbar-light navbar-glass navbar-top navbar-expand" style="display: none;">
+    <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalCollapse" aria-controls="navbarVerticalCollapse" aria-expanded="false" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
+    <a class="navbar-brand me-1 me-sm-3" href="/">
+      <div class="d-flex align-items-center"><img class="me-2" src="images/icon/logo.png" alt width="40" /><span class="font-sans-serif text-primary">Tesla</span></div>
+    </a>
+
+    <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
+      <li class="nav-item ps-2 pe-0">
+        <div class="dropdown theme-control-dropdown"><a class="nav-link d-flex align-items-center dropdown-toggle fa-icon-wait fs-9 pe-1 py-0" href="#" role="button" id="themeSwitchDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-sun fs-7" data-fa-transform="shrink-2" data-theme-dropdown-toggle-icon="light"></span><span class="fas fa-moon fs-7" data-fa-transform="shrink-3" data-theme-dropdown-toggle-icon="dark"></span><span class="fas fa-adjust fs-7" data-fa-transform="shrink-2" data-theme-dropdown-toggle-icon="auto"></span></a>
+          <div class="dropdown-menu dropdown-menu-end dropdown-caret border py-0 mt-3" aria-labelledby="themeSwitchDropdown">
+            <div class="bg-white dark__bg-1000 rounded-2 py-2"><button class="dropdown-item d-flex align-items-center gap-2" type="button" value="light" data-theme-control="theme"><span class="fas fa-sun"></span>Light<span class="fas fa-check dropdown-check-icon ms-auto text-600"></span></button><button class="dropdown-item d-flex align-items-center gap-2" type="button" value="dark" data-theme-control="theme"><span class="fas fa-moon" data-fa-transform></span>Dark<span class="fas fa-check dropdown-check-icon ms-auto text-600"></span></button><button class="dropdown-item d-flex align-items-center gap-2" type="button" value="auto" data-theme-control="theme"><span class="fas fa-adjust" data-fa-transform></span>Auto<span class="fas fa-check dropdown-check-icon ms-auto text-600"></span></button></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link notification-indicator notification-indicator-primary px-0 fa-icon-wait" id="navbarDropdownNotification" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-hide-on-body-scroll="data-hide-on-body-scroll"><span class="fas fa-bell" data-fa-transform="shrink-6" style="font-size: 33px;"></span>
+          <span class="notification-indicator-number"><%=countUnreadNotifications%></span>
+        </a>
+        <div class="dropdown-menu dropdown-caret dropdown-caret dropdown-menu-end dropdown-menu-card dropdown-menu-notification dropdown-caret-bg" aria-labelledby="navbarDropdownNotification">
+          <div class="card card-notification shadow-none">
+            <div class="card-header">
+              <div class="row justify-content-between align-items-center">
+                <div class="col-auto">
+                  <h6 class="card-header-title mb-0">Thông báo</h6>
+                </div>
+                <div class="col-auto ps-0 ps-sm-3"></div>
+              </div>
+            </div>
+            <div class="scrollbar-overlay" style="max-height:19rem">
+              <div class="list-group list-group-flush fw-normal fs-10">
+                <div class="list-group-title border-bottom"><%=countUnreadNotifications%>
+                  thông báo chưa đọc</div>
+                <% notifications.forEach(function(notification) { %>
+                <div class="list-group-item" class="notifi__item" onclick="markAsReadAndRedirect('<%= notification.id %>', '/client/task/<%= notification.project.id %>')">
+                  <a class="notification notification-flush notification-unread" id="<%= notification.isRead ? 'isRead' : 'notIsRead' %>">
+                    <div class="notification-avatar" style="display: grid;
+place-items: center;
+height: auto;font-size: 30px;">
+                      <div class="avatar avatar-2xl me-3">
+                        <i class="far fa-bell" style="font-size: larger;"></i>
+                      </div>
+                    </div>
+                    <div class="notification-body">
+                      <p class="mb-1"><strong><%= notification.title
+                                  %></strong>
+                        <br>
+                        <%= notification.message %>
+                      </p>
+                      <span class="notification-time"> <%=
+                                formatDate(notification.createdAt) %></span>
+                    </div>
+                  </a>
+                </div>
+                <% }) %>
+              </div>
+            </div>
+            <div class="card-footer text-center border-top"><a class="card-link d-block" href="app/social/notifications.html">View all</a></div>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item dropdown"><a class="nav-link pe-0 ps-2" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <div class="avatar avatar-xl">
+            <img class="rounded-circle" src="/images/avatar/<%= avatarLocal %>" alt />
+          </div>
+        </a>
+        <div class="dropdown-menu dropdown-caret dropdown-caret dropdown-menu-end py-0" aria-labelledby="navbarDropdownUser">
+          <div class="bg-white dark__bg-1000 rounded-2 py-2">
+            <a class="dropdown-item" href="/staffs/detailAccount"> <i class="far fa-user-circle"></i> Tài khoản</a>
+            <a class="dropdown-item" href="/staffs/changePass"> <i class="fas fa-key"></i> Đổi mật khẩu</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Đang xuất</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  <nav class="navbar navbar-light navbar-glass navbar-top navbar-expand-lg" style="display: none;" data-move-target="#navbarVerticalNav" data-navbar-top="combo">
+    <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalCollapse" aria-controls="navbarVerticalCollapse" aria-expanded="false" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
+    <a class="navbar-brand me-1 me-sm-3" href="/client/">
+      <div class="d-flex align-items-center"><img class="me-2" src="images/icon/logo.png" alt width="40" /><span class="font-sans-serif text-primary">Tesla</span></div>
+    </a>
+    <div class="collapse navbar-collapse scrollbar" id="navbarStandard">
+      <ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
+        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dashboards">Thông
+            kê</a>
+          <div class="dropdown-menu dropdown-caret dropdown-menu-card border-0 mt-0" aria-labelledby="dashboards">
+            <div class="bg-white dark__bg-1000 rounded-3 py-2"><a class="dropdown-item link-600 fw-medium" href="index.html">Default</a><a class="dropdown-item link-600 fw-medium" href="dashboard/analytics.html">Analytics</a><a class="dropdown-item link-600 fw-medium" href="dashboard/crm.html">CRM</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="apps">Nhân
+            sự</a>
+          <div class="dropdown-menu dropdown-caret dropdown-menu-card border-0 mt-0" aria-labelledby="apps">
+            <div class="card navbar-card-app shadow-none dark__bg-1000">
+              <div class="card-body scrollbar max-h-dropdown"><img class="img-dropdown" src="assets/img/icons/spot-illustrations/authentication-corner.png" width="130" alt />
+                <div class="row">
+                  <div class="col-6 col-md-4">
+                    <div class="nav flex-column"><a class="nav-link py-1 link-600 fw-medium" href="/departmens">Phòng ban</a><a class="nav-link py-1 link-600 fw-medium" href="/positions">Chức vụ</a><a class="nav-link py-1 link-600 fw-medium" href="/staffs">Nhân viên</a><a class="nav-link py-1 link-600 fw-medium" href="app/kanban.html">Kanban</a>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="pagess">Quy
+            trình</a>
+          <div class="dropdown-menu dropdown-caret dropdown-menu-card border-0 mt-0" aria-labelledby="pagess">
+            <div class="card navbar-card-pages shadow-none dark__bg-1000">
+              <div class="card-body scrollbar max-h-dropdown"><img class="img-dropdown" src="assets/img/icons/spot-illustrations/authentication-corner.png" width="130" alt />
+                <div class="row">
+                  <div class="col-6 col-xxl-3">
+                    <div class="nav flex-column">
+                      <p class="nav-link text-700 mb-0 fw-bold">Quy
+                        trình</p><a class="nav-link py-1 link-600 fw-medium" href="/workflows">Quy trình</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="moduless">Dự
+            án</a>
+          <div class="dropdown-menu dropdown-caret dropdown-menu-card border-0 mt-0" aria-labelledby="moduless">
+            <div class="card navbar-card-components shadow-none dark__bg-1000">
+              <div class="card-body scrollbar max-h-dropdown"><img class="img-dropdown" src="assets/img/icons/spot-illustrations/authentication-corner.png" width="130" alt />
+                <div class="row">
+                  <div class="col-6 col-xxl-3">
+                    <div class="nav flex-column">
+                      <p class="nav-link text-700 mb-0 fw-bold">Dự
+                        án</p><a class="nav-link py-1 link-600 fw-medium" href="/project">Danh sách công trình</a><a class="nav-link py-1 link-600 fw-medium" href="/project/action">Công trình đang lắp đặt</a><a class="nav-link py-1 link-600 fw-medium" href="/project/success">Công trình đã hoàn thành</a>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="moduless">Bảo
+            trì</a>
+          <div class="dropdown-menu dropdown-caret dropdown-menu-card border-0 mt-0" aria-labelledby="moduless">
+            <div class="card navbar-card-components shadow-none dark__bg-1000">
+              <div class="card-body scrollbar max-h-dropdown"><img class="img-dropdown" src="assets/img/icons/spot-illustrations/authentication-corner.png" width="130" alt />
+                <div class="row">
+                  <div class="col-6 col-xxl-3">
+                    <div class="nav flex-column">
+                      <p class="nav-link text-700 mb-0 fw-bold">Bảo
+                        trì</p><a class="nav-link py-1 link-600 fw-medium" href="/maintenance">Bảo trì</a>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
+      <li class="nav-item ps-2 pe-0">
+        <div class="dropdown theme-control-dropdown"><a class="nav-link d-flex align-items-center dropdown-toggle fa-icon-wait fs-9 pe-1 py-0" href="#" role="button" id="themeSwitchDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-sun fs-7" data-fa-transform="shrink-2" data-theme-dropdown-toggle-icon="light"></span><span class="fas fa-moon fs-7" data-fa-transform="shrink-3" data-theme-dropdown-toggle-icon="dark"></span><span class="fas fa-adjust fs-7" data-fa-transform="shrink-2" data-theme-dropdown-toggle-icon="auto"></span></a>
+          <div class="dropdown-menu dropdown-menu-end dropdown-caret border py-0 mt-3" aria-labelledby="themeSwitchDropdown">
+            <div class="bg-white dark__bg-1000 rounded-2 py-2"><button class="dropdown-item d-flex align-items-center gap-2" type="button" value="light" data-theme-control="theme"><span class="fas fa-sun"></span>Light<span class="fas fa-check dropdown-check-icon ms-auto text-600"></span></button><button class="dropdown-item d-flex align-items-center gap-2" type="button" value="dark" data-theme-control="theme"><span class="fas fa-moon" data-fa-transform></span>Dark<span class="fas fa-check dropdown-check-icon ms-auto text-600"></span></button><button class="dropdown-item d-flex align-items-center gap-2" type="button" value="auto" data-theme-control="theme"><span class="fas fa-adjust" data-fa-transform></span>Auto<span class="fas fa-check dropdown-check-icon ms-auto text-600"></span></button></div>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item d-none d-sm-block">
+        <a class="nav-link px-0 notification-indicator notification-indicator-warning notification-indicator-fill fa-icon-wait" href="app/e-commerce/shopping-cart.html"><span class="fas fa-shopping-cart" data-fa-transform="shrink-7" style="font-size: 33px;"></span><span class="notification-indicator-number">1</span></a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link notification-indicator notification-indicator-primary px-0 fa-icon-wait" id="navbarDropdownNotification" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-hide-on-body-scroll="data-hide-on-body-scroll"><span class="fas fa-bell" data-fa-transform="shrink-6" style="font-size: 33px;"></span></a>
+        <div class="dropdown-menu dropdown-caret dropdown-caret dropdown-menu-end dropdown-menu-card dropdown-menu-notification dropdown-caret-bg" aria-labelledby="navbarDropdownNotification">
+          <div class="card card-notification shadow-none">
+            <div class="card-header">
+              <div class="row justify-content-between align-items-center">
+                <div class="col-auto">
+                  <h6 class="card-header-title mb-0">Notifications</h6>
+                </div>
+                <div class="col-auto ps-0 ps-sm-3"><a class="card-link fw-normal" href="#">Mark all as
+                    read</a></div>
+              </div>
+            </div>
+            <div class="scrollbar-overlay" style="max-height:19rem">
+              <div class="list-group list-group-flush fw-normal fs-10">
+                <div class="list-group-title border-bottom">NEW</div>
+                <div class="list-group-item">
+                  <a class="notification notification-flush notification-unread" href="#!">
+                    <div class="notification-avatar">
+                      <div class="avatar avatar-2xl me-3">
+                        <img class="rounded-circle" src="assets/img/team/1-thumb.png" alt />
+                      </div>
+                    </div>
+                    <div class="notification-body">
+                      <p class="mb-1"><strong>Emma Watson</strong> replied
+                        to your comment : "Hello world 😍"</p>
+                      <span class="notification-time"><span class="me-2" role="img" aria-label="Emoji">💬</span>Just
+                        now</span>
+                    </div>
+                  </a>
+                </div>
+                <div class="list-group-item">
+                  <a class="notification notification-flush notification-unread" href="#!">
+                    <div class="notification-avatar">
+                      <div class="avatar avatar-2xl me-3">
+                        <div class="avatar-name rounded-circle"><span>AB</span></div>
+                      </div>
+                    </div>
+                    <div class="notification-body">
+                      <p class="mb-1"><strong>Albert Brooks</strong>
+                        reacted to <strong>Mia Khalifa's</strong>
+                        status</p>
+                      <span class="notification-time"><span class="me-2 fab fa-gratipay text-danger"></span>9hr</span>
+                    </div>
+                  </a>
+                </div>
+
+              </div>
+            </div>
+            <div class="card-footer text-center border-top"><a class="card-link d-block" href="app/social/notifications.html">View all</a></div>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item dropdown px-1">
+        <a class="nav-link fa-icon-wait nine-dots p-1" id="navbarDropdownMenu" role="button" data-hide-on-body-scroll="data-hide-on-body-scroll" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="43" viewBox="0 0 16 16" fill="none">
+            <circle cx="2" cy="2" r="2" fill="#6C6E71"></circle>
+            <circle cx="2" cy="8" r="2" fill="#6C6E71"></circle>
+            <circle cx="2" cy="14" r="2" fill="#6C6E71"></circle>
+            <circle cx="8" cy="8" r="2" fill="#6C6E71"></circle>
+            <circle cx="8" cy="14" r="2" fill="#6C6E71"></circle>
+            <circle cx="14" cy="8" r="2" fill="#6C6E71"></circle>
+            <circle cx="14" cy="14" r="2" fill="#6C6E71"></circle>
+            <circle cx="8" cy="2" r="2" fill="#6C6E71"></circle>
+            <circle cx="14" cy="2" r="2" fill="#6C6E71"></circle>
+          </svg></a>
+        <div class="dropdown-menu dropdown-caret dropdown-caret dropdown-menu-end dropdown-menu-card dropdown-caret-bg" aria-labelledby="navbarDropdownMenu">
+          <div class="card shadow-none">
+            <div class="scrollbar-overlay nine-dots-dropdown">
+              <div class="card-body px-3">
+                <div class="row text-center gx-0 gy-0">
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="pages/user/profile.html" target="_blank">
+                      <div class="avatar avatar-2xl"> <img class="rounded-circle" src="/images/avatar/<%= avatarLocal %>" alt /></div>
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11">Account</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="https://themewagon.com/" target="_blank"><img class="rounded" src="assets/img/nav-icons/themewagon.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Themewagon</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="https://mailbluster.com/" target="_blank"><img class="rounded" src="assets/img/nav-icons/mailbluster.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Mailbluster</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/google.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Google</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/spotify.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Spotify</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/steam.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Steam</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/github-light.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Github</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/discord.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Discord</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/xbox.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">xbox</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/trello.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Kanban</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/hp.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Hp</p>
+                    </a></div>
+                  <div class="col-12">
+                    <hr class="my-3 mx-n3 bg-200" />
+                  </div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/linkedin.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Linkedin</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/twitter.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Twitter</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/facebook.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Facebook</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/instagram.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Instagram</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/pinterest.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Pinterest</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/slack.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Slack</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="#!" target="_blank"><img class="rounded" src="assets/img/nav-icons/deviantart.png" alt width="40" height="40" />
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11 pt-1">Deviantart</p>
+                    </a></div>
+                  <div class="col-4"><a class="d-block hover-bg-200 px-2 py-3 rounded-3 text-center text-decoration-none" href="app/events/event-detail.html" target="_blank">
+                      <div class="avatar avatar-2xl">
+                        <div class="avatar-name rounded-circle bg-primary-subtle text-primary"><span class="fs-7">E</span></div>
+                      </div>
+                      <p class="mb-0 fw-medium text-800 text-truncate fs-11">Events</p>
+                    </a></div>
+                  <div class="col-12"><a class="btn btn-outline-primary btn-sm mt-4" href="#!">Show more</a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item dropdown"><a class="nav-link pe-0 ps-2" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <div class="avatar avatar-xl">
+            <img class="rounded-circle" src="/images/avatar/<%= avatarLocal %>" alt />
+          </div>
+        </a>
+        <div class="dropdown-menu dropdown-caret dropdown-caret dropdown-menu-end py-0" aria-labelledby="navbarDropdownUser">
+          <div class="bg-white dark__bg-1000 rounded-2 py-2">
+            <a class="dropdown-item fw-bold text-warning" href="#!"><span class="fas fa-crown me-1"></span><span>Go Pro</span></a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#!">Set status</a>
+            <a class="dropdown-item" href="pages/user/profile.html">Profile &amp; account</a>
+            <a class="dropdown-item" href="#!">Feedback</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="pages/user/settings.html">Settings2</a>
+            <a class="dropdown-item" href="/logout">Logout</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </nav>

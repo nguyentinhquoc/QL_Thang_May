@@ -1,0 +1,133 @@
+<%- include('../../layout/header') %>
+<% function formatDate(dateString) {
+const date = new Date(dateString);
+const day = String(date.getDate()).padStart(2, '0');
+const month = String(date.getMonth() + 1).padStart(2, '0');
+const year = date.getFullYear();
+const hours = String(date.getHours()).padStart(2, '0');
+const minutes = String(date.getMinutes()).padStart(2, '0');
+const seconds = String(date.getSeconds()).padStart(2, '0');
+return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+} %>
+
+<div class="card p-3">
+  <div class="tab-pane preview-tab-pane active" role="tabpanel" aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5" id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
+    <h4>Chi tiết bảng công nhân viên</h4>
+    <div id="tableExample3" data-list='{"valueNames":["congtrinh","congviec","ngaygiao","ngayhoanthanh","trongso","trangthai"],"page":20,"pagination":true}'>
+      <div class="m-b-30">
+        <p type="button" class="btn" id="add-new-position">
+          Nhân viên: <%=staff.full_name%>
+        </p>
+        <p type="button" class="btn" id="add-new-position">
+          Phòng ban: <%=staff.department.name%>
+        </p>
+        <p type="button" class="btn" id="add-new-position">
+          Chức vụ: <%=staff.position.name%>
+        </p>
+      </div>
+      <h5>Lắp đặt</h5>
+      <div class="row justify-content-end g-0">
+        <div class="col-auto col-sm-5 mb-3">
+          <form>
+            <div class="input-group"><input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
+              <div class="input-group-text bg-transparent"><span class="fa fa-search fs-10 text-600"></span></div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="table-responsive scrollbar">
+        <table class="table table-bordered table-striped fs-10 mb-0">
+          <thead class="bg-200">
+            <tr>
+              <th class="text-900 sort" data-sort="congtrinh">Công trình</th>
+              <th class="text-900 sort" data-sort="congviec">Công việc</th>
+              <th class="text-900 sort" data-sort="ngayhoanthanh">Thời gian hoàn
+                thành</th>
+              <th class="text-900 sort" data-sort="trongso">Trọng số</th>
+              <th class="text-900 sort" data-sort="trangthai">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <% infoStaffs.projectSteps.forEach(function(info, key) { %>
+            <tr>
+              <td class="congtrinh"> <a href="/client/task/<%= info.project.id %>"> <%=
+                  info.project.full_name %></a></td>
+              <th class="congviec"><%= info.workflowStep.step.name %></th>
+              <th class=" ngayhoanthanh <%= (info.status > info.time) || !info.status  ? 'text-danger' : 'text-success'  %>"><%= info.status ? formatDate(info.status) : 'Chưa hoàn thành'  %></th>
+              <td class="trongso"><%= info.weight %></td>
+              <td class="trangthai">
+                <% if(info.status == null && info.time > new Date()) { %>
+                <span class="text-info fs-10 "> Chưa hoàn thành
+                </span>
+                <% }else if(info.status != null) { %>
+                <span class="text-success fs-10">Hoàn thành</span>
+                <% } %>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center mt-3"><button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+        <ul class="pagination mb-0"></ul><button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next"><span class="fas fa-chevron-right"> </span></button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card mt-3 p-3">
+  <div class="tab-pane preview-tab-pane active" role="tabpanel" aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5" id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
+    <h5>Bảo trì</h5>
+    <div id="tableExample3" data-list='{"valueNames":["congtrinh","congviec","ngaygiao","ngayhoanthanh","trongso","trangthai"],"page":20,"pagination":true}'>
+      <div class="row justify-content-end g-0">
+        <div class="col-auto col-sm-5 mb-3">
+          <form>
+            <div class="input-group"><input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
+              <div class="input-group-text bg-transparent"><span class="fa fa-search fs-10 text-600"></span></div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="table-responsive scrollbar">
+        <table class="table table-bordered table-striped fs-10 mb-0">
+          <thead class="bg-200">
+            <tr>
+              <th class="text-900 sort" data-sort="congtrinh">Công trình</th>
+              <th class="text-900 sort" data-sort="congviec">Công việc</th>
+              <th class="text-900 sort" data-sort="ngayhoanthanh">Thời gian hoàn
+                thành</th>
+              <th class="text-900 sort" data-sort="trongso">Trọng số</th>
+              <th class="text-900 sort" data-sort="trangthai">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <% infoStaffs.maintenanceActions.forEach(function(info, key) { %>
+            <tr>
+              <% if(info.maintenance.project){ %>
+              <td class="congtrinh"> <a href="/client/task/<%= info.maintenance.project.id %>"><%=
+                  info.maintenance.project.full_name %></a></td>
+              <% }else{ %>
+              <td class="congtrinh"> <a><%= info.maintenance.projectName %></a></td>
+              <% } %>
+              <th class="congviec"><%= info.maintenance.reason %></th>
+              <th class=" ngayhoanthanh <%= (info.status > info.time) || !info.status  ? 'text-danger' : 'text-success'  %>"><%= info.status ? formatDate(info.status) : 'Chưa hoàn thành'  %></th>
+              <td class="trongso"><%= info.weight %></td>
+              <td class="trangthai">
+                <% if(info.status == null && new Date(info.time) > new Date()) { %>
+                <span class="text-info fs-10"> Chưa hoàn thành
+                </span>
+                <% }else if(info.status != null) { %>
+                <span class="text-success fs-10">Hoàn thành</span>
+                <% } %>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center mt-3"><button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+        <ul class="pagination mb-0"></ul><button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next"><span class="fas fa-chevron-right"> </span></button>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../../layout/footer') %>

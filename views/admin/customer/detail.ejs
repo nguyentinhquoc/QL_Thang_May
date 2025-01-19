@@ -1,0 +1,38 @@
+<%- include('../../layout/header') %>
+<form action="?_method=Patch" method="POST" id="FormAdd">
+  <div class="row m-t-15 m-b-15">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body text-secondary">
+          <h2 class="m-b-30">Tạo mới công trình dự kiến</h2>
+          <div>
+            <div class="form-group">
+              <label for="full_name">Tên công trình <span style="color: red">*</span></label>
+              <input type="text"  placeholder="Enter Name" id="full_name" value="<%= customer.full_name %>" name="full_name" class="form-control" required maxlength="255" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="number_phone">Số điện thoại <span style="color: red">*</span></label>
+            <input type="tel"  placeholder="Enter Number Phone" id="number_phone" value="<%= customer.number_phone %>" name="number_phone" class="form-control" required maxlength="15" />
+          </div>
+          <div class="form-group">
+            <label for="email">Địa chỉ email</label>
+            <input type="email"  placeholder="Enter Address Email" id="email" value="<%= customer.email %>" name="email" class="form-control" maxlength="255" />
+          </div>
+          <div class="form-group">
+            <label for="address">Địa chỉ lắp đặt <span style="color: red">*</span></label>
+            <textarea id="address"  placeholder="Enter Address" name="address" class="form-control"> <%= customer.address %>  </textarea>
+          </div>
+          <div class="form-group">
+            <label for="description">Ghi chú</label>
+            <textarea id="description"  placeholder="Enter Description" name="description" class="form-control" maxlength="225"> <%= customer.description %> </textarea>
+          </div>
+          <button class="btn btn-primary btn-lg btn-block mt-3 w-100">
+            Sửa thông tin công trình
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<%- include('../../layout/footer') %>
