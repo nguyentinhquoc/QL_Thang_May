@@ -48,9 +48,13 @@ import { DepartmentsStepsModule } from './departments_steps/departments_steps.mo
 import { DepartmentsStep } from './departments_steps/entities/departments_step.entity'
 import { TargetBusinesModule } from './target_busines/target_busines.module'
 import { TargetBusine } from './target_busines/entities/target_busine.entity'
-
+import { ScheduleModule } from '@nestjs/schedule'
+import { TasksService } from './tasks.service'
+import { PermisionModule } from './permision/permision.module';
+import { Permision } from './permision/entities/permision.entity'
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -78,6 +82,7 @@ import { TargetBusine } from './target_busines/entities/target_busine.entity'
           Customer,
           DepartmentsStep,
           TargetBusine,
+          Permision
         ],
         synchronize: true,
       }),
@@ -117,9 +122,11 @@ import { TargetBusine } from './target_busines/entities/target_busine.entity'
     CustomerModule,
     DepartmentsStepsModule,
     TargetBusinesModule,
+    PermisionModule,
   ],
   controllers: [AppController],
   providers: [
+    TasksService,
     AppService,
     {
       provide: APP_FILTER,

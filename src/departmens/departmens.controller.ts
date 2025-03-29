@@ -8,7 +8,6 @@ import {
   Delete,
   Render,
   Res,
-  SetMetadata,
 } from '@nestjs/common'
 import { DepartmensService } from './departmens.service'
 import { CreateDepartmenDto } from './dto/create-departmen.dto'
@@ -18,7 +17,6 @@ import { Response } from 'express'
 export class DepartmensController {
   constructor (private readonly departmensService: DepartmensService) {}
   @Post()
-  @SetMetadata('role_admin', true)
   async create (
     @Body() createDepartmenDto: CreateDepartmenDto,
     @Res() res: Response,
@@ -43,7 +41,6 @@ export class DepartmensController {
     }
   }
   @Get()
-  @SetMetadata('role_admin', true)
   @Render('admin/departmens/departmens')
   async findAll () {
     const departmens = await this.departmensService.findAll()
@@ -53,7 +50,6 @@ export class DepartmensController {
     }
   }
   @Patch()
-  @SetMetadata('role_admin', true)
   async update (
     @Body('id') id: string,
     @Body() updateDepartmenDto: UpdateDepartmenDto,
@@ -63,7 +59,6 @@ export class DepartmensController {
     return res.redirect('/departmens')
   }
   @Delete()
-  @SetMetadata('role_admin', true)
   remove (@Body('id') id: string) {
     return this.departmensService.remove(+id)
   }

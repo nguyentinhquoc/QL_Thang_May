@@ -23,9 +23,7 @@ export class CreateProjectDto {
   @IsNumber({}, { message: 'Giá phải là số' })
   price?: number
   @IsNotEmpty({ message: 'Thuế đầy đủ không được để trống' })
-  @Transform(({ value }) => parseFloat(value))
-  @IsNumber({}, { message: 'Thuế phải là số' })
-  tax?: number
+  tax?: string
   @IsOptional()
   @Transform(({ value }) => (value === '' ? undefined : value))
   @IsEmail({}, { message: 'Email không hợp lệ' })

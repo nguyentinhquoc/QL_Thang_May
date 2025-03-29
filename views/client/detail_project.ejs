@@ -203,16 +203,16 @@ ${hours}:${minutes}:${seconds}`; } %>
                 disabled><%= project.address %></textarea>
             </div>
             <div class="d-flex" style="justify-content: space-between;">
-              <div class="form-group">
-                <label for="price">Giá trị hợp đồng: <span
+                  <div class="form-group">
+                  <label for="price">Giá trị hợp đồng: <span
                     style="color: red;">*</span></label>
-                <input type="number" value="<%= project.price %>"
-                  placeholder="Enter Address price" id="price" name="price"
-                  class="form-control" disabled>
-              </div>
+                  <input type="text" value="<%= new Intl.NumberFormat('vi-VN').format(project.price) %>"
+                    placeholder="Nhập giá trị hợp đồng" id="price" name="price"
+                    class="form-control" disabled>
+                  </div>
               <div class="form-group">
                 <label for="tax">Thuế:</label>
-                <input type="number" value="<%= project.tax %>"
+                <input type="text" value="<%= project.tax %>"
                   placeholder="Enter Address tax" id="tax" name="tax" class="form-control"
                   disabled>
               </div>
@@ -232,65 +232,52 @@ ${hours}:${minutes}:${seconds}`; } %>
                 </thead>
                 <tbody>
                   <tr>
-                    <td><label for="dongCo">Động cơ <span style="font-size: 10px;">(Nhật
-                          Bản)</span></label></td>
+                    <td><label for="dongCo">Động cơ</label></td>
                     <td><input type="text" id="dongCo" name="dongCo"
                         value="<%= project.infor_product.dongCo %>" disabled></td>
                   </tr>
                   <tr>
-                    <td><label for="tuDien">Tủ điện <span style="font-size: 10px;">(Hàn
-                          Quốc)</span></label></td>
+                    <td><label for="tuDien">Tủ điện</label></td>
                     <td><input type="text" id="tuDien" name="tuDien"
                         value="<%= project.infor_product.tuDien %>" disabled></td>
                   </tr>
                   <tr>
-                    <td><label for="capTai">Cáp Tải <span style="font-size: 10px;">(Hàn
-                          Quốc)</span></label></td>
+                    <td><label for="capTai">Cáp Tải</label></td>
                     <td><input type="text" id="capTai" name="capTai"
                         value="<%= project.infor_product.capTai %>" disabled></td>
                   </tr>
                   <tr>
-                    <td><label for="congSuat">Công suất <span
-                          style="font-size: 10px;">(3.3
-                          Kw)</span></label></td>
+                    <td><label for="congSuat">Công suất</label></td>
                     <td><input type="text" id="congSuat" name="congSuat"
                         value="<%= project.infor_product.congSuat %>" disabled></td>
                   </tr>
                   <tr>
-                    <td><label for="hoThang">Hố thang <span
-                          style="font-size: 10px;">(1600x
-                          1600 mm)</span></label></td>
+                    <td><label for="hoThang">Hố thang</label></td>
                     <td><input type="text" id="hoThang" name="hoThang"
                         value="<%= project.infor_product.hoThang %>" disabled></td>
                   </tr>
                   <tr>
-                    <td><label for="cabin">Cabin <span style="font-size: 10px;">(1200 x
-                          1000
-                          mm)</span></label></td>
+                    <td><label for="cabin">Cabin</label></td>
                     <td><input type="text" id="cabin" name="cabin"
                         value="<%= project.infor_product.cabin %>" disabled></td>
                   </tr>
                   <tr>
-                    <td><label for="cua">Cửa <span style="font-size: 10px;">(700 x 2100
-                          mm)</span></label></td>
+                    <td><label for="cua">Cửa</label></td>
                     <td><input type="text" id="cua" name="cua"
                         value="<%= project.infor_product.cua %>" disabled></td>
                   </tr>
                   <tr>
-                    <td><label for="pit">Pít <span style="font-size: 10px;">(1400
-                          mm)</span></label></td>
+                    <td><label for="pit">Pít </label></td>
                     <td><input type="text" id="pit" name="pit"
                         value="<%= project.infor_product.pit %>" disabled></td>
                   </tr>
                   <tr>
-                    <td><label for="oh">OH <span style="font-size: 10px;">(3300 + 1300
-                          mm)</span></label></td>
+                    <td><label for="oh">OH </label></td>
                     <td><input type="text" id="oh" name="oh"
                         value="<%= project.infor_product.oh %>" disabled></td>
                   </tr>
                   <tr>
-                    <td><label for="phongMay">Phòng máy<span
-                          style="font-size: 10px;">(Có/Không)</span></label></td>
+                    <td><label for="phongMay">Phòng máy</label></td>
                     <td><input type="text" id="phongMay" name="phongMay"
                         value="<%= project.infor_product.phongMay %>" disabled></td>
                   </tr>

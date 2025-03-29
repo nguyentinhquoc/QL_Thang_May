@@ -10,10 +10,8 @@ import {
   UploadedFile,
   UseInterceptors,
   Res,
-  SetMetadata,
   Req,
-  UseGuards
-} from '@nestjs/common'
+} from '@nestjs/common';
 import { Request, Response } from 'express'
 import { StaffsService } from './staffs.service'
 import { CreateStaffDto } from './dto/create-staff.dto'
@@ -27,9 +25,6 @@ import { SendMailService } from 'src/send-mail/send-mail.service'
 import { MailerService } from '@nestjs-modules/mailer'
 import { ProjectStepsService } from 'src/project_steps/project_steps.service'
 import * as bcrypt from 'bcrypt'
-import { ProjectStaffService } from 'src/project_staff/project_staff.service'
-import { BusinessGuard } from 'src/guards/auth/busines.guard'
-import { ManagerGuard } from 'src/guards/auth/manager.guard'
 @Controller('staffs')
 export class StaffsController {
   constructor (
@@ -41,8 +36,6 @@ export class StaffsController {
     private projectStepsService: ProjectStepsService
   ) {}
   @Get('busines')
-  @UseGuards(BusinessGuard)
-  @UseGuards(ManagerGuard)
   @Render('admin/staff/busines')
   async findBusinesList () {
     const staffsBusiness = await this.staffsService.findAllBusines()
@@ -50,7 +43,6 @@ export class StaffsController {
   }
 
   @Get('/add')
-  @SetMetadata('role_admin', true)
   @Render('admin/staff/add')
   async renderAdd () {
     const positions = await this.positionsService.findAll()
@@ -62,7 +54,6 @@ export class StaffsController {
     }
   }
   @Post('/add')
-  @SetMetadata('role_admin', true)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -164,7 +155,6 @@ export class StaffsController {
     return {}
   }
   @Get('payroll')
-  @UseGuards(ManagerGuard)
   @Render('admin/staff/payroll')
   async findAllPayroll (@Req() req: Request) {
     const token = req.cookies['token']
@@ -184,7 +174,6 @@ export class StaffsController {
     }
   }
   @Get()
-  @UseGuards(ManagerGuard)
   @Render('admin/staff/staff')
   async findAll (@Req() req: Request) {
     const token = req.cookies['token']
@@ -204,7 +193,6 @@ export class StaffsController {
     }
   }
   @Get(':id')
-  @SetMetadata('role_admin', true)
   findOne (@Param('id') id: string) {
     return this.staffsService.findOne(+id)
   }
@@ -223,17 +211,14 @@ export class StaffsController {
 
 
   @Patch(':id')
-  @SetMetadata('role_admin', true)
   update (@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto) {
     return this.staffsService.update(+id, updateStaffDto)
   }
   @Patch('changeStatus/:id')
-  @SetMetadata('role_admin', true)
   async changeStatus (@Param('id') id: string) {
     return await this.staffsService.changeStatus(+id)
   }
   @Delete()
-  @SetMetadata('role_admin', true)
   remove (@Body('id') id: string) {
     return this.staffsService.remove(+id)
   }

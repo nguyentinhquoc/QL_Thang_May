@@ -1,20 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Render,
-  Res,
-  UseGuards
-} from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Res } from '@nestjs/common';
 import { CustomerService } from './customer.service'
 import { CreateCustomerDto } from './dto/create-customer.dto'
 import { UpdateCustomerDto } from './dto/update-customer.dto'
-import { Response, Request } from 'express'
-import { BusinessGuard } from 'src/guards/auth/busines.guard'
+import { Response } from 'express';
 
 @Controller('customer')
 export class CustomerController {
@@ -35,7 +23,6 @@ export class CustomerController {
     return { customers }
   }
   @Get('infor')
-  @UseGuards(BusinessGuard)
   @Render('admin/customer/infor')
   async findAll () {
     const customers = await this.customerService.findAll()

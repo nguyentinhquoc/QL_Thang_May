@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Req,
-  SetMetadata,
 } from '@nestjs/common'
 import { ProjectEditService } from './project_edit.service'
 import { CreateProjectEditDto } from './dto/create-project_edit.dto'
@@ -61,17 +60,14 @@ export class ProjectEditController {
     }
   }
   @Get()
-  @SetMetadata('role_admin', true)
   findAll () {
     return this.projectEditService.findAll()
   }
   @Get(':id')
-  @SetMetadata('role_admin', true)
   findOne (@Param('id') id: string) {
     return this.projectEditService.findOne(+id)
   }
   @Patch(':id')
-  @SetMetadata('role_admin', true)
   update (
     @Param('id') id: string,
     @Body() updateProjectEditDto: UpdateProjectEditDto,
@@ -79,7 +75,6 @@ export class ProjectEditController {
     return this.projectEditService.update(+id, updateProjectEditDto)
   }
   @Delete(':id')
-  @SetMetadata('role_admin', true)
   remove (@Param('id') id: string) {
     return this.projectEditService.remove(+id)
   }

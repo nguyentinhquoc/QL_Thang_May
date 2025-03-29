@@ -9,7 +9,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm'
 
 @Entity()
@@ -22,6 +22,8 @@ export class Maintenance {
   confirmSuccess: boolean
   @Column()
   reason: string
+  @Column({ default: true })
+  fee: boolean
   @Column({ nullable: true })
   projectName: string
   @CreateDateColumn()
@@ -34,7 +36,7 @@ export class Maintenance {
   project: Project
   @OneToMany(
     () => MaintenanceAction,
-    maintenanceAction => maintenanceAction.maintenance,
+    maintenanceAction => maintenanceAction.maintenance
   )
   maintenanceActions: MaintenanceAction[]
 }

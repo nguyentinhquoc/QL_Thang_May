@@ -10,4 +10,5 @@ export class CreateMaintenanceDto {
   reason?: string
   projectName?: string
   confirmSuccess?: boolean
+  fee?: boolean
 }

@@ -1,26 +1,11 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Render,
-  Req,
-  Res,
-  SetMetadata,
-  UseGuards
-} from '@nestjs/common'
-import { AppService } from './app.service'
 import { LoginDto } from './staffs/dto/create-staff-logindto'
 import { StaffsService } from './staffs/staffs.service'
 import { Response, Request } from 'express'
-import { MailerService } from '@nestjs-modules/mailer'
-import { SendMailService } from './send-mail/send-mail.service'
 import { ProjectEditService } from './project_edit/project_edit.service'
 import { MaintenanceService } from './maintenance/maintenance.service'
-import { ProjectStaffService } from './project_staff/project_staff.service'
 import { ProjectService } from './project/project.service'
-import { BusinessGuard } from './guards/auth/busines.guard'
 import { WorkflowStepsService } from './workflow_steps/workflow_steps.service'
+import { Body, Controller, Get, Post, Render, Req, Res, SetMetadata } from '@nestjs/common'
 @Controller()
 export class AppController {
   constructor (
@@ -31,7 +16,6 @@ export class AppController {
     private workflowStepsService: WorkflowStepsService
   ) {}
   // @Get('sendmail')
-  // @SetMetadata('isPublic', true)
   // sendMail () {
   //   const contentSendMail = this.sendMailService.forgotPassword(
   //     'Nguyễn Tình',
@@ -64,16 +48,10 @@ export class AppController {
       acc[id].steps.push(workflowStep)
       return acc
     }, {})
-
-    console.log('🔱  WaveBear  ---------------------------------------------------------------------------------🔱  WaveBear ')
-    console.log('🔱  WaveBear  ~ AppController ~ quytrinhmau ~ workflowSteps⚡ ⚡ ⚡  :', workflowSteps)
-    console.log('🔱  WaveBear  ---------------------------------------------------------------------------------🔱  WaveBear ')
     return { workflowSteps }
-
   }
-
+  @SetMetadata('permision','1')
   @Get()
-  @UseGuards(BusinessGuard)
   @Render('admin/index')
   async renderIndexadmin (@Req() req: Request) {
     const token = req.cookies['token']
@@ -122,13 +100,11 @@ export class AppController {
     }
   }
   @Get('/login')
-  @SetMetadata('isPublic', true)
   @Render('login')
   loginRender () {
     return {}
   }
   @Get('/logout')
-  @SetMetadata('isPublic', true)
   @Render('login')
   logout (@Res() res: Response) {
     res.clearCookie('token')
@@ -136,7 +112,6 @@ export class AppController {
   }
 
   @Post('login')
-  @SetMetadata('isPublic', true)
   async login (
     @Body() loginDto: LoginDto,
     @Res() res: Response,

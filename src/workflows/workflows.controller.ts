@@ -8,7 +8,6 @@ import {
   Delete,
   Render,
   Res,
-  SetMetadata,
 } from '@nestjs/common'
 import { WorkflowsService } from './workflows.service'
 import { CreateWorkflowDto } from './dto/create-workflow.dto'
@@ -28,7 +27,6 @@ export class WorkflowsController {
     private projectStepsService: ProjectStepsService,
   ) {}
   @Post()
-  @SetMetadata('role_admin', true)
   async create (
     @Body() createWorkflowDto: CreateWorkflowDto,
     @Res() res: Response,
@@ -37,7 +35,6 @@ export class WorkflowsController {
     return res.redirect(`/workflows/${workflows}`)
   }
   @Get()
-  @SetMetadata('role_admin', true)
   @Render('admin/workflows/workflows')
   async findAll () {
     const workflows = await this.workflowsService.findAll()
@@ -47,7 +44,6 @@ export class WorkflowsController {
     }
   }
   @Get(':id')
-  @SetMetadata('role_admin', true)
   @Render('admin/workflows/edit_workflows')
   async findOne (@Param('id') id: number) {
     const departmens = await this.departmensService.findAll()
@@ -83,7 +79,6 @@ export class WorkflowsController {
     }
   }
   @Patch()
-  @SetMetadata('role_admin', true)
   async update (
     @Body('id') id: string,
     @Body() updateWorkflowDto: UpdateWorkflowDto,
@@ -93,7 +88,6 @@ export class WorkflowsController {
     return res.redirect('/workflows')
   }
   @Patch(':id')
-  @SetMetadata('role_admin', true)
   async updateQt (
     @Param('id') id: string,
     @Body() updateWorkflowDto: UpdateWorkflowDto,
@@ -114,7 +108,6 @@ export class WorkflowsController {
     return res.redirect('/workflows')
   }
   @Delete(':id')
-  @SetMetadata('role_admin', true)
   remove (@Param('id') id: string) {
     return this.workflowsService.remove(+id)
   }

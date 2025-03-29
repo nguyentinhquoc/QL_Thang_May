@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Res,
-  SetMetadata
 } from '@nestjs/common'
 import { StepsService } from './steps.service'
 import { CreateStepDto } from './dto/create-step.dto'
@@ -24,7 +23,6 @@ export class StepsController {
     private departmentsStepsService: DepartmentsStepsService
   ) {}
   @Post()
-  @SetMetadata('role_admin', true)
   async create (@Body() createStepDto: CreateStepDto, @Res() res: Response) {
     await this.stepsService.create(createStepDto)
     if (createStepDto.department.length > 0) {
@@ -42,17 +40,14 @@ export class StepsController {
     return res.redirect('back')
   }
   @Get()
-  @SetMetadata('role_admin', true)
   findAll () {
     return this.stepsService.findAll()
   }
   @Get(':id')
-  @SetMetadata('role_admin', true)
   findOne (@Param('id') id: string) {
     return this.stepsService.findOne(+id)
   }
   @Patch(':id')
-  @SetMetadata('role_admin', true)
   async update (@Param('id') id: string, @Body() updateStepDto: UpdateStepDto) {
     let departmentNew: number[] = updateStepDto.department || []
     let findByStep = await this.departmentsStepsService.findByStep(+id)
@@ -104,7 +99,6 @@ export class StepsController {
     return this.stepsService.update(+id, updateStepDto)
   }
   @Delete(':id')
-  @SetMetadata('role_admin', true)
   remove (@Param('id') id: string) {
     return this.stepsService.remove(+id)
   }

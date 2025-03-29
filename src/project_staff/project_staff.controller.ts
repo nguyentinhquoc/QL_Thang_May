@@ -11,9 +11,13 @@ import {
 import { ProjectStaffService } from './project_staff.service'
 import { CreateProjectStaffDto } from './dto/create-project_staff.dto'
 import { UpdateProjectStaffDto } from './dto/update-project_staff.dto'
+import { TargetBusinesService } from 'src/target_busines/target_busines.service'
 @Controller('project-staff')
 export class ProjectStaffController {
-  constructor (private readonly projectStaffService: ProjectStaffService) {}
+  constructor (
+    private readonly projectStaffService: ProjectStaffService,
+    private readonly targetBusinesService: TargetBusinesService
+  ) {}
   @Post()
   create (@Body() createProjectStaffDto: CreateProjectStaffDto) {
     return this.projectStaffService.create(createProjectStaffDto)
@@ -22,11 +26,13 @@ export class ProjectStaffController {
   @Get('busines/:idStaff')
   @Render('admin/staff/busines_detail')
   async findBusinesDeatil (@Param('idStaff') id: string) {
+    const dealineBusines =  await this.targetBusinesService.findAllWStaff(+id)
+
+    console.log(dealineBusines)
     const staffsBusines =
       await this.projectStaffService.findProjectStaffByMonth(+id)
-    return { staffsBusines: staffsBusines.monthlyDetails }
+    return { staffsBusines: staffsBusines.monthlyDetails, dealineBusines, staffId:id}
   }
-
   @Get()
   @Render('admin/staff/business')
   async findAllList () {

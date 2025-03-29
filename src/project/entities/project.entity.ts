@@ -38,8 +38,8 @@ export class Project {
   status: number
   @Column({ type: 'bigint', default: 0 })
   price: number
-  @Column({ type: 'bigint', default: 0 })
-  tax: number
+  @Column()
+  tax: string
   @Column({ type: 'date', nullable: true })
   warranty: Date
   @Column({ type: 'date', nullable: true })

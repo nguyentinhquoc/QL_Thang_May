@@ -35,7 +35,7 @@
             </div>
             <div class="form-group">
               <label for="tax">Thuế:</label>
-              <input type="number" value="<%= project.tax %>" placeholder="Enter Address tax" id="tax" name="tax" class="form-control">
+              <input type="text" value="<%= project.tax %>" placeholder="Enter Address tax" id="tax" name="tax" class="form-control">
             </div>
           </div>
           <div class="form-group">
@@ -51,51 +51,43 @@
               </thead>
               <tbody>
                 <tr>
-                  <td><label for="dongCo">Động cơ <span style="font-size: 10px;">(Nhật
-                        Bản)</span></label></td>
+                  <td><label for="dongCo">Động cơ </label></td>
                   <td><input type="text" id="dongCo" name="dongCo" value="<%= project.infor_product.dongCo %>" class="form-control"></td>
                 </tr>
                 <tr>
-                  <td><label for="tuDien">Tủ điện <span style="font-size: 10px;">(Hàn
-                        Quốc)</span></label></td>
+                  <td><label for="tuDien">Tủ điện </label></td>
                   <td><input type="text" id="tuDien" name="tuDien" value="<%= project.infor_product.tuDien %>" class="form-control"></td>
                 </tr>
                 <tr>
-                  <td><label for="capTai">Cáp Tải <span style="font-size: 10px;">(Hàn
-                        Quốc)</span></label></td>
+                  <td><label for="capTai">Cáp Tải </label></td>
                   <td><input type="text" id="capTai" name="capTai" value="<%= project.infor_product.capTai %>" class="form-control"></td>
                 </tr>
                 <tr>
-                  <td><label for="congSuat">Công suất <span style="font-size: 10px;">(3.3 Kw)</span></label></td>
+                  <td><label for="congSuat">Công suất </label></td>
                   <td><input type="text" id="congSuat" name="congSuat" value="<%= project.infor_product.congSuat %>" class="form-control"></td>
                 </tr>
                 <tr>
-                  <td><label for="hoThang">Hố thang <span style="font-size: 10px;">(1600x 1600 mm)</span></label></td>
+                  <td><label for="hoThang">Hố thang</label></td>
                   <td><input type="text" id="hoThang" name="hoThang" value="<%= project.infor_product.hoThang %>" class="form-control"></td>
                 </tr>
                 <tr>
-                  <td><label for="cabin">Cabin <span style="font-size: 10px;">(1200 x
-                        1000 mm)</span></label></td>
+                  <td><label for="cabin">Cabin </label></td>
                   <td><input type="text" id="cabin" name="cabin" value="<%= project.infor_product.cabin %>" class="form-control"></td>
                 </tr>
                 <tr>
-                  <td><label for="cua">Cửa <span style="font-size: 10px;">(700 x 2100
-                        mm)</span></label></td>
+                  <td><label for="cua">Cửa </label></td>
                   <td><input type="text" id="cua" name="cua" value="<%= project.infor_product.cua %>" class="form-control"></td>
                 </tr>
                 <tr>
-                  <td><label for="pit">Pít <span style="font-size: 10px;">(1400
-                        mm)</span></label></td>
+                  <td><label for="pit">Pít </label></td>
                   <td><input type="text" id="pit" name="pit" value="<%= project.infor_product.pit %>" class="form-control"></td>
                 </tr>
                 <tr>
-                  <td><label for="oh">OH <span style="font-size: 10px;">(3300 + 1300
-                        mm)</span></label></td>
+                  <td><label for="oh">OH </label></td>
                   <td><input type="text" id="oh" name="oh" value="<%= project.infor_product.oh %>" class="form-control"></td>
                 </tr>
                 <tr>
-                  <td><label for="phongMay">Phòng máy <span style="font-size: 10px;">(3300 + 1300
-                        mm)</span></label></td>
+                  <td><label for="phongMay">Phòng máy </label></td>
                   <td><input type="text" id="phongMay" name="phongMay" value="<%= project.infor_product.phongMay %>" class="form-control"></td>
                 </tr>
               </tbody>
@@ -141,7 +133,7 @@
         </div>
         <div class="form-group">
           <label for="tax">Thuế:</label>
-          <input readonly type="number" value="<%= projectEdit.tax %>" placeholder="Enter Address tax" id="tax2" class="form-control">
+          <input readonly type="text" value="<%= projectEdit.tax %>" placeholder="Enter Address tax" id="tax2" class="form-control">
         </div>
       </div>
       <div class="form-group">
@@ -157,52 +149,43 @@
           </thead>
           <tbody>
             <tr>
-              <td><label for="dongCo">Động cơ <span style="font-size: 10px;">(Nhật
-                    Bản)</span></label></td>
+              <td><label for="dongCo">Động cơ</label></td>
               <td><input readonly type="text" id="dongCo2" value="<%= projectEdit.infor_product.dongCo %>" class="form-control"></td>
             </tr>
             <tr>
-              <td><label for="tuDien">Tủ điện <span style="font-size: 10px;">(Hàn
-                    Quốc)</span></label></td>
+              <td><label for="tuDien">Tủ điện</label></td>
               <td><input readonly type="text" id="tuDien2" value="<%= projectEdit.infor_product.tuDien %>" class="form-control"></td>
             </tr>
             <tr>
-              <td><label for="capTai">Cáp Tải <span style="font-size: 10px;">(Hàn
-                    Quốc)</span></label></td>
+              <td><label for="capTai">Cáp Tải</label></td>
               <td><input readonly type="text" id="capTai2" value="<%= projectEdit.infor_product.capTai %>" class="form-control"></td>
             </tr>
             <tr>
-              <td><label for="congSuat">Công suất <span style="font-size: 10px;">(3.3 Kw)</span></label></td>
+              <td><label for="congSuat">Công suất</label></td>
               <td><input readonly type="text" id="congSuat2" value="<%= projectEdit.infor_product.congSuat %>" class="form-control"></td>
             </tr>
             <tr>
-              <td><label for="hoThang">Hố thang <span style="font-size: 10px;">(1600x 1600 mm)</span></label></td>
+              <td><label for="hoThang">Hố thang</label></td>
               <td><input readonly type="text" id="hoThang2" value="<%= projectEdit.infor_product.hoThang %>" class="form-control"></td>
             </tr>
             <tr>
-              <td><label for="cabin">Cabin <span style="font-size: 10px;">(1200
-                    x
-                    1000 mm)</span></label></td>
+              <td><label for="cabin">Cabin</label></td>
               <td><input readonly type="text" id="cabin2" value="<%= projectEdit.infor_product.cabin %>" class="form-control"></td>
             </tr>
             <tr>
-              <td><label for="cua">Cửa <span style="font-size: 10px;">(700 x
-                    2100
-                    mm)</span></label></td>
+              <td><label for="cua">Cửa</label></td>
               <td><input readonly type="text" id="cua2" value="<%= projectEdit.infor_product.cua %>" class="form-control"></td>
             </tr>
             <tr>
-              <td><label for="pit">Pít <span style="font-size: 10px;">(1400
-                    mm)</span></label></td>
+              <td><label for="pit">Pít</label></td>
               <td><input readonly type="text" id="pit2" value="<%= projectEdit.infor_product.pit %>" class="form-control"></td>
             </tr>
             <tr>
-              <td><label for="oh">OH <span style="font-size: 10px;">(3300 + 1300
-                    mm)</span></label></td>
+              <td><label for="oh">OH</label></td>
               <td><input readonly type="text" id="oh2" value="<%= projectEdit.infor_product.oh %>" class="form-control"></td>
             </tr>
             <tr>
-              <td><label for="phongMay">Phòng máy <span style="font-size: 10px;">(Có/không)</span></label></td>
+              <td><label for="phongMay">Phòng máy</label></td>
               <td><input readonly type="text" id="phongMay2" value="<%= projectEdit.infor_product.phongMay %>" class="form-control"></td>
             </tr>
           </tbody>

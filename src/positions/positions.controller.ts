@@ -9,7 +9,6 @@ import {
   Query,
   Render,
   Res,
-  SetMetadata,
 } from '@nestjs/common'
 import { PositionsService } from './positions.service'
 import { CreatePositionDto } from './dto/create-position.dto'
@@ -19,7 +18,6 @@ import { Response } from 'express'
 export class PositionsController {
   constructor (private readonly positionsService: PositionsService) {}
   @Post()
-  @SetMetadata('role_admin', true)
   async create (
     @Body() createPositionDto: CreatePositionDto,
     @Res() res: Response,
@@ -28,7 +26,6 @@ export class PositionsController {
     return res.redirect('/positions')
   }
   @Get()
-  @SetMetadata('role_admin', true)
   @Render('admin/positions/positions')
   async findAll () {
     const positions = await this.positionsService.findAll()
@@ -38,7 +35,6 @@ export class PositionsController {
 }
   }
   @Patch()
-  @SetMetadata('role_admin', true)
   async update (
     @Body('id') id: string,
     @Body() updatePositionDto: UpdatePositionDto,
@@ -48,7 +44,6 @@ export class PositionsController {
     return res.redirect('/positions')
   }
   @Delete()
-  @SetMetadata('role_admin', true)
   remove (@Body('id') id: string) {
     return this.positionsService.remove(+id)
   }

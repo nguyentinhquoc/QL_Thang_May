@@ -2,6 +2,7 @@ import { Department } from 'src/departmens/entities/departmen.entity'
 import { Maintenance } from 'src/maintenance/entities/maintenance.entity'
 import { MaintenanceAction } from 'src/maintenance_actions/entities/maintenance_action.entity'
 import { Notification } from 'src/notification/entities/notification.entity'
+import { Permision } from 'src/permision/entities/permision.entity'
 import { Position } from 'src/positions/entities/position.entity'
 import { Project } from 'src/project/entities/project.entity'
 import { ProjectEdit } from 'src/project_edit/entities/project_edit.entity'
@@ -18,6 +19,7 @@ import {
   DeleteDateColumn,
   OneToMany,
   ManyToMany,
+  JoinTable,
 } from 'typeorm'
 @Entity()
 export class Staff {
@@ -67,4 +69,8 @@ export class Staff {
     maintenanceAction => maintenanceAction.staff,
   )
   maintenanceActions: MaintenanceAction[]
+
+  @ManyToMany(() => Permision, permision => permision.staffs)
+  @JoinTable() permisions: Permision[];
+
 }

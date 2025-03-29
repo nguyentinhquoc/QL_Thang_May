@@ -1,17 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Render,
-  Res,
-  SetMetadata,
-  Req,
-  Query,
-  UseGuards
-} from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Render, Res, Req, Query } from '@nestjs/common';
 import { ProjectService } from './project.service'
 import { CreateProjectDto } from './dto/create-project.dto'
 import { UpdateProjectDto } from './dto/update-project.dto'
@@ -29,9 +16,6 @@ import { MaintenanceService } from 'src/maintenance/maintenance.service'
 import { DepartmensService } from 'src/departmens/departmens.service'
 import { ProjectStaffService } from 'src/project_staff/project_staff.service'
 import { validate } from 'class-validator'
-import * as request from 'supertest'
-import { ManagerGuard } from 'src/guards/auth/manager.guard'
-import { BusinessGuard } from 'src/guards/auth/busines.guard'
 @Controller('project')
 export class ProjectController {
   constructor (
@@ -145,7 +129,7 @@ export class ProjectController {
           return { message: 'Gửi mail thất bại!', error: error.message }
         })
     }
-    return res.redirect('/project')
+    return res.redirect('/project/trang-thai/tat-ca')
   }
   @Patch('/:id')
   async updateP (
@@ -213,7 +197,7 @@ export class ProjectController {
         code_project: updateProjectDto.code_project,
         full_name: updateProjectDto.full_name,
         price: updateProjectDto.price,
-        tax: updateProjectDto.tax,
+        tax: Number(updateProjectDto.tax),
         number_phone: updateProjectDto.number_phone,
         email: updateProjectDto.email,
         address: updateProjectDto.address,
@@ -408,7 +392,6 @@ export class ProjectController {
     }
   }
   @Get('/:id')
-  @UseGuards(ManagerGuard)
   @Render('admin/projects/edit_project')
   async findOne (@Param('id') id: number, @Req() req: Request) {
     const departments = await this.departmensService.findAll()

@@ -183,13 +183,21 @@ return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
       }]
     },
     options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true
+  responsive: true,
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: {
+        stepSize: 1, // Hiển thị nhãn cách nhau 1 đơn vị
+        callback: function(value) {
+          if (Number.isInteger(value)) {
+            return value; // Chỉ hiển thị số nguyên
+          }
         }
       }
     }
+  }
+}
   });
 
   // Biểu đồ thứ hai: Tổng giá trị

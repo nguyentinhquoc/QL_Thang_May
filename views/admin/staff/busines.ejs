@@ -36,7 +36,13 @@
               <td class="phone"><%= staff.number_phone %></td>
               <td class="email"><%= staff.email %></td>
               <td class="hoanthanh"><%= staff.totalProjectStaff %></td>
-              <td class="danglam"><%= staff.totalTarget %></td>
+             <td class="danglam">
+  <% if (staff.totalTarget == 0) { %>
+    <span class="text-danger">Chưa có chỉ tiêu</span>
+  <% } else { %>
+    <%= staff.totalTarget %>
+  <% } %>
+</td>
               <td class="chitiet">
                 <a href="/project-staff/busines/<%=staff.id%>">Chi tiết</a>
               </td>

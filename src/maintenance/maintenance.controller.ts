@@ -8,7 +8,6 @@ import {
   Delete,
   Render,
   Res,
-  SetMetadata,
   UseInterceptors,
   UploadedFiles,
   Req
@@ -153,8 +152,10 @@ export class MaintenanceController {
     @Res() res: Response,
     @Body() createMaintenanceDto: CreateMaintenanceDto
   ) {
-    await this.maintenanceService.create(createMaintenanceDto)
-    return res.redirect('back')
+    createMaintenanceDto.fee = String(createMaintenanceDto.fee) === '1' ? true : false;
+    console.log(createMaintenanceDto);
+    await this.maintenanceService.create(createMaintenanceDto);
+    return res.redirect('back');
   }
   @Get()
   @Render('admin/maintenance/maintenance')
@@ -198,8 +199,10 @@ export class MaintenanceController {
   ) {
     const Project = await this.projectService.findOne(+idProject)
     const { timeMaintenance, reason } = body
+    body.fee = String(body.fee) === '1' ? true : false;
     for (let i = 0; i < timeMaintenance.length; i++) {
       await this.maintenanceService.create({
+        fee: body.fee,
         project: Project,
         time: timeMaintenance[i],
         reason: reason[i]

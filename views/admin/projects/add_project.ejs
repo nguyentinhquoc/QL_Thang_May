@@ -60,13 +60,24 @@
             <div class="form-group col-5">
               <label for="price">Giá trị hợp đồng: <span
                   style="color: red">*</span></label>
-              <input type="number" placeholder="Enter Address price" id="price"
-                name="price" class="form-control" />
+                <input type="text" placeholder="Nhập giá trị hợp đồng" id="price"
+                 class="form-control" onkeyup="formatCurrency(this)" />
+                <input type="hidden" id="price_value" name="price" />
+                <script>
+                function formatCurrency(input) {
+                  let value = input.value.replace(/\D/g, '');
+                  input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                  document.getElementById('price_value').value = value;
+                }
+                </script>
             </div>
             <div class="form-group col-5">
-              <label for="tax">Thuế:</label>
-              <input type="number" placeholder="Enter Address tax" id="tax" name="tax"
-                class="form-control" />
+                <label for="tax">Thuế:</label>
+                <select id="tax" name="tax" class="form-control">
+                <option value="" disabled selected>Chọn</option>
+                <option value="Có">Có</option>
+                <option value="Không">Không</option>
+                </select>
             </div>
           </div>
           <div class="form-group">
@@ -211,6 +222,7 @@
 </form>
 <script>
   let workflowSteps = JSON.parse(`<%- JSON.stringify(workflowSteps) %>`)
+
   function handleWorkflowChange(event) {
     let filteredSteps = workflowSteps.filter(step => Number(step.workflow.id) === Number(event.target.value));
     console.log(filteredSteps);

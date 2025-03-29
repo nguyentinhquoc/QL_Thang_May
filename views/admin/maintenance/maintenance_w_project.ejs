@@ -5,13 +5,13 @@
   }
 </style>
 <% function formatDate(dateString) { const date=new Date(dateString); const
-  day=String(date.getDate()).padStart(2, '0'
-  ); const month=String(date.getMonth() + 1).padStart(2, '0' ); const
-  year=date.getFullYear(); const
-  hours=String(date.getHours()).padStart(2, '0' ); const
-  minutes=String(date.getMinutes()).padStart(2, '0' ); const
-  seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${year}`;
-  } %>
+day=String(date.getDate()).padStart(2, '0'
+); const month=String(date.getMonth() + 1).padStart(2, '0' ); const
+year=date.getFullYear(); const
+hours=String(date.getHours()).padStart(2, '0' ); const
+minutes=String(date.getMinutes()).padStart(2, '0' ); const
+seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${year}`;
+} %>
 <div class="card p-3">
   <div>
     <div class="m-b-30">
@@ -20,25 +20,40 @@
         <span> <strong> Chủ công trình: </strong> <%= project.full_name %></span>
         <div>
           <div class="m-2">
-            <span id="warrantyBadge" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-success false " onclick="toggleWarrantyStyle()"> <strong> Bảo hành: </strong>  <%= project.warranty ?  formatDate(
+            <span id="warrantyBadge"
+              style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;"
+              class="badge rounded badge-subtle-success false "
+              onclick="toggleWarrantyStyle()"> <strong> Bảo hành: </strong> <%=
+              project.warranty ? formatDate(
               project.warranty) : 'Chưa có' %> </span>
-            <div id="add-warranty" <% if(project.warranty ){%> style="display: none;" <%}%>>
+            <div id="add-warranty" <% if(project.warranty ){%> style="display: none;"
+              <%}%>>
               <form
-                action="/project/addWarranty/<%= project.id %>" class="d-flex" method="post">
-              <input class="form-control datetimepicker flatpickr-input" id="datepicker" type="text" placeholder="dd/mm/yy" data-options='{"disableMobile":true}' readonly="readonly" name="warranty" style="width: 140px" />
-              <button class="btn btn-primary">Xác nhận</button>
+                action="/project/addWarranty/<%= project.id %>" class="d-flex"
+                method="post">
+                <input class="form-control datetimepicker flatpickr-input" id="datepicker"
+                  type="text" placeholder="dd/mm/yy" data-options='{"disableMobile":true}'
+                  readonly="readonly" name="warranty" style="width: 140px" />
+                <button class="btn btn-primary">Xác nhận</button>
               </form>
             </div>
           </div>
           <div class="m-2">
-            <span id="addmaintenanceFit" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-success false " onclick="toggleWarrantyStyle2()"> <strong> Bảo trì: </strong>
-              <%= project.warranty ?  formatDate(
+            <span id="addmaintenanceFit"
+              style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;"
+              class="badge rounded badge-subtle-success false "
+              onclick="toggleWarrantyStyle2()"> <strong> Bảo trì: </strong>
+              <%= project.warranty ? formatDate(
               project.maintenanceFit) : 'Chưa có' %></span>
-            <div id="add-maintenanceFit" <% if(project.maintenanceFit ){%> style="display: none;" <%}%>>
+            <div id="add-maintenanceFit" <% if(project.maintenanceFit ){%>
+              style="display: none;" <%}%>>
               <form
-                action="/project/addmaintenanceFit/<%= project.id %>" class="d-flex" method="post">
-              <input class="form-control datetimepicker flatpickr-input" id="datepicker" type="text" placeholder="dd/mm/yy" data-options='{"disableMobile":true}' readonly="readonly" name="maintenanceFit" style="width: 140px" />
-              <button class="btn btn-primary">Xác nhận</button>
+                action="/project/addmaintenanceFit/<%= project.id %>" class="d-flex"
+                method="post">
+                <input class="form-control datetimepicker flatpickr-input" id="datepicker"
+                  type="text" placeholder="dd/mm/yy" data-options='{"disableMobile":true}'
+                  readonly="readonly" name="maintenanceFit" style="width: 140px" />
+                <button class="btn btn-primary">Xác nhận</button>
               </form>
             </div>
           </div>
@@ -51,26 +66,40 @@
       <button class="btn btn-primary mt-3 mb-3" id="AddBaotriBtn">
         + Gia hạn bảo trì
       </button>
-      <form method="post" class="p-3" style="display: none; border: 1px solid" id="baotriForm">
+      <form method="post" class="p-3" style="display: none; border: 1px solid"
+        id="baotriForm">
+        <div class="form-group mb-3">
+          <label for="feeSelect" class="form-label">Loại phí:</label>
+          <select name="fee" id="feeSelect" class="form-select">
+            <option selected value="1">Mất phí</option>
+            <option value="0">Miễn phí</option>
+          </select>
+        </div>
         <div>
           <label for="baoTri">Bảo trì <span style="font-size: 10px">tháng</span></label>
           <div style="display: flex">
-            <input type="date" id="baoTri" class="form-control" /><input id="month" type="number" class="form-control" />
+            <input type="date" id="baoTri" class="form-control" /><input id="month"
+              type="number" class="form-control" />
           </div>
         </div>
         <div>
           Lịch bảo trì dự kiến
+
           <div id="result"></div>
           <p class="add-btn btn btn-primary" onclick="addInput()">+</p>
         </div>
         <button class="btn btn-primary mt-3 mb-3">Thêm lịch bảo trì</button>
       </form>
-      <div id="tableExample3" data-list='{"valueNames":["noidung","thoigian","nhanvien","action"],"page":10,"pagination":true}'>
+      <div id="tableExample3"
+        data-list='{"valueNames":["noidung","thoigian","nhanvien","action","loai"],"page":10,"pagination":true}'>
         <div class="row justify-content-end g-0">
           <div class="col-auto col-sm-5 mb-3">
             <form>
-              <div class="input-group"><input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
-                <div class="input-group-text bg-transparent"><span class="fa fa-search fs-10 text-600"></span></div>
+              <div class="input-group"><input
+                  class="form-control form-control-sm shadow-none search" type="search"
+                  placeholder="Search..." aria-label="search" />
+                <div class="input-group-text bg-transparent"><span
+                    class="fa fa-search fs-10 text-600"></span></div>
               </div>
             </form>
           </div>
@@ -84,6 +113,7 @@
                   tính</th>
                 <th class="text-900 sort" data-sort="nhanvien">Nhân viên thực hiện</th>
                 <th class="text-900 sort" data-sort="action">Trạng thái</th>
+                <th class="text-900 sort" data-sort="loai">Loại</th>
               </tr>
             </thead>
             <tbody class="list">
@@ -91,10 +121,11 @@
               <tr>
                 <td class="noidung"><%=item.reason%></td>
                 <td class="thoigian"><%= formatDate(
-              item.time) %></td>
+                  item.time) %></td>
                 <td class="nhanvien">
                   <% item.maintenanceActions.forEach(function(action) { %>
-                  <img src="/images/avatar/<%=  action.staff.avatar %>" alt height="30px" width="30px" style="border-radius: 50%" />
+                  <img src="/images/avatar/<%=  action.staff.avatar %>" alt height="30px"
+                    width="30px" style="border-radius: 50%" />
                   <%= action.staff.full_name %>
                   <br />
                   <br />
@@ -133,6 +164,13 @@
                     </span>
                   </p>
                 </td>
+                <td class="loai">
+                  <% if(item.fee) { %>
+                  <span class="badge rounded badge-subtle-warning">Mất phí</span>
+                  <% } else { %>
+                  <span class="badge rounded badge-subtle-success">Miễn phí</span>
+                  <% } %>
+                </td>
               </tr>
               <% }); %>
 
@@ -140,8 +178,12 @@
           </table>
 
         </div>
-        <div class="d-flex justify-content-center mt-3"><button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
-          <ul class="pagination mb-0"></ul><button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next"><span class="fas fa-chevron-right">
+        <div class="d-flex justify-content-center mt-3"><button
+            class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous"
+            data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+          <ul class="pagination mb-0"></ul><button
+            class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next"
+            data-list-pagination="next"><span class="fas fa-chevron-right">
             </span></button>
         </div>
       </div>
@@ -232,13 +274,22 @@
         '<div class="modal-header">' +
         '<input type="hidden" id="staffId" name="project" value= "<%= project.id %>">' +
         '<div class="d-flex justify-content-between w-100" >' +
-        `<h5 class="modal-title" id="newPositionModalLabel">Chọn người bảo trì</h5>` +
+        `<h5 class="modal-title" id="newPositionModalLabel">Thêm bảo trì</h5>` +
         '<button class="btn btn-primary clickXN" disable onclick="clickXN()" disabled>Xác nhận</button>' +
         '</div>' +
         '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
         '</div>' +
         '<div class="modal-body">' +
         '<div >' +
+
+          `<div class="form-group mb-3">
+          <label for="feeSelect" class="form-label">Loại phí:</label>
+          <select name="fee" id="feeSelect" class="form-select">
+            <option selected value="1">Mất phí</option>
+            <option value="0">Miễn phí</option>
+          </select>
+        </div>`+
+
         '<div class="form-group">' +
         '<label for="date-time">Chọn thời gian bảo trì:</label>' +
         '<input type="datetime-local" class="form-control" id="date-time" name="time" onchange="changeDate()">' +
