@@ -99,7 +99,9 @@ export class AppController {
       countProject
     }
   }
-  @Get('/login')
+
+  @Get('login')
+  @SetMetadata('isPublic',true)
   @Render('login')
   loginRender () {
     return {}
@@ -110,8 +112,8 @@ export class AppController {
     res.clearCookie('token')
     return { message: 'Đăng xuất thành công!', status: 'success' }
   }
-
   @Post('login')
+  @SetMetadata('isPublic', true)
   async login (
     @Body() loginDto: LoginDto,
     @Res() res: Response,

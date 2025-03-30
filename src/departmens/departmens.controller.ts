@@ -8,6 +8,7 @@ import {
   Delete,
   Render,
   Res,
+  SetMetadata,
 } from '@nestjs/common'
 import { DepartmensService } from './departmens.service'
 import { CreateDepartmenDto } from './dto/create-departmen.dto'
@@ -40,6 +41,7 @@ export class DepartmensController {
       })
     }
   }
+  @SetMetadata('permision', '2')
   @Get()
   @Render('admin/departmens/departmens')
   async findAll () {

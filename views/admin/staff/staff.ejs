@@ -2,7 +2,7 @@
 <div class="card p-4">
   <div class="tab-pane preview-tab-pane active" role="tabpanel" aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5" id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
     <h4>Danh sách nhân viên</h4>
-    <div id="tableExample3" data-list='{"valueNames":["ten","phongban","chucvu","sdt","email","action"],"page":10,"pagination":true}'>
+    <div id="tableExample3" data-list='{"valueNames":["ten","phongban","chucvu","sdt","email","action","chitiet"],"page":10,"pagination":true}'>
       <div class="m-b-30">
         <a href="/staffs/add" type="button" class="btn btn-primary" id="add-new-position">
           <i class="fas fa-plus-square"></i>&nbsp; Thêm mới</a>
@@ -29,6 +29,7 @@
               <th class="text-900 sort" data-sort="sdt">Số điện thoại</th>
               <th class="text-900 sort" data-sort="email">Email</th>
               <th class="text-900 sort" data-sort="action">Trạng thái</th>
+              <th class="text-900 sort" data-sort="chitiet">Chi tiết</th>
             </tr>
           </thead>
           <tbody class="list">
@@ -48,6 +49,9 @@
                 <div class="form-check form-switch">
                   <input class="form-check-input" id="flexSwitchCheckChecked" type="checkbox" <%=staff.status == 1 ? 'checked' : '' %> onchange="changStatus('<%= staff.id %>')"><label class="form-check-label" for="flexSwitchCheckChecked"></label>
                 </div>
+              </td>
+                 <td class="chitiet">
+                <a href="/staffs/payroll/<%=staff.id%>">Chi tiết</a>
               </td>
             </tr>
             <tr class="spacer"></tr>

@@ -126,6 +126,7 @@ export class StaffsService {
     return this.staffsRepository.findOne({ where: { email } })
   }
   async login (loginDto: LoginDto) {
+    console.log('123333333333');
     const staff = await this.staffsRepository.findOne({
       where: { email: loginDto.email, status: true },
       relations: ['department', 'position']

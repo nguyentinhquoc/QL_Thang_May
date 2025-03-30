@@ -24,16 +24,4 @@ export class TargetBusinesService {
     });
   }
 
-
-  findOne(id: number) {
-    return `This action returns a #${id} targetBusine`;
-  }
-
-  update(id: number, updateTargetBusineDto: UpdateTargetBusineDto) {
-    return `This action updates a #${id} targetBusine`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} targetBusine`;
-  }
 }

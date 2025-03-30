@@ -60,10 +60,5 @@ export class ProjectEditService {
       relations: ['staff', 'project']
     })
   }
-  update (id: number, updateProjectEditDto: UpdateProjectEditDto) {
-    return `This action updates a #${id} projectEdit`
-  }
-  remove (id: number) {
-    return `This action removes a #${id} projectEdit`
-  }
+
 }

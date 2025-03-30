@@ -1,26 +1,17 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Res,
-} from '@nestjs/common'
-import { StepsService } from './steps.service'
-import { CreateStepDto } from './dto/create-step.dto'
-import { UpdateStepDto } from './dto/update-step.dto'
-import { Response } from 'express'
-import { DepartmensService } from 'src/departmens/departmens.service'
-import { DepartmentsStepsService } from 'src/departments_steps/departments_steps.service'
-import { CreateDepartmentsStepDto } from 'src/departments_steps/dto/create-departments_step.dto'
+import { Controller, Post, Body, Patch, Param, Res, SetMetadata } from '@nestjs/common';
+import {StepsService} from './steps.service'
+import {CreateStepDto} from './dto/create-step.dto'
+import {UpdateStepDto} from './dto/update-step.dto'
+import {Response} from 'express'
+import {DepartmensService} from 'src/departmens/departmens.service'
+import {DepartmentsStepsService} from 'src/departments_steps/departments_steps.service'
+import {CreateDepartmentsStepDto} from 'src/departments_steps/dto/create-departments_step.dto'
 @Controller('steps')
 export class StepsController {
   constructor (
     private readonly stepsService: StepsService,
     private departmensService: DepartmensService,
-    private departmentsStepsService: DepartmentsStepsService
+    private departmentsStepsService: DepartmentsStepsService,
   ) {}
   @Post()
   async create (@Body() createStepDto: CreateStepDto, @Res() res: Response) {
@@ -39,25 +30,15 @@ export class StepsController {
     }
     return res.redirect('back')
   }
-  @Get()
-  findAll () {
-    return this.stepsService.findAll()
-  }
-  @Get(':id')
-  findOne (@Param('id') id: string) {
-    return this.stepsService.findOne(+id)
-  }
   @Patch(':id')
   async update (@Param('id') id: string, @Body() updateStepDto: UpdateStepDto) {
     let departmentNew: number[] = updateStepDto.department || []
     let findByStep = await this.departmentsStepsService.findByStep(+id)
-    let idDepartmentOld: number[] = findByStep.map(item => +item.department.id)
-    departmentNew = departmentNew.map(item => +item)
-    idDepartmentOld = idDepartmentOld.map(item => +item)
+    let idDepartmentOld: number[] = findByStep.map((item) => +item.department.id)
+    departmentNew = departmentNew.map((item) => +item)
+    idDepartmentOld = idDepartmentOld.map((item) => +item)
     if (departmentNew.length - idDepartmentOld.length > 0) {
-      let departmentAdd = departmentNew.filter(
-        item => !idDepartmentOld.includes(item)
-      )
+      let departmentAdd = departmentNew.filter((item) => !idDepartmentOld.includes(item))
       for (const department of departmentAdd) {
         let stepCreate = await this.stepsService.findOne(+id)
         let departmentCreate = await this.departmensService.findOne(+department)
@@ -69,37 +50,20 @@ export class StepsController {
         }
       }
     } else if (departmentNew.length - idDepartmentOld.length < 0) {
-      let departmentRemove = idDepartmentOld.filter(
-        item => !departmentNew.includes(item)
-      )
+      let departmentRemove = idDepartmentOld.filter((item) => !departmentNew.includes(item))
       for (const department of departmentRemove) {
-        await this.departmentsStepsService.removeByStepAndDepartment(
-          +id,
-          department
-        )
+        await this.departmentsStepsService.removeByStepAndDepartment(+id, department)
       }
     } else if (departmentNew.length - idDepartmentOld.length == 0) {
       for (let index = 0; index < idDepartmentOld.length; index++) {
-        const departmentOld = await this.departmensService.findOne(
-          idDepartmentOld[index]
-        )
-        const idDepartmentStep =
-          await this.departmentsStepsService.findOneByStepADepartment(
-            +id,
-            +departmentOld.id
-          )
-        const department = await this.departmensService.findOne(
-          departmentNew[index]
-        )
+        const departmentOld = await this.departmensService.findOne(idDepartmentOld[index])
+        const idDepartmentStep = await this.departmentsStepsService.findOneByStepADepartment(+id, +departmentOld.id)
+        const department = await this.departmensService.findOne(departmentNew[index])
         await this.departmentsStepsService.update(+idDepartmentStep.id, {
-          department
+          department,
         })
       }
     }
     return this.stepsService.update(+id, updateStepDto)
-  }
-  @Delete(':id')
-  remove (@Param('id') id: string) {
-    return this.stepsService.remove(+id)
   }
 }

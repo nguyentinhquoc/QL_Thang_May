@@ -10,24 +10,25 @@ import {
   UseInterceptors,
   UploadedFiles,
   Req,
+  SetMetadata,
 } from '@nestjs/common'
-import { MaintenanceActionsService } from './maintenance_actions.service'
-import { CreateMaintenanceActionDto } from './dto/create-maintenance_action.dto'
-import { UpdateMaintenanceActionDto } from './dto/update-maintenance_action.dto'
-import { MaintenanceService } from 'src/maintenance/maintenance.service'
-import { StaffsService } from 'src/staffs/staffs.service'
-import { Response, Request } from 'express'
-import { NotificationService } from 'src/notification/notification.service'
-import { Project } from 'src/project/entities/project.entity'
-import { ProjectService } from 'src/project/project.service'
-import { SendMailService } from 'src/send-mail/send-mail.service'
-import { MailerService } from '@nestjs-modules/mailer'
-import { FilesInterceptor } from '@nestjs/platform-express'
-import { diskStorage } from 'multer'
-import { extname } from 'path'
+import {MaintenanceActionsService} from './maintenance_actions.service'
+import {CreateMaintenanceActionDto} from './dto/create-maintenance_action.dto'
+import {UpdateMaintenanceActionDto} from './dto/update-maintenance_action.dto'
+import {MaintenanceService} from 'src/maintenance/maintenance.service'
+import {StaffsService} from 'src/staffs/staffs.service'
+import {Response, Request} from 'express'
+import {NotificationService} from 'src/notification/notification.service'
+import {Project} from 'src/project/entities/project.entity'
+import {ProjectService} from 'src/project/project.service'
+import {SendMailService} from 'src/send-mail/send-mail.service'
+import {MailerService} from '@nestjs-modules/mailer'
+import {FilesInterceptor} from '@nestjs/platform-express'
+import {diskStorage} from 'multer'
+import {extname} from 'path'
 @Controller('maintenance-actions')
 export class MaintenanceActionsController {
-  constructor (
+  constructor(
     private readonly maintenanceActionsService: MaintenanceActionsService,
     readonly maintenanceService: MaintenanceService,
     readonly staffsService: StaffsService,
@@ -37,19 +38,15 @@ export class MaintenanceActionsController {
     readonly mailerService: MailerService,
   ) {}
   @Post(':id')
-  async create (
+  async create(
     @Param('id') id: string,
     @Body() createMaintenanceActionDto: CreateMaintenanceActionDto,
     @Res() res: Response,
   ) {
     if (+id == 0) {
       await this.maintenanceActionsService.create(createMaintenanceActionDto)
-      const Maintenance = await this.maintenanceService.findOne(
-        +createMaintenanceActionDto.maintenance,
-      )
-      const Staff = await this.staffsService.findOne(
-        +createMaintenanceActionDto.staff,
-      )
+      const Maintenance = await this.maintenanceService.findOne(+createMaintenanceActionDto.maintenance)
+      const Staff = await this.staffsService.findOne(+createMaintenanceActionDto.staff)
       await this.notificationService.create({
         title: 'Thông báo về nhiệm vụ mới của bạn !!!',
         message: `Bảo trì tại công trình :${Maintenance.projectName}`,
@@ -65,16 +62,14 @@ export class MaintenanceActionsController {
       this.mailerService
         .sendMail(contentSendMail)
         .then(() => {})
-        .catch(error => {
+        .catch((error) => {
           console.error('Error sending email:', error)
-          return { message: 'Gửi mail thất bại!', error: error.message }
+          return {message: 'Gửi mail thất bại!', error: error.message}
         })
     } else {
       await this.maintenanceActionsService.create(createMaintenanceActionDto)
       const Project = await this.projectService.findOne(+id)
-      const Staff = await this.staffsService.findOne(
-        +createMaintenanceActionDto.staff,
-      )
+      const Staff = await this.staffsService.findOne(+createMaintenanceActionDto.staff)
       await this.notificationService.create({
         title: 'Thông báo về nhiệm vụ mới của bạn !!!',
         message: `Bảo trì tại công trình :${Project.full_name}`,
@@ -90,9 +85,9 @@ export class MaintenanceActionsController {
       this.mailerService
         .sendMail(contentSendMail)
         .then(() => {})
-        .catch(error => {
+        .catch((error) => {
           console.error('Error sending email:', error)
-          return { message: 'Gửi mail thất bại!', error: error.message }
+          return {message: 'Gửi mail thất bại!', error: error.message}
         })
     }
     return res.redirect('back')
@@ -109,7 +104,7 @@ export class MaintenanceActionsController {
       }),
     }),
   )
-  async SuccessJob (
+  async SuccessJob(
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: Request,
     @Res() res: Response,
@@ -118,7 +113,7 @@ export class MaintenanceActionsController {
   ) {
     const token = req.cookies['token']
     if (token) {
-      const images = files.map(file => file.filename)
+      const images = files.map((file) => file.filename)
       const image = JSON.stringify(images)
       this.maintenanceActionsService.update(+id, {
         status: new Date(),
@@ -129,19 +124,5 @@ export class MaintenanceActionsController {
     } else {
       res.redirect('back')
     }
-  }
-  @Get()
-  findAll () {
-    return this.maintenanceActionsService.findAll()
-  }
-  @Patch(':id')
-  update (
-    @Param('id') id: string,
-    @Body() updateMaintenanceActionDto: UpdateMaintenanceActionDto,
-  ) {
-    return this.maintenanceActionsService.update(
-      +id,
-      updateMaintenanceActionDto,
-    )
   }
 }

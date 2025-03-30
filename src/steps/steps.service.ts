@@ -30,7 +30,5 @@ export class StepsService {
       description: updateStepDto.description
     })
   }
-  remove (id: number) {
-    return `This action removes a #${id} step`
-  }
+
 }

@@ -30,23 +30,5 @@ export class TargetBusinesController {
     createTargetBusineDto.staff = staff
     await this.targetBusinesService.create(createTargetBusineDto)
     return      res.redirect('back')
-
-  }
-  @Get(':id')
-  findOne (@Param('id') id: string) {
-    return this.targetBusinesService.findOne(+id)
-  }
-
-  @Patch(':id')
-  update (
-    @Param('id') id: string,
-    @Body() updateTargetBusineDto: UpdateTargetBusineDto
-  ) {
-    return this.targetBusinesService.update(+id, updateTargetBusineDto)
-  }
-
-  @Delete(':id')
-  remove (@Param('id') id: string) {
-    return this.targetBusinesService.remove(+id)
   }
 }

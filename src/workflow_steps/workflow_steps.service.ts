@@ -59,9 +59,7 @@ export class WorkflowStepsService {
       relations: ['workflow', 'step'],
     })
   }
-  update (id: number, updateWorkflowStepDto: UpdateWorkflowStepDto) {
-    return `This action updates a #${id} workflowStep`
-  }
+
   remove (id: number) {
     return this.workflowStepRepository.delete({
       workflow: { id },

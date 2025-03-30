@@ -11,6 +11,7 @@ import {
   Req,
   UseInterceptors,
   UploadedFiles,
+  SetMetadata,
 } from "@nestjs/common";
 import { ClientService } from "./client.service";
 import { CreateClientDto } from "./dto/create-client.dto";
@@ -41,6 +42,7 @@ export class ClientController {
   create(@Body() createClientDto: CreateClientDto) {
     return this.clientService.create(createClientDto);
   }
+  @SetMetadata('permision', '9')
   @Get("list-project-responsibility")
   @Render("client/list_project_responsibility")
   async list_project_responsibility(@Res() res: Response, @Req() req: Request) {
@@ -59,7 +61,6 @@ export class ClientController {
       res.redirect("/login");
     }
   }
-
   @Get("list-task")
   @Render("client/index")
   async renderIndex(@Res() res: Response, @Req() req: Request) {

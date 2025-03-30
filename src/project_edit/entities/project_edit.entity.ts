@@ -32,8 +32,8 @@ export class ProjectEdit {
   code_project: string
   @Column({ type: 'bigint', default: 0 })
   price: number
-  @Column({ type: 'bigint', default: 0 })
-  tax: number
+  @Column()
+  tax: string
   @Column({ default: 0 })
   status: number
   @CreateDateColumn()

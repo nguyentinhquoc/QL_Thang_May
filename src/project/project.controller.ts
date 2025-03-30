@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Render, Res, Req, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Render, Res, Req, Query, SetMetadata } from '@nestjs/common';
 import { ProjectService } from './project.service'
 import { CreateProjectDto } from './dto/create-project.dto'
 import { UpdateProjectDto } from './dto/update-project.dto'
@@ -197,7 +197,7 @@ export class ProjectController {
         code_project: updateProjectDto.code_project,
         full_name: updateProjectDto.full_name,
         price: updateProjectDto.price,
-        tax: Number(updateProjectDto.tax),
+        tax: updateProjectDto.tax,
         number_phone: updateProjectDto.number_phone,
         email: updateProjectDto.email,
         address: updateProjectDto.address,
@@ -362,6 +362,7 @@ export class ProjectController {
       activeMenu: 'project'
     }
   }
+  @SetMetadata('permision', '7')
   @Get('/trang-thai/:status')
   @Render('admin/projects/projects')
   async filterProjects (@Param('status') status: string, @Req() req: Request) {
@@ -441,6 +442,7 @@ export class ProjectController {
     await this.projectService.update(+id, updateProjectDto)
     res.redirect('back')
   }
+
   @Get('/checkEdit/:projectEdit')
   @Render('admin/projects/checkEdit_project')
   async checkEdit (@Param('projectEdit') projectEditId: number) {

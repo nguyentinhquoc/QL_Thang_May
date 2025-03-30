@@ -294,18 +294,30 @@
       <div class="d-flex align-items-center py-3"><img class="me-2" src="/images/logo.png" alt width="40" /><span class="font-sans-serif text-primary">Tesla</span></div>
     </a>
   </div>
-  <% if (role_admin) { %>
+
   <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
     <div class="navbar-vertical-content scrollbar">
       <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
+        <% if (!role_admin) { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/client/list-task" role="button">
+            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-table-list"></i></span><span class="nav-link-text ps-1">Danh
+                sách nhiệm vụ</span></div>
+          </a>
+        </li>
+        <% } %>
+        <% permisionArr.forEach(element => { %>
+        <% if (element === 1) { %>
         <li class="nav-item">
           <a class="nav-link" href="/" role="button">
             <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fas fa-home"></i></span><span class="nav-link-text ps-1">Trang
                 chủ</span></div>
           </a>
         </li>
+        <% } if (element == 2 || element == 3 ) { %>
         <li class="nav-item">
           <!-- label-->
+          <% if (element === 2) { %>
           <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
             <div class="col-auto navbar-vertical-label">Nhân sự</div>
             <div class="col ps-0">
@@ -316,13 +328,17 @@
           </a><!-- parent pages--><a class="nav-link" href="/positions" role="button">
             <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-ranking-star"></i></span><span class="nav-link-text ps-1">Chức vụ</span></div>
           </a>
+          <% } if (element == 3 ) { %>
+
           <a class="nav-link" href="/staffs" role="button">
             <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-user-gear"></i></span><span class="nav-link-text ps-1">Nhân viên</span></div>
           </a>
           <a class="nav-link" href="/staffs/payroll" role="button">
             <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fas fa-clipboard-list"></i></span><span class="nav-link-text ps-1">Bảng công</span></div>
           </a>
+          <% } %>
         </li>
+        <% } if (element == 4 ) { %>
         <li class="nav-item">
           <!-- label-->
           <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
@@ -335,6 +351,7 @@
             </div>
           </a>
         </li>
+        <% } if (element == 5 || element == 6 ) { %>
         <li class="nav-item">
           <!-- label-->
           <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
@@ -343,19 +360,23 @@
               <hr class="mb-0 navbar-vertical-divider" />
             </div>
           </div>
+          <% if (element == 6 ) { %>
           <a class="nav-link" href="/customer/infor" role="button">
             <div class="d-flex align-items-center">
               <span class="nav-link-icon"><i class="fa-solid fa-bars-progress"></i></span>
               <span class="nav-link-text ps-1">Danh sách dự án dự kiến</span>
             </div>
           </a>
+          <% } if (element == 5 ) { %>
           <a class="nav-link" href="/staffs/busines" role="button">
             <div class="d-flex align-items-center">
               <span class="nav-link-icon"><i class="fa-solid fa-clipboard-list"></i></span>
               <span class="nav-link-text ps-1">Quản lý nhân viên kinh doanh</span>
             </div>
           </a>
+          <% }%>
         </li>
+        <% } if (element == 7 ) { %>
         <li class="nav-item">
           <!-- label-->
           <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
@@ -377,6 +398,7 @@
                 thành</span></div>
           </a>
         </li>
+        <% } if (element == 8 ) { %>
         <li class="nav-item">
           <!-- label-->
           <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
@@ -390,111 +412,10 @@
             </div>
           </a>
         </li>
-      </ul>
-    </div>
-  </div>
-  <% }else{%>
-  <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
-    <div class="navbar-vertical-content scrollbar">
-      <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
-        <% if(busines){ %>
+        <% }  %>
+        <% }) %>
+
         <li class="nav-item">
-          <a class="nav-link" href="/" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fas fa-home"></i></span><span class="nav-link-text ps-1">Trang
-                chủ
-              </span></div>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/client/list-project-responsibility" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-building"></i></span><span class="nav-link-text ps-1">Công
-                trình phụ trách
-              </span></div>
-          </a>
-        </li>
-        <% } %>
-        <li class="nav-item">
-          <a class="nav-link" href="/client/list-task" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-table-list"></i></span><span class="nav-link-text ps-1">Danh
-                sách nhiệm vụ</span></div>
-          </a>
-        </li>
-        <% if(busines){ %>
-        <li class="nav-item">
-          <!-- label-->
-          <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-            <div class="col-auto navbar-vertical-label">Công trình</div>
-            <div class="col ps-0">
-              <hr class="mb-0 navbar-vertical-divider" />
-            </div>
-          </div>
-          <a class="nav-link" href="/project/trang-thai/tat-ca" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-diagram-project"></i></span><span class="nav-link-text ps-1">Danh sách công
-                trình</span></div>
-          </a>
-          <a class="nav-link" href="/project/trang-thai/dang-thuc-hien" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-wrench"></i></span><span class="nav-link-text ps-1">Công trình đang lắp
-                đặt</span></div>
-          </a>
-          <a class="nav-link" href="/project/trang-thai/da-hoan-thanh" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-regular fa-circle-check"></i></span><span class="nav-link-text ps-1">Công trình đã hoàn
-                thành</span></div>
-          </a>
-        </li>
-        <li class="nav-item">
-          <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-            <div class="col-auto navbar-vertical-label">Quản lý kinh doanh</div>
-            <div class="col ps-0">
-              <hr class="mb-0 navbar-vertical-divider" />
-            </div>
-          </div>
-          <a class="nav-link" href="/customer/infor" role="button">
-            <div class="d-flex align-items-center">
-              <span class="nav-link-icon"><i class="fa-regular fa-file-lines"></i></span>
-              <span class="nav-link-text ps-1">Danh sách dự án dự kiến</span>
-            </div>
-          </a>
-             <% if(manager){ %>
-          <a class="nav-link" href="/staffs/busines" role="button">
-            <div class="d-flex align-items-center">
-              <span class="nav-link-icon"><i class="fa-solid fa-rectangle-list"></i></span>
-              <span class="nav-link-text ps-1">Quản lý nhân viên kinh doanh</span>
-            </div>
-          </a>
- <% } %>
-        </li>
-        <li class="nav-item">
-          <!-- label-->
-          <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-            <div class="col-auto navbar-vertical-label">Bảo trì</div>
-            <div class="col ps-0">
-              <hr class="mb-0 navbar-vertical-divider" />
-            </div>
-          </div><!-- parent pages-->
-          <a class="nav-link" href="/maintenance" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-screwdriver-wrench"></i></span><span class="nav-link-text ps-1">Bảo trì</span>
-            </div>
-          </a>
-        </li>
-        <%}%>
-        <% if(manager){ %>
-        <li class="nav-item">
-          <!-- label-->
-          <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-            <div class="col-auto navbar-vertical-label">Nhân sự</div>
-            <div class="col ps-0">
-              <hr class="mb-0 navbar-vertical-divider" />
-            </div>
-          </div><!-- parent pages-->
-          <a class="nav-link" href="/staffs" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-user-gear"></i></span><span class="nav-link-text ps-1">Nhân viên</span></div>
-          </a>
-          <a class="nav-link" href="/staffs/payroll" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fas fa-clipboard-list"></i></span><span class="nav-link-text ps-1">Bảng công</span></div>
-          </a>
-        </li>
-        <%}%>
- <li class="nav-item">
           <!-- label-->
           <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
             <div class="col-auto navbar-vertical-label">Quy trình làm việc</div>
@@ -506,10 +427,14 @@
             <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-user-gear"></i></span><span class="nav-link-text ps-1">Quy trình làm việc</span></div>
           </a>
         </li>
-        </ul>
-      </div>
+      </ul>
     </div>
-    <%} %>
+  </div>
+
+
+
+
+
 </nav>
 <nav class="navbar navbar-light navbar-glass navbar-top navbar-expand-lg navbar-card" style="display: none;">
   <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarStandard" aria-controls="navbarStandard" aria-expanded="false" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>

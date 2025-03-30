@@ -12,23 +12,4 @@ export class PermisionController {
     return this.permisionService.create(createPermisionDto);
   }
 
-  @Get()
-  findAll() {
-    return this.permisionService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.permisionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePermisionDto: UpdatePermisionDto) {
-    return this.permisionService.update(+id, updatePermisionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.permisionService.remove(+id);
-  }
 }

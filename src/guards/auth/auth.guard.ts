@@ -13,8 +13,15 @@ export class AuthGuard2 implements CanActivate {
       'isPublic',
       context.getHandler(),
     )
+    if (isPublic) {
+      return true
+    }
     const role_admin = this.reflector.get<boolean>(
       'role_admin',
+      context.getHandler(),
+    )
+    const permision = this.reflector.get<boolean>(
+      'permision',
       context.getHandler(),
     )
     const request = context.switchToHttp().getRequest()
@@ -22,9 +29,7 @@ export class AuthGuard2 implements CanActivate {
     const token = request.cookies['token']
     // Nếu endpoint là public, cho phép truy cập
 
-    if (isPublic) {
-      return true
-    }
+
     // Kiểm tra quyền truy cập với token
     if (!token) {
       return this.redirectToLogin(

@@ -32,7 +32,7 @@ export class CreateProjectEditDto {
   @IsOptional()
   price?: number
   @IsOptional()
-  tax?: number
+  tax?: string
   @IsString()
   code_project: string
   @MaxLength(225)

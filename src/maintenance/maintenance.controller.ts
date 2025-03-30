@@ -10,11 +10,11 @@ import {
   Res,
   UseInterceptors,
   UploadedFiles,
-  Req
+  Req,
+  SetMetadata
 } from '@nestjs/common'
 import { MaintenanceService } from './maintenance.service'
 import { CreateMaintenanceDto } from './dto/create-maintenance.dto'
-import { UpdateMaintenanceDto } from './dto/update-maintenance.dto'
 import { ProjectService } from 'src/project/project.service'
 import { StaffsService } from 'src/staffs/staffs.service'
 import { FilesInterceptor } from '@nestjs/platform-express'
@@ -157,6 +157,7 @@ export class MaintenanceController {
     await this.maintenanceService.create(createMaintenanceDto);
     return res.redirect('back');
   }
+    @SetMetadata('permision', '8')
   @Get()
   @Render('admin/maintenance/maintenance')
   async findAll (@Req() req: Request) {

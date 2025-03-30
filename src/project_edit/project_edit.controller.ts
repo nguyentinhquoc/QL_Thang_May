@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  SetMetadata,
 } from '@nestjs/common'
 import { ProjectEditService } from './project_edit.service'
 import { CreateProjectEditDto } from './dto/create-project_edit.dto'
@@ -59,23 +60,5 @@ export class ProjectEditController {
       res.redirect('/login')
     }
   }
-  @Get()
-  findAll () {
-    return this.projectEditService.findAll()
-  }
-  @Get(':id')
-  findOne (@Param('id') id: string) {
-    return this.projectEditService.findOne(+id)
-  }
-  @Patch(':id')
-  update (
-    @Param('id') id: string,
-    @Body() updateProjectEditDto: UpdateProjectEditDto,
-  ) {
-    return this.projectEditService.update(+id, updateProjectEditDto)
-  }
-  @Delete(':id')
-  remove (@Param('id') id: string) {
-    return this.projectEditService.remove(+id)
-  }
+
 }

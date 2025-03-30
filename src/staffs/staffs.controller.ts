@@ -11,6 +11,8 @@ import {
   UseInterceptors,
   Res,
   Req,
+  SetMetadata,
+  Redirect,
 } from '@nestjs/common';
 import { Request, Response } from 'express'
 import { StaffsService } from './staffs.service'
@@ -25,6 +27,8 @@ import { SendMailService } from 'src/send-mail/send-mail.service'
 import { MailerService } from '@nestjs-modules/mailer'
 import { ProjectStepsService } from 'src/project_steps/project_steps.service'
 import * as bcrypt from 'bcrypt'
+import { Permision } from '../permision/entities/permision.entity';
+import { PermisionService } from 'src/permision/permision.service';
 @Controller('staffs')
 export class StaffsController {
   constructor (
@@ -33,15 +37,16 @@ export class StaffsController {
     private readonly departmensService: DepartmensService,
     private readonly sendMailService: SendMailService,
     private mailerService: MailerService,
-    private projectStepsService: ProjectStepsService
+    private projectStepsService: ProjectStepsService,
+    private permisionService: PermisionService
   ) {}
+  @SetMetadata('permision', '6')
   @Get('busines')
   @Render('admin/staff/busines')
   async findBusinesList () {
     const staffsBusiness = await this.staffsService.findAllBusines()
     return { staffsBusiness }
   }
-
   @Get('/add')
   @Render('admin/staff/add')
   async renderAdd () {
@@ -173,6 +178,7 @@ export class StaffsController {
       activeMenu: 'staff'
     }
   }
+  @SetMetadata('permision', '3')
   @Get()
   @Render('admin/staff/staff')
   async findAll (@Req() req: Request) {
@@ -202,14 +208,23 @@ export class StaffsController {
     const infoStaffs = await this.staffsService.findPayrollWStaff(+id)
     const staff = await this.staffsService.findOne(+id)
     const Staff = await this.staffsService.findOne(+id)
+    const permisionPhanQuyen = await this.permisionService.findPhanqQuyen(+id)
+    const permision = await this.permisionService.findAll()
+
     return {
       Staff,
       staff,
-      infoStaffs,
+      infoStaffs, permision, permisionPhanQuyen
     }
   }
-
-
+  @Post('/payroll/:id')
+  @Redirect('back')
+  async phaQuyen(@Param('id') id: string,@Body('quyen') quyen:any) {
+    await this.permisionService.udpatePhanQuyen(+id) // Xóa hết quyền của người dùng
+    await this.permisionService.createQuyen(+id,quyen) // Xóa hết quyền của người dùng
+    return {
+    }
+  }
   @Patch(':id')
   update (@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto) {
     return this.staffsService.update(+id, updateStaffDto)

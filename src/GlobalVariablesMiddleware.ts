@@ -2,12 +2,14 @@ import { Injectable, NestMiddleware } from '@nestjs/common'
 import { Request, Response, NextFunction } from 'express'
 import { StaffsService } from './staffs/staffs.service'
 import { NotificationService } from './notification/notification.service'
+import { PermisionService } from './permision/permision.service'
 
 @Injectable()
 export class GlobalVariablesMiddleware implements NestMiddleware {
   constructor (
     private readonly staffsService: StaffsService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly permisionService: PermisionService
   ) {}
 
   async use (req: Request, res: Response, next: NextFunction) {
@@ -18,6 +20,7 @@ export class GlobalVariablesMiddleware implements NestMiddleware {
     if (token) {
       try {
         const payload = await this.staffsService.payload(token)
+        res.locals.permisionArr = await this.permisionService.finByStaff(+payload.id)
         res.locals.fullNameLocal = payload.full_name
         res.locals.avatarLocal = payload.avatar
         res.locals.emailLocal = payload.email

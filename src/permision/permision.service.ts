@@ -1,26 +1,83 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePermisionDto } from './dto/create-permision.dto';
 import { UpdatePermisionDto } from './dto/update-permision.dto';
-
+import { Permision } from './entities/permision.entity';
+import { getRepository, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class PermisionService {
+  constructor(
+    // private readonly permisionRepository: Repository<Permision>, // Uncomment if using TypeORM
+    @InjectRepository(Permision) private readonly permisionRepository: Repository<Permision>, // Uncomment if using TypeORM
+  ) {}
   create(createPermisionDto: CreatePermisionDto) {
     return 'This action adds a new permision';
   }
-
-  findAll() {
-    return `This action returns all permision`;
+  async findAll() {
+    const permissions = await this.permisionRepository.find({
+      order: {
+        id: 'ASC'
+      },
+    });
+    return permissions;
+  }
+  async findPhanqQuyen(idStaff: number) {
+    const permissions = await this.permisionRepository.find({
+      where: {
+        staffs: {
+          id: idStaff
+        }
+      },
+      order: {
+        id: 'ASC'
+      },
+    });
+    return permissions;
+  }
+  async finByStaff(idStaff: number) {
+    const permissions = await this.permisionRepository.find({
+      select: ['id'],
+      where: {
+        staffs: {
+          id: idStaff
+        }
+      },
+      order: {
+        id: 'ASC'
+      },
+    });
+    // Extract IDs and push them into an array
+    const permissionIds: number[] = permissions.map(permission => permission.id);
+    return permissionIds;
+  }
+  async udpatePhanQuyen(idStaff: number) {
+    await this.permisionRepository.manager.createQueryBuilder()
+      .delete()
+      .from('staff_permisions_permision')
+      .where("staffId = :staffId", { staffId: idStaff })
+      .execute();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} permision`;
-  }
+  async createQuyen(staffId: number, permissionIds: number[]) {
+    try {
+      // Create query builder to insert relations
+      const queryBuilder = this.permisionRepository.manager.createQueryBuilder();
 
-  update(id: number, updatePermisionDto: UpdatePermisionDto) {
-    return `This action updates a #${id} permision`;
-  }
+      // For each permission ID, create a relation with the staff
+      for (const permissionId of permissionIds) {
+        await queryBuilder
+          .insert()
+          .into('staff_permisions_permision')
+          .values({
+            staffId: staffId,
+            permisionId: permissionId
+          })
+          .execute();
+      }
 
-  remove(id: number) {
-    return `This action removes a #${id} permision`;
+      return { success: true, message: 'Permissions assigned successfully' };
+    } catch (error) {
+      return { success: false, message: 'Failed to assign permissions', error };
+    }
   }
 }

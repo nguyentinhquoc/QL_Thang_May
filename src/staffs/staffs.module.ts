@@ -9,6 +9,7 @@ import { DepartmensModule } from 'src/departmens/departmens.module'
 import { PositionsModule } from 'src/positions/positions.module'
 import { SendMailService } from 'src/send-mail/send-mail.service'
 import { ProjectStepsModule } from 'src/project_steps/project_steps.module'
+import { PermisionModule } from 'src/permision/permision.module'
 @Module({
   imports: [
     TypeOrmModule.forFeature([Staff]),
@@ -25,6 +26,7 @@ import { ProjectStepsModule } from 'src/project_steps/project_steps.module'
     DepartmensModule,
     PositionsModule,
     ProjectStepsModule,
+    PermisionModule,
   ],
   controllers: [StaffsController],
   providers: [StaffsService, SendMailService],

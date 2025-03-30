@@ -80,9 +80,6 @@ export class ProjectStaffService {
     return result
   }
 
-  findOne (id: number) {
-    return `This action returns all projectStaff`
-  }
   findWStaff (idStaff: number) {
     return this.projectStaffRepository.find({
       where: { staff: { id: idStaff } },
@@ -100,9 +97,7 @@ export class ProjectStaffService {
       relations: ['staff', 'project'],
     })
   }
-  update (id: number, updateProjectStaffDto: UpdateProjectStaffDto) {
-    return `This action updates a #${id} projectStaff`
-  }
+
   remove (id: number) {
     return this.projectStaffRepository.delete(+id)
   }

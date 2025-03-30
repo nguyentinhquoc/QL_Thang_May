@@ -1,22 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Render,
-  Res,
-} from '@nestjs/common'
-import { WorkflowsService } from './workflows.service'
-import { CreateWorkflowDto } from './dto/create-workflow.dto'
-import { UpdateWorkflowDto } from './dto/update-workflow.dto'
-import { Response } from 'express'
-import { StepsService } from 'src/steps/steps.service'
-import { WorkflowStepsService } from 'src/workflow_steps/workflow_steps.service'
-import { ProjectStepsService } from 'src/project_steps/project_steps.service'
-import { DepartmensService } from 'src/departmens/departmens.service'
+import {Controller, Get, Post, Body, Patch, Param, Delete, Render, Res, SetMetadata} from '@nestjs/common'
+import {WorkflowsService} from './workflows.service'
+import {CreateWorkflowDto} from './dto/create-workflow.dto'
+import {UpdateWorkflowDto} from './dto/update-workflow.dto'
+import {Response} from 'express'
+import {StepsService} from 'src/steps/steps.service'
+import {WorkflowStepsService} from 'src/workflow_steps/workflow_steps.service'
+import {ProjectStepsService} from 'src/project_steps/project_steps.service'
+import {DepartmensService} from 'src/departmens/departmens.service'
 @Controller('workflows')
 export class WorkflowsController {
   constructor (
@@ -27,13 +17,11 @@ export class WorkflowsController {
     private projectStepsService: ProjectStepsService,
   ) {}
   @Post()
-  async create (
-    @Body() createWorkflowDto: CreateWorkflowDto,
-    @Res() res: Response,
-  ) {
+  async create (@Body() createWorkflowDto: CreateWorkflowDto, @Res() res: Response) {
     const workflows = await this.workflowsService.create(createWorkflowDto)
     return res.redirect(`/workflows/${workflows}`)
   }
+  @SetMetadata('permision', '4')
   @Get()
   @Render('admin/workflows/workflows')
   async findAll () {
@@ -54,20 +42,20 @@ export class WorkflowsController {
     }
     const steps = await this.stepsService.findAll()
     const workflowSteps = await this.workflowStepsService.findWorkflow(+id)
-    let Picker = workflowSteps.map(workflowStep => workflowStep.step.id)
-    const steps2 = steps.map(step => step.id)
-    const NonePicker = steps2.filter(stepId => !Picker.includes(stepId))
+    let Picker = workflowSteps.map((workflowStep) => workflowStep.step.id)
+    const steps2 = steps.map((step) => step.id)
+    const NonePicker = steps2.filter((stepId) => !Picker.includes(stepId))
     const PickerIn = await Promise.all(
-      Picker.map(async element => {
+      Picker.map(async (element) => {
         return this.stepsService.findOne(+element)
       }),
     )
     const NonePickerIn = await Promise.all(
-      NonePicker.map(async element => {
+      NonePicker.map(async (element) => {
         return this.stepsService.findOne(+element)
       }),
     )
-    const MaxIdStep = Math.max(...steps.map(step => step.id));
+    const MaxIdStep = Math.max(...steps.map((step) => step.id))
     return {
       MaxIdStep,
       departmens,
@@ -79,20 +67,12 @@ export class WorkflowsController {
     }
   }
   @Patch()
-  async update (
-    @Body('id') id: string,
-    @Body() updateWorkflowDto: UpdateWorkflowDto,
-    @Res() res: Response,
-  ) {
+  async update (@Body('id') id: string, @Body() updateWorkflowDto: UpdateWorkflowDto, @Res() res: Response) {
     await this.workflowsService.update(+id, updateWorkflowDto)
     return res.redirect('/workflows')
   }
   @Patch(':id')
-  async updateQt (
-    @Param('id') id: string,
-    @Body() updateWorkflowDto: UpdateWorkflowDto,
-    @Res() res: Response,
-  ) {
+  async updateQt (@Param('id') id: string, @Body() updateWorkflowDto: UpdateWorkflowDto, @Res() res: Response) {
     const checkEdit = await this.projectStepsService.findOneWWorkflows(+id)
     if (checkEdit.length <= 0) {
       await this.workflowStepsService.remove(+id)
@@ -106,9 +86,5 @@ export class WorkflowsController {
       }
     }
     return res.redirect('/workflows')
-  }
-  @Delete(':id')
-  remove (@Param('id') id: string) {
-    return this.workflowsService.remove(+id)
   }
 }

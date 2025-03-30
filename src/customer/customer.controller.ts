@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Res, SetMetadata } from '@nestjs/common';
 import { CustomerService } from './customer.service'
 import { CreateCustomerDto } from './dto/create-customer.dto'
 import { UpdateCustomerDto } from './dto/update-customer.dto'
@@ -22,6 +22,7 @@ export class CustomerController {
     const customers = await this.customerService.findAll()
     return { customers }
   }
+  @SetMetadata('permision', '5')
   @Get('infor')
   @Render('admin/customer/infor')
   async findAll () {
