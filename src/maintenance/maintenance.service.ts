@@ -14,6 +14,23 @@ export class MaintenanceService {
     @InjectRepository(MaintenanceAction)
     private readonly maintenanceActionRepository: Repository<MaintenanceAction>
   ) {}
+
+async findByNotifycation() {
+  const currentDate = new Date()
+  currentDate.setHours(0, 0, 0, 0)
+  const twoDaysLater = new Date(currentDate)
+  twoDaysLater.setDate(currentDate.getDate() + 2)
+
+  return this.maintenanceRepository.find({
+    relations: ['project'],
+    where: {
+      confirmSuccess: true,
+      time: Between(currentDate, twoDaysLater)
+    },
+    order: { time: 'ASC' }
+  })
+}
+
   async create3 (createMaintenanceActionDto: CreateMaintenanceActionDto) {
     return this.maintenanceActionRepository.save({
       ...createMaintenanceActionDto,

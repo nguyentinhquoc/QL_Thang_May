@@ -1,13 +1,7 @@
-import { Injectable } from '@nestjs/common'
+import {Injectable} from '@nestjs/common'
 @Injectable()
 export class SendMailService {
-  notificationCreateStaff (
-    password: string,
-    name: string,
-    email: string,
-    Title: string,
-    Message: string,
-  ) {
+  notificationCreateStaff (password: string, name: string, email: string, Title: string, Message: string) {
     return {
       to: email,
       subject: `${Title}`,
@@ -116,12 +110,7 @@ export class SendMailService {
       </html>`,
     }
   }
-  notificationNewJob (
-    name: string,
-    email: string,
-    Title: string,
-    Message: string,
-  ) {
+  notificationNewJob (name: string, email: string, Title: string, Message: string) {
     return {
       to: email,
       subject: `${Title}`,
@@ -226,12 +215,7 @@ export class SendMailService {
       </html>`,
     }
   }
-  notificationRemoveKJob (
-    name: string,
-    email: string,
-    Title: string,
-    Message: string,
-  ) {
+  notificationRemoveKJob (name: string, email: string, Title: string, Message: string) {
     return {
       to: email,
       subject: `${Title}`,
@@ -436,5 +420,92 @@ export class SendMailService {
       </body>
       </html>`,
     }
+  }
+  notificationThongBaoBaoTriGanNhat(name: string, email: string, maintenanceDate: string, projectName: string) {
+    return {
+      to: email,
+      subject: 'Thông báo lịch bảo trì sắp tới',
+      html: `<!DOCTYPE html>
+    <html lang="vi">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f4f7fa;
+          margin: 0;
+          padding: 0;
+        }
+        .container {
+          max-width: 600px;
+          margin: 40px auto;
+          background-color: #ffffff;
+          padding: 30px;
+          border-radius: 8px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          text-align: center;
+          background-color: #28a745;
+          color: #ffffff;
+          padding: 30px;
+          border-radius: 6px 6px 0 0;
+        }
+        .header h1 {
+          margin: 0;
+          font-size: 26px;
+          font-weight: bold;
+        }
+        .content {
+          text-align: center;
+          padding: 20px;
+        }
+        .content h2 {
+          font-size: 22px;
+          color: #333;
+        }
+        .content p {
+          font-size: 16px;
+          color: #555;
+        }
+        .highlight {
+          font-size: 18px;
+          color: #155724;
+          background-color: #d4edda;
+          padding: 10px;
+          margin: 20px 0;
+          border: 1px solid #c3e6cb;
+          border-radius: 5px;
+        }
+        .footer {
+          text-align: center;
+          font-size: 14px;
+          color: #999;
+          margin-top: 40px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Thông báo lịch bảo trì sắp tới</h1>
+        </div>
+        <div class="content">
+          <h2>Xin chào, ${name}</h2>
+          <p>Bạn được phân công tham gia bảo trì cho dự án:</p>
+          <div class="highlight"><strong>${projectName}</strong></div>
+          <p>Thời gian bảo trì dự kiến:</p>
+          <div class="highlight"><strong>${maintenanceDate}</strong></div>
+          <p>Vui lòng kiểm tra và xác nhận lịch trình trong hệ thống.</p>
+        </div>
+        <div class="footer">
+          <p>Trân trọng,<br>Đội ngũ <strong>Thang Máy Tesla</strong></p>
+          <p>&copy; 2025 Thang Máy Tesla. Mọi thông tin xin được bảo mật.</p>
+        </div>
+      </div>
+    </body>
+    </html>`
+    };
   }
 }

@@ -1,24 +1,36 @@
-import { Injectable } from '@nestjs/common'
-import { CreateStaffDto } from './dto/create-staff.dto'
-import { UpdateStaffDto } from './dto/update-staff.dto'
-import { Staff } from './entities/staff.entity'
-import { Repository } from 'typeorm'
-import { InjectRepository } from '@nestjs/typeorm'
+import {Injectable} from '@nestjs/common'
+import {CreateStaffDto} from './dto/create-staff.dto'
+import {UpdateStaffDto} from './dto/update-staff.dto'
+import {Staff} from './entities/staff.entity'
+import {Repository} from 'typeorm'
+import {InjectRepository} from '@nestjs/typeorm'
 import * as bcrypt from 'bcrypt'
-import { LoginDto } from './dto/create-staff-logindto'
-import { JwtService } from '@nestjs/jwt'
-import { relative } from 'path'
+import {LoginDto} from './dto/create-staff-logindto'
+import {JwtService} from '@nestjs/jwt'
+import {relative} from 'path'
 @Injectable()
 export class StaffsService {
   constructor (
     @InjectRepository(Staff)
     private staffsRepository: Repository<Staff>,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
+
+  findNhanTBBaoTri () {
+    return this.staffsRepository.find({
+      where: {
+        role_admin: false,
+        status: true,
+        department: {id: 2},
+      },
+      relations: ['department', 'position'],
+    })
+  }
+
   findPayrollWStaff (staffId: number) {
     return this.staffsRepository.findOne({
       where: {
-        id: staffId
+        id: staffId,
       },
       relations: [
         'projectSteps',
@@ -26,19 +38,16 @@ export class StaffsService {
         'projectSteps.project',
         'maintenanceActions',
         'maintenanceActions.maintenance',
-        'maintenanceActions.maintenance.project'
-      ]
+        'maintenanceActions.maintenance.project',
+      ],
     })
   }
-  async create (
-    createStaffDto: CreateStaffDto,
-    password: string
-  ): Promise<Staff> {
+  async create (createStaffDto: CreateStaffDto, password: string): Promise<Staff> {
     const saltRounds = 10
     const hashedPassword = await bcrypt.hash(password, saltRounds)
     const createStaffDtohash = this.staffsRepository.create({
       ...createStaffDto,
-      password: hashedPassword
+      password: hashedPassword,
     })
     return this.staffsRepository.save(createStaffDtohash)
   }
@@ -46,36 +55,36 @@ export class StaffsService {
   async findAll () {
     return this.staffsRepository.find({
       order: {
-        status: 'DESC'
+        status: 'DESC',
       },
-      relations: ['department', 'position']
+      relations: ['department', 'position'],
     })
   }
 
   async findStaffsByDepartment (departmentId: number) {
     return this.staffsRepository.find({
       where: {
-        department: { id: departmentId },
-        role_admin: false
+        department: {id: departmentId},
+        role_admin: false,
       },
-      relations: ['department', 'position']
+      relations: ['department', 'position'],
     })
   }
 
   async findAllPayroll () {
     const staffs = await this.staffsRepository.find({
-      order: { status: 'DESC' },
-      relations: ['projectSteps', 'maintenanceActions']
+      order: {status: 'DESC'},
+      relations: ['projectSteps', 'maintenanceActions'],
     })
-    const results = staffs.map(staff => {
+    const results = staffs.map((staff) => {
       // Tính số lượng ongoingTasks
       const ongoingTasks =
-        staff.projectSteps.filter(step => step.status == null).length +
-        staff.maintenanceActions.filter(action => action.status == null).length
+        staff.projectSteps.filter((step) => step.status == null).length +
+        staff.maintenanceActions.filter((action) => action.status == null).length
       // Tính số lượng completedTasks
       const completedTasks =
-        staff.projectSteps.filter(step => step.status !== null).length +
-        staff.maintenanceActions.filter(action => action.status !== null).length
+        staff.projectSteps.filter((step) => step.status !== null).length +
+        staff.maintenanceActions.filter((action) => action.status !== null).length
       // Tổng số task
       const totalTasks = ongoingTasks + completedTasks
 
@@ -83,33 +92,33 @@ export class StaffsService {
         staff,
         ongoingTasks,
         completedTasks,
-        totalTasks
+        totalTasks,
       }
     })
     return results
   }
   async findAllPayrollByDepartment (idDepartment: number) {
     const staffs = await this.staffsRepository.find({
-      where: { department: { id: idDepartment } },
-      order: { status: 'DESC' },
-      relations: ['projectSteps', 'maintenanceActions']
+      where: {department: {id: idDepartment}},
+      order: {status: 'DESC'},
+      relations: ['projectSteps', 'maintenanceActions'],
     })
-    const results = staffs.map(staff => {
+    const results = staffs.map((staff) => {
       // Tính số lượng ongoingTasks
       const ongoingTasks =
-        staff.projectSteps.filter(step => step.status == null).length +
-        staff.maintenanceActions.filter(action => action.status == null).length
+        staff.projectSteps.filter((step) => step.status == null).length +
+        staff.maintenanceActions.filter((action) => action.status == null).length
       // Tính số lượng completedTasks
       const completedTasks =
-        staff.projectSteps.filter(step => step.status !== null).length +
-        staff.maintenanceActions.filter(action => action.status !== null).length
+        staff.projectSteps.filter((step) => step.status !== null).length +
+        staff.maintenanceActions.filter((action) => action.status !== null).length
       // Tổng số task
       const totalTasks = ongoingTasks + completedTasks
       return {
         staff,
         ongoingTasks,
         completedTasks,
-        totalTasks
+        totalTasks,
       }
     })
 
@@ -118,26 +127,23 @@ export class StaffsService {
 
   findOne (id: number) {
     return this.staffsRepository.findOne({
-      where: { id },
-      relations: ['department', 'position']
+      where: {id},
+      relations: ['department', 'position'],
     })
   }
   findOnew (email: string) {
-    return this.staffsRepository.findOne({ where: { email } })
+    return this.staffsRepository.findOne({where: {email}})
   }
   async login (loginDto: LoginDto) {
-    console.log('123333333333');
+    console.log('123333333333')
     const staff = await this.staffsRepository.findOne({
-      where: { email: loginDto.email, status: true },
-      relations: ['department', 'position']
+      where: {email: loginDto.email, status: true},
+      relations: ['department', 'position'],
     })
     if (!staff) {
       return false
     }
-    const isPasswordValid = await bcrypt.compare(
-      loginDto.password,
-      staff.password
-    )
+    const isPasswordValid = await bcrypt.compare(loginDto.password, staff.password)
     if (!isPasswordValid) {
       return false
     }
@@ -148,7 +154,7 @@ export class StaffsService {
       full_name: staff.full_name,
       avatar: staff.avatar,
       manager: staff.position.id === 1,
-      busines: staff.department.id === 1
+      busines: staff.department.id === 1,
     }
     const token = this.createToken(payload)
     return token
@@ -164,10 +170,7 @@ export class StaffsService {
   async update (id: number, updateStaffDto: UpdateStaffDto) {
     if (updateStaffDto.password) {
       const saltRounds = 10
-      updateStaffDto.password = await bcrypt.hash(
-        updateStaffDto.password,
-        saltRounds
-      )
+      updateStaffDto.password = await bcrypt.hash(updateStaffDto.password, saltRounds)
     }
     await this.staffsRepository.update(id, updateStaffDto)
   }
@@ -175,30 +178,27 @@ export class StaffsService {
     return this.staffsRepository.softDelete(id)
   }
   async changeStatus (id: number) {
-    const staff = await this.staffsRepository.findOne({ where: { id } })
+    const staff = await this.staffsRepository.findOne({where: {id}})
     if (staff) {
       const newStatus = !staff.status
-      await this.staffsRepository.update(id, { status: newStatus })
+      await this.staffsRepository.update(id, {status: newStatus})
     }
   }
   async findAllBusines () {
     const currentYear = new Date().getFullYear()
     const staffs = await this.staffsRepository.find({
-      where: { department: { id: 1 } },
-      relations: ['projectStaff', 'targetBusine', 'department']
+      where: {department: {id: 1}},
+      relations: ['projectStaff', 'targetBusine', 'department'],
     })
-    const result = staffs.map(staff => {
+    const result = staffs.map((staff) => {
       const currentYearTargets = staff.targetBusine
-        ? staff.targetBusine.filter(target => target.year === currentYear)
+        ? staff.targetBusine.filter((target) => target.year === currentYear)
         : []
-      const totalTarget = currentYearTargets.reduce(
-        (sum, target) => sum + (target.target || 0),
-        0
-      )
+      const totalTarget = currentYearTargets.reduce((sum, target) => sum + (target.target || 0), 0)
       return {
         ...staff,
         totalProjectStaff: staff.projectStaff ? staff.projectStaff.length : 0,
-        totalTarget
+        totalTarget,
       }
     })
     return result

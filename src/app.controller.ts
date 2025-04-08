@@ -6,6 +6,7 @@ import { MaintenanceService } from './maintenance/maintenance.service'
 import { ProjectService } from './project/project.service'
 import { WorkflowStepsService } from './workflow_steps/workflow_steps.service'
 import { Body, Controller, Get, Post, Render, Req, Res, SetMetadata } from '@nestjs/common'
+import { SendMailService } from './send-mail/send-mail.service';
 @Controller()
 export class AppController {
   constructor (
@@ -15,23 +16,6 @@ export class AppController {
     private projectService: ProjectService,
     private workflowStepsService: WorkflowStepsService
   ) {}
-  // @Get('sendmail')
-  // sendMail () {
-  //   const contentSendMail = this.sendMailService.forgotPassword(
-  //     'Nguyễn Tình',
-  //     'nguyentinh201004@gmail.com',
-  //     '123456',
-  //   )
-  //   this.mailerService
-  //     .sendMail(contentSendMail)
-  //     .then(() => {
-  //       console.log('Email sent successfully')
-  //     })
-  //     .catch(error => {
-  //       console.error('Error sending email:', error)
-  //       return { message: 'Gửi mail thất bại!', error: error.message }
-  //     })
-  // }
   @Get('quy-trinh-lam-viec')
   @Render('client/quytrinhmau')
   async quytrinhmau() {

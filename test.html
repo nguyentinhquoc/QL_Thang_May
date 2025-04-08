@@ -1,61 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Select Năm và Hiển Thị Dữ Liệu</title>
-  <style>
-    .table {
-      width: 50%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    .table th, .table td {
-      border: 1px solid #ddd;
-      padding: 8px;
-    }
-    .table th {
-      background-color: #f2f2f2;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fa;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 600px;
+    margin: 40px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  .header {
+    text-align: center;
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 30px;
+    border-radius: 6px 6px 0 0;
+  }
+  .header h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+  }
+  .content {
+    text-align: center;
+    padding: 20px;
+  }
+  .content h2 {
+    font-size: 24px;
+    color: #333333;
+  }
+  .content p {
+    font-size: 16px;
+    color: #666666;
+  }
+  .content .reminder {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e63946;
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #e63946;
+    border-radius: 5px;
+    background-color: #fff1f0;
+  }
+  .content .details {
+    text-align: left;
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  .content .button {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 12px 25px;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+    margin-top: 20px;
+    display: inline-block;
+  }
+  .content .button:hover {
+    background-color: #0056b3;
+  }
+  .footer {
+    text-align: center;
+    font-size: 14px;
+    color: #999999;
+    margin-top: 40px;
+  }
+  .footer a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  .footer a:hover {
+    text-decoration: underline;
+  }
+</style>
 </head>
 <body>
-
-  <h3>Chọn Năm:</h3>
-  <select id="yearSelect">
-    <option value="">-- Chọn năm --</option>
-  </select>
-
-  <table class="table">
-    <tr><th>Năm</th><td id="year">---</td></tr>
-    <tr><th>Target</th><td id="target">---</td></tr>
-  </table>
-
-  <script>
-    const yearSelect = document.getElementById('yearSelect');
-    const yearCell = document.getElementById('year');
-    const targetCell = document.getElementById('target');
-
-    // ✅ Populate Select Options
-    data.forEach(item => {
-      const option = document.createElement('option');
-      option.value = item.year;
-      option.textContent = item.year;
-      yearSelect.appendChild(option);
-    });
-
-    // ✅ OnChange Event
-    yearSelect.addEventListener('change', (e) => {
-      const selectedYear = parseInt(e.target.value);
-      const selectedData = data.find(item => item.year === selectedYear);
-
-      if (selectedData) {
-        yearCell.textContent = selectedData.year;
-        targetCell.textContent = selectedData.target;
-      } else {
-        yearCell.textContent = '---';
-        targetCell.textContent = '---';
-      }
-    });
-  </script>
+  <div class="container">
+    <div class="header">
+      <h1>Maintenance Schedule Notification</h1>
+    </div>
+    <div class="content">
+      <h2>Hello, ${name}</h2>
+      <div class="reminder">Upcoming maintenance scheduled for ${maintenanceDate}</div>
+      <div class="details">
+        <p>
+          Maintenance at project: <strong>${projectName}</strong><br>
+          <strong>Please log in to the system to view detailed information</strong></p>
+      </div>
+    </div>
+    <div class="footer">
+      <p>Have a great day!<br> <strong>Tesla Elevator</strong> Team</p>
+      <p>&copy; 2024 Tesla Elevator. Security and reliability are our commitment.</p>
+    </div>
+  </div>
 </body>
 </html>
