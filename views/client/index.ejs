@@ -55,10 +55,13 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
     <div class="card-body fs-10">
       <div class="row">
         <% projectSteps.forEach(function(item, index) { %>
-        <div class="col-md-6 h-100" onclick="window.location.href = '/client/task/<%= item.project.id %>'" style="cursor: pointer;">
+        <div class="col-md-6 h-100"
+          onclick="window.location.href = '/client/task/<%= item.project.id %>'"
+          style="cursor: pointer;">
           <div class="d-flex btn-reveal-trigger">
             <div class="calendar"><span class="calendar-month">T
-                <%=returnMonth(item.createdAt)%></span><span class="calendar-day"><%=returnDay(item.createdAt)%></span></div>
+                <%=returnMonth(item.createdAt)%></span><span
+                class="calendar-day"><%=returnDay(item.createdAt)%></span></div>
             <div class="flex-1 position-relative ps-3">
               <h6 class="fs-9 mb-0">
                 <p class="text-primary m-0"><%=
@@ -73,10 +76,11 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
                   <span class="badge badge-subtle-success rounded-pill">Đã hoàn
                     thành</span>
                   <% } %>
-                  </a>
+                </a>
               </h6>
               <p class="mb-1"><%=
-                item.workflowStep.step.description %> tại công trình <a href="#!" class="text-700"><%=
+                item.workflowStep.step.description %> tại công trình <a href="#!"
+                  class="text-700"><%=
                   item.project.full_name %></a></p>
               <p class="text-1000 mb-0">Ngày giao: <%= formatDate(
                 item.createdAt) %></p>
@@ -98,14 +102,20 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
     <div class="card-body fs-10">
       <div class="row">
         <div class="d-flex mb-2">
-          <button class="btn btn-primary m-3" type="button" data-bs-toggle="modal" data-bs-target="#error-modal">+ Đề xuất thêm bảo trì</button>
-          <button class="btn btn-primary m-3" type="button" data-bs-toggle="modal" data-bs-target="#error-modal2">+ Đề xuất xác nhận bảo trì</button>
+          <button class="btn btn-primary m-3" type="button" data-bs-toggle="modal"
+            data-bs-target="#error-modal">+ Đề xuất thêm bảo trì</button>
+          <button class="btn btn-primary m-3" type="button" data-bs-toggle="modal"
+            data-bs-target="#error-modal2">+ Đề xuất xác nhận bảo trì</button>
         </div>
-        <div class="modal fade" id="error-modal2" tabindex="-1" role="dialog" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
+        <div class="modal fade" id="error-modal2" tabindex="-1" role="dialog"
+          aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document"
+            style="max-width: 500px">
             <div class="modal-content position-relative">
               <div class="position-absolute top-0 end-0 mt-2 me-2 z-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button
+                  class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                  data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body p-0">
                 <div class="rounded-top-3 py-3 ps-4 pe-6 bg-body-tertiary">
@@ -113,14 +123,17 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
                     trì</h4>
                 </div>
                 <div class="p-4 pb-0">
-                  <form class="myForm1" method="post" action="/maintenance/add2" enctype="multipart/form-data">
+                  <form class="myForm1" method="post" action="/maintenance/add2"
+                    enctype="multipart/form-data">
                     <div class="mb-3">
                       <label class="col-form-label" for="recipient-name">Tên công
                         trình:</label>
-                      <input class="form-control recipient-name1" type="text" oninput="filterList1(event)" />
+                      <input class="form-control recipient-name1" type="text"
+                        oninput="filterList1(event)" />
                       <ul class="itemList itemList1">
                         <% projects.forEach(function(project) { %>
-                        <li class="btn w-100 infor-staff" onclick="clickProject1('<%= project.full_name %> - <%= project.number_phone %>','<%=project.id%>')"><%=
+                        <li class="btn w-100 infor-staff"
+                          onclick="clickProject1('<%= project.full_name %> - <%= project.number_phone %>','<%=project.id%>')"><%=
                           project.full_name %>
                           - <%=
                           project.number_phone %>
@@ -138,32 +151,40 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
                     </div>
                     <div class="mb-3">
                       <label class="col-form-label" for="message-reason1">Mô tả:</label>
-                      <input class="form-control" id="recipient-reason1" type="text" name="reason" />
+                      <input class="form-control" id="recipient-reason1" type="text"
+                        name="reason" />
                     </div>
                     <div class="mb-3">
                       <label class="col-form-label" for="message-feedback1">Phản
                         hồi:</label>
-                      <input class="form-control" id="recipient-feedback1" type="text" name="feedback" />
+                      <input class="form-control" id="recipient-feedback1" type="text"
+                        name="feedback" />
                     </div>
                     <div class="mb-3">
                       <label class="col-form-label" for="message-image1">Ảnh:</label>
-                      <input class="form-control" id="recipient-image1" type="file" name="image" />
+                      <input class="form-control" id="recipient-image1" type="file"
+                        name="image" />
                     </div>
                     <input type="submit" class="btn btn-primary" value="Xác nhận">
                   </form>
                 </div>
               </div>
               <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-secondary" type="button"
+                  data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
         </div>
-        <div class="modal fade" id="error-modal" tabindex="-1" role="dialog" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
+        <div class="modal fade" id="error-modal" tabindex="-1" role="dialog"
+          aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document"
+            style="max-width: 500px">
             <div class="modal-content position-relative">
               <div class="position-absolute top-0 end-0 mt-2 me-2 z-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button
+                  class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                  data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body p-0">
                 <div class="rounded-top-3 py-3 ps-4 pe-6 bg-body-tertiary">
@@ -174,10 +195,12 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
                     <div class="mb-3">
                       <label class="col-form-label" for="recipient-name2">Thông
                         tin:</label>
-                      <input class="form-control recipient-name2" type="text" oninput="filterList2(event)" />
+                      <input class="form-control recipient-name2" type="text"
+                        oninput="filterList2(event)" />
                       <ul class="itemList itemList2">
                         <% projects.forEach(function(project) { %>
-                        <li class="btn w-100 infor-staff" onclick="clickProject2('<%= project.full_name %>- <%= project.number_phone %>','<%=project.id%>')">
+                        <li class="btn w-100 infor-staff"
+                          onclick="clickProject2('<%= project.full_name %>- <%= project.number_phone %>','<%=project.id%>')">
                           <%= project.full_name %>- <%= project.number_phone %>
                         </li>
                         <% }) %>
@@ -194,18 +217,21 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
                     <div class="mb-3">
                       <label class="col-form-label" for="recipient-time2">Thời gian bảo
                         trì:</label>
-                      <input class="form-control" id="recipient-time2" type="date" name="time" disabled />
+                      <input class="form-control" id="recipient-time2" type="date"
+                        name="time" disabled />
                     </div>
                     <div class="mb-3">
                       <label class="col-form-label" for="message-reason2">Mô tả:</label>
-                      <input class="form-control" id="recipient-reason2" type="text" name="reason" disabled />
+                      <input class="form-control" id="recipient-reason2" type="text"
+                        name="reason" disabled />
                     </div>
                     <input type="submit" class="btn btn-primary" value="Xác nhận">
                   </form>
                 </div>
               </div>
               <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-secondary" type="button"
+                  data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
@@ -216,7 +242,8 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
         <div class="col-md-6 h-100" style="cursor: pointer;">
           <div class="d-flex btn-reveal-trigger">
             <div class="calendar"><span class="calendar-month">T
-                <%= returnMonth(item.maintenance.time) %></span><span class="calendar-day"><%=returnDay(item.maintenance.time)%></span></div>
+                <%= returnMonth(item.maintenance.time) %></span><span
+                class="calendar-day"><%=returnDay(item.maintenance.time)%></span></div>
             <div class="flex-1 position-relative ps-3">
               <h6 class="fs-9 mb-0"><a href="/client/task/<%=
                   item.maintenance.project.id %>"><%=
@@ -229,7 +256,8 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
                   <% if (currentDate > itemDate) { %>
                   <span class="badge badge-subtle-danger rounded-pill">Đã bỏ lỡ</span>
                   <% } else { %>
-                  <span id="openFormBtnBt" maintenanceActionId="<%= item.id %>" class="badge badge-subtle-warning rounded-pill">Cần làm</span>
+                  <span id="openFormBtnBt" maintenanceActionId="<%= item.id %>"
+                    class="badge badge-subtle-warning rounded-pill">Cần làm</span>
                   <% } %>
                   <% } else if (item.status != null) { %>
                   <span class="badge badge-subtle-success rounded-pill">Đã hoàn
@@ -253,7 +281,8 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
         <div class="col-md-6 h-100" style="cursor: pointer;">
           <div class="d-flex btn-reveal-trigger">
             <div class="calendar"><span class="calendar-month">T
-                <%=returnMonth(item.time)%></span><span class="calendar-day"><%=returnDay(item.time)%></span></div>
+                <%=returnMonth(item.time)%></span><span
+                class="calendar-day"><%=returnDay(item.time)%></span></div>
             <div class="flex-1 position-relative ps-3">
               <h6 class="fs-9 mb-0 text-warning"><a><%=item.maintenance.projectName %>
                   <%
@@ -265,7 +294,8 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
                   <span class="badge badge-subtle-danger rounded-pill">Đã bỏ lỡ</span>
                   <% } else { %>
 
-                  <span id="openFormBtnBt" maintenanceActionId="<%= item.id %>" class="badge badge-subtle-warning rounded-pill">Cần làm</span>
+                  <span id="openFormBtnBt" maintenanceActionId="<%= item.id %>"
+                    class="badge badge-subtle-warning rounded-pill">Cần làm</span>
                   <% } %>
                   <% } else if (item.status != null) { %>
                   <span class="badge badge-subtle-success rounded-pill">Đã hoàn

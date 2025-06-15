@@ -11,25 +11,24 @@ import {
   UseInterceptors,
   UploadedFiles,
   Req,
-  SetMetadata
+  SetMetadata,
 } from '@nestjs/common'
-import { MaintenanceService } from './maintenance.service'
-import { CreateMaintenanceDto } from './dto/create-maintenance.dto'
-import { ProjectService } from 'src/project/project.service'
-import { StaffsService } from 'src/staffs/staffs.service'
-import { FilesInterceptor } from '@nestjs/platform-express'
-import { diskStorage } from 'multer'
-import { extname } from 'path'
-import { Response, Request } from 'express'
-import { MaintenanceActionsService } from 'src/maintenance_actions/maintenance_actions.service'
-
+import {MaintenanceService} from './maintenance.service'
+import {CreateMaintenanceDto} from './dto/create-maintenance.dto'
+import {ProjectService} from 'src/project/project.service'
+import {StaffsService} from 'src/staffs/staffs.service'
+import {FilesInterceptor} from '@nestjs/platform-express'
+import {diskStorage} from 'multer'
+import {extname} from 'path'
+import {Response, Request} from 'express'
+import {MaintenanceActionsService} from 'src/maintenance_actions/maintenance_actions.service'
 @Controller('maintenance')
 export class MaintenanceController {
   constructor (
     private readonly maintenanceService: MaintenanceService,
     readonly projectService: ProjectService,
     readonly maintenanceActionsService: MaintenanceActionsService,
-    readonly staffsService: StaffsService
+    readonly staffsService: StaffsService,
   ) {}
   @Post('add2')
   @UseInterceptors(
@@ -39,9 +38,9 @@ export class MaintenanceController {
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + extname(file.originalname)
           callback(null, file.fieldname + '-' + uniqueSuffix)
-        }
-      })
-    })
+        },
+      }),
+    }),
   )
   async createYc2 (
     @UploadedFiles() files: Express.Multer.File[],
@@ -52,12 +51,12 @@ export class MaintenanceController {
     @Body('weight') weight: number,
     @Body('reason') reason: string,
     @Body('projectName') projectName: string,
-    @Body('project') project: number
+    @Body('project') project: number,
   ) {
     const token = req.cookies['token']
     if (token) {
       const confirmSuccess = false
-      const images = files.map(file => file.filename)
+      const images = files.map((file) => file.filename)
       const image = JSON.stringify(images)
       var today = new Date()
       const payload = await this.staffsService.payload(token)
@@ -68,9 +67,9 @@ export class MaintenanceController {
             project: null,
             time: today,
             projectName: projectName,
-            reason: reason
+            reason: reason,
           },
-          confirmSuccess
+          confirmSuccess,
         )
         await this.maintenanceService.create3({
           weight: weight,
@@ -78,7 +77,7 @@ export class MaintenanceController {
           status: new Date(),
           maintenance: maintenance,
           feedback: feedback,
-          image: image
+          image: image,
         })
       } else {
         const Project = await this.projectService.findOne(+project)
@@ -87,9 +86,9 @@ export class MaintenanceController {
             project: Project,
             time: today,
             projectName: null,
-            reason: reason
+            reason: reason,
           },
-          confirmSuccess
+          confirmSuccess,
         )
         await this.maintenanceService.create3({
           weight: weight,
@@ -97,39 +96,32 @@ export class MaintenanceController {
           status: new Date(),
           maintenance: maintenance,
           feedback: feedback,
-          image: image
+          image: image,
         })
       }
-
       res.redirect('back')
     } else {
       res.redirect('back')
     }
   }
   @Post('add')
-  async createYc (
-    @Res() res: Response,
-    @Body() createMaintenanceDto: CreateMaintenanceDto
-  ) {
+  async createYc (@Res() res: Response, @Body() createMaintenanceDto: CreateMaintenanceDto) {
+    createMaintenanceDto.fee = String(createMaintenanceDto.fee) === '1' ? true : false
     let confirmSuccess = false
     if (createMaintenanceDto.confirmSuccess == true) {
       confirmSuccess = true
     }
-    console.log(confirmSuccess)
     if (+createMaintenanceDto.project === 0) {
       createMaintenanceDto.project = null
       await this.maintenanceService.create2(
         {
           project: null,
-          ...createMaintenanceDto
+          ...createMaintenanceDto,
         },
-        confirmSuccess
+        confirmSuccess,
       )
     } else {
-      await this.maintenanceService.create2(
-        createMaintenanceDto,
-        confirmSuccess
-      )
+      await this.maintenanceService.create2(createMaintenanceDto, confirmSuccess)
     }
     return res.redirect('back')
   }
@@ -138,26 +130,22 @@ export class MaintenanceController {
     const numericId = parseInt(id, 10)
     await this.maintenanceActionsService.ConfirmDelete(+numericId)
     await this.maintenanceService.ConfirmDelete(+numericId)
-    return res.status(200).json({ success: true, message: 'Success' })
+    return res.status(200).json({success: true, message: 'Success'})
   }
   @Patch('confirm')
   async confirm (@Res() res: Response, @Body('id') id: string) {
     const numericId = parseInt(id, 10)
     await this.maintenanceService.updateConfirmSuccess(+numericId)
     await this.maintenanceActionsService.updateConfirmSuccess(+numericId)
-    return res.status(200).json({ success: true, message: 'Success' })
+    return res.status(200).json({success: true, message: 'Success'})
   }
   @Post()
-  async create (
-    @Res() res: Response,
-    @Body() createMaintenanceDto: CreateMaintenanceDto
-  ) {
-    createMaintenanceDto.fee = String(createMaintenanceDto.fee) === '1' ? true : false;
-    console.log(createMaintenanceDto);
-    await this.maintenanceService.create(createMaintenanceDto);
-    return res.redirect('back');
+  async create (@Res() res: Response, @Body() createMaintenanceDto: CreateMaintenanceDto) {
+    createMaintenanceDto.fee = String(createMaintenanceDto.fee) === '1' ? true : false
+    await this.maintenanceService.create(createMaintenanceDto)
+    return res.redirect('back')
   }
-    @SetMetadata('permision', '8')
+  @SetMetadata('permision', '8')
   @Get()
   @Render('admin/maintenance/maintenance')
   async findAll (@Req() req: Request) {
@@ -167,46 +155,35 @@ export class MaintenanceController {
     let maintenanceWProjects = null
     let projects = null
     if (inforAccount.role_admin || (inforAccount.department.id == 1 && inforAccount.position.id == 1)) {
-      console.log(12333333333333)
       maintenanceWProjects = await this.maintenanceService.findAll()
-       projects = await this.projectService.findAll()
+      projects = await this.projectService.findAll()
     } else {
-      maintenanceWProjects = await this.maintenanceService.findAllByBusiness(
-        inforAccount.id
-      )
-       projects = await this.projectService.findAllByBusines(
-        inforAccount.id
-      )
+      maintenanceWProjects = await this.maintenanceService.findAllByBusiness(inforAccount.id)
+      projects = await this.projectService.findAllByBusines(inforAccount.id)
     }
     const staffs = await this.staffsService.findAll()
-    return { maintenanceWProjects, activeMenu: 'maintenance', staffs, projects }
+    return {maintenanceWProjects, activeMenu: 'maintenance', staffs, projects}
   }
   @Get('project/:idProject')
   @Render('admin/maintenance/maintenance_w_project')
   async findAllWProject (@Param('idProject') idProject: string) {
-    const maintenanceWProjects = await this.maintenanceService.findAllWProject(
-      +idProject
-    )
+    const maintenanceWProjects = await this.maintenanceService.findAllWProject(+idProject)
     const staffs = await this.staffsService.findAll()
     const project = await this.projectService.findOne(+idProject)
-    return { staffs, project, maintenanceWProjects, activeMenu: 'maintenance' }
+    return {staffs, project, maintenanceWProjects, activeMenu: 'maintenance'}
   }
   @Post('project/:idProject')
   @Render('admin/maintenance/maintenance_w_project')
-  async addMaintenance (
-    @Param('idProject') idProject: string,
-    @Res() res: Response,
-    @Body() body: any
-  ) {
+  async addMaintenance (@Param('idProject') idProject: string, @Res() res: Response, @Body() body: any) {
     const Project = await this.projectService.findOne(+idProject)
-    const { timeMaintenance, reason } = body
-    body.fee = String(body.fee) === '1' ? true : false;
+    const {timeMaintenance, reason} = body
+    body.fee = String(body.fee) === '1' ? true : false
     for (let i = 0; i < timeMaintenance.length; i++) {
       await this.maintenanceService.create({
         fee: body.fee,
         project: Project,
         time: timeMaintenance[i],
-        reason: reason[i]
+        reason: reason[i],
       })
     }
     return res.redirect('back')

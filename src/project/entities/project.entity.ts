@@ -1,9 +1,9 @@
-import { Maintenance } from 'src/maintenance/entities/maintenance.entity'
-import { Notification } from 'src/notification/entities/notification.entity'
-import { ProjectEdit } from 'src/project_edit/entities/project_edit.entity'
-import { ProjectStaff } from 'src/project_staff/entities/project_staff.entity'
-import { ProjectStep } from 'src/project_steps/entities/project_step.entity'
-import { Staff } from 'src/staffs/entities/staff.entity'
+import {Maintenance} from 'src/maintenance/entities/maintenance.entity'
+import {Notification} from 'src/notification/entities/notification.entity'
+import {ProjectEdit} from 'src/project_edit/entities/project_edit.entity'
+import {ProjectStaff} from 'src/project_staff/entities/project_staff.entity'
+import {ProjectStep} from 'src/project_steps/entities/project_step.entity'
+import {Staff} from 'src/staffs/entities/staff.entity'
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -20,44 +20,57 @@ import {
 export class Project {
   @PrimaryGeneratedColumn()
   id: number
-  @Column({ length: 255 })
+  @Column({length: 255})
   full_name: string
-  @Column({ length: 15 })
+  @Column({length: 15})
   number_phone: string
-  @Column({ nullable: true, length: 255 })
+  @Column({nullable: true, length: 255})
   email: string
-  @Column(`text`, { nullable: true })
+  @Column(`text`, {nullable: true})
   address: string
-  @Column('json', { nullable: true })
+  @Column('json', {nullable: true})
   infor_product: string
-  @Column({ length: 225, nullable: true })
+  @Column({length: 225, nullable: true})
   description: string
-  @Column({ length: 225 })
+  @Column({length: 225})
   code_project: string
-  @Column({ default: 0 })
+  @Column({default: 0})
   status: number
-  @Column({ type: 'bigint', default: 0 })
+  @Column({type: 'bigint', default: 0})
   price: number
   @Column()
   tax: string
-  @Column({ type: 'date', nullable: true })
-  warranty: Date
-  @Column({ type: 'date', nullable: true })
-  maintenanceFit: Date
+  @Column({
+    type: 'enum',
+    enum: {
+      INTERNAL: 'BAOTRI',
+      EXTERNAL: 'LAPDAT',
+    },
+    default: 'LAPDAT',
+  })
+  type: 'BAOTRI' | 'LAPDAT'
+  @Column({type: 'date', nullable: true})
+  warrantyStart: Date
+  @Column({type: 'date', nullable: true})
+  maintenanceFitStart: Date
+  @Column({type: 'date', nullable: true})
+  warrantyEnd: Date
+  @Column({type: 'date', nullable: true})
+  maintenanceFitEnd: Date
   @CreateDateColumn()
   createdAt: Date
   @UpdateDateColumn()
   updatedAt: Date
   @DeleteDateColumn()
   deletedAt?: Date
-  @OneToMany(() => ProjectStep, projectStep => projectStep.project)
+  @OneToMany(() => ProjectStep, (projectStep) => projectStep.project)
   projectSteps: ProjectStep[]
-  @OneToMany(() => ProjectEdit, projectEdit => projectEdit.project)
+  @OneToMany(() => ProjectEdit, (projectEdit) => projectEdit.project)
   projectEdits: ProjectEdit[]
-  @OneToMany(() => Notification, notification => notification.project)
+  @OneToMany(() => Notification, (notification) => notification.project)
   notifications: Notification[]
-  @OneToMany(() => Maintenance, maintenance => maintenance.project)
+  @OneToMany(() => Maintenance, (maintenance) => maintenance.project)
   maintenances: Maintenance[]
-  @OneToMany(() => ProjectStaff, projectStaff => projectStaff.project)
+  @OneToMany(() => ProjectStaff, (projectStaff) => projectStaff.project)
   projectStaff: ProjectStaff[]
 }

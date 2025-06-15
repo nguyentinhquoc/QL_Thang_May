@@ -1,21 +1,21 @@
-import { Injectable } from '@nestjs/common'
-import { CreateProjectDto } from './dto/create-project.dto'
-import { UpdateProjectDto } from './dto/update-project.dto'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Project } from './entities/project.entity'
-import { Not, Repository } from 'typeorm'
+import {Injectable} from '@nestjs/common'
+import {CreateProjectDto} from './dto/create-project.dto'
+import {UpdateProjectDto} from './dto/update-project.dto'
+import {InjectRepository} from '@nestjs/typeorm'
+import {Project} from './entities/project.entity'
+import {Not, Repository} from 'typeorm'
 @Injectable()
 export class ProjectService {
   constructor (
     @InjectRepository(Project)
-    private readonly projectRepository: Repository<Project>
+    private readonly projectRepository: Repository<Project>,
   ) {}
 
   async countProjectByMonth () {
     const projects = await this.projectRepository.find()
     // Đếm số lượng dự án và tính tổng giá trị (price - tax) theo tháng
     const monthlyCount = {}
-    projects.forEach(project => {
+    projects.forEach((project) => {
       const month = new Date(project.createdAt).getMonth() + 1 // Tháng bắt đầu từ 0 nên cần cộng thêm 1
       const year = new Date(project.createdAt).getFullYear()
       const key = `${year}-${month}`
@@ -29,18 +29,18 @@ export class ProjectService {
       } else {
         monthlyCount[key] = {
           count: 1, // Số lượng dự án
-          totalValue: totalValue // Tổng giá trị (price - tax)
+          totalValue: totalValue, // Tổng giá trị (price - tax)
         }
       }
     })
     // Chuyển kết quả thành mảng và sắp xếp theo tháng/năm
-    const result = Object.keys(monthlyCount).map(key => {
+    const result = Object.keys(monthlyCount).map((key) => {
       const [year, month] = key.split('-')
       return {
         year: parseInt(year),
         month: parseInt(month),
         count: monthlyCount[key].count,
-        totalValue: monthlyCount[key].totalValue // Thêm tổng giá trị vào kết quả
+        totalValue: monthlyCount[key].totalValue, // Thêm tổng giá trị vào kết quả
       }
     })
     result.sort((a, b) => {
@@ -56,13 +56,13 @@ export class ProjectService {
       where: {
         projectStaff: {
           staff: {
-            id: idStaff
-          }
-        }
-      }
+            id: idStaff,
+          },
+        },
+      },
     })
     const monthlyCount = {}
-    projects.forEach(project => {
+    projects.forEach((project) => {
       const month = new Date(project.createdAt).getMonth() + 1 // Tháng bắt đầu từ 0 nên cần cộng thêm 1
       const year = new Date(project.createdAt).getFullYear()
       const key = `${year}-${month}`
@@ -76,18 +76,18 @@ export class ProjectService {
       } else {
         monthlyCount[key] = {
           count: 1, // Số lượng dự án
-          totalValue: totalValue // Tổng giá trị (price - tax)
+          totalValue: totalValue, // Tổng giá trị (price - tax)
         }
       }
     })
     // Chuyển kết quả thành mảng và sắp xếp theo tháng/năm
-    const result = Object.keys(monthlyCount).map(key => {
+    const result = Object.keys(monthlyCount).map((key) => {
       const [year, month] = key.split('-')
       return {
         year: parseInt(year),
         month: parseInt(month),
         count: monthlyCount[key].count,
-        totalValue: monthlyCount[key].totalValue // Thêm tổng giá trị vào kết quả
+        totalValue: monthlyCount[key].totalValue, // Thêm tổng giá trị vào kết quả
       }
     })
 
@@ -111,126 +111,116 @@ export class ProjectService {
         number_phone: createProjectDto.number_phone,
         email: createProjectDto.email,
         address: createProjectDto.address,
-        infor_product: createProjectDto.infor_product
+        infor_product: createProjectDto.infor_product,
       })
     } catch (error) {
-      console.log(
-        '🔴 ~ file: project.service.ts ~ line 116 ~ ProjectService ~ create ~ error',
-        error
-      )
+      console.log('🔴 ~ file: project.service.ts ~ line 116 ~ ProjectService ~ create ~ error', error)
     }
   }
   findAll () {
     return this.projectRepository.find({
-      relations: [
-        'projectStaff',
-        'projectStaff.staff',
-        'projectSteps',
-        'projectSteps.staff'
-      ]
+      relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
     })
   }
-  findAllByBusines (idStaff:number) {
+  findAllByBusines (idStaff: number) {
     return this.projectRepository.find({
       where: {
         projectStaff: {
           staff: {
-            id: idStaff
-          }
+            id: idStaff,
+          },
         },
       },
-      relations: [
-        'projectStaff',
-        'projectStaff.staff',
-        'projectSteps',
-        'projectSteps.staff'
-      ]
+      relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
     })
   }
 
   findAllStatus (status: number) {
     if (status == 2) {
       return this.projectRepository.find({
-        relations: [
-          'projectStaff',
-          'projectStaff.staff',
-          'projectSteps',
-          'projectSteps.staff'
-        ]
+        where: {type: 'LAPDAT'},
+        relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
       })
     } else {
       return this.projectRepository.find({
-        where: { status },
-        relations: [
-          'projectStaff',
-          'projectStaff.staff',
-          'projectSteps',
-          'projectSteps.staff'
-        ]
+        where: {status, type: 'LAPDAT'},
+        relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
       })
     }
+  }
+
+  findAllProjectsMaintennce () {
+    return this.projectRepository.find({
+      where: {type: 'BAOTRI'},
+      relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
+    })
   }
 
   findByStaffId (staffId: number, status: number) {
     if (status == 2) {
       return this.projectRepository.find({
         where: {
+          type: 'LAPDAT',
           projectStaff: {
             staff: {
-              id: staffId
-            }
-          }
+              id: staffId,
+            },
+          },
         },
-        relations: [
-          'projectStaff',
-          'projectStaff.staff',
-          'projectSteps',
-          'projectSteps.staff'
-        ]
+        relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
       })
     } else {
       return this.projectRepository.find({
         where: {
+          type: 'LAPDAT',
           projectStaff: {
             staff: {
-              id: staffId
-            }
+              id: staffId,
+            },
           },
-          status
+          status,
         },
-        relations: [
-          'projectStaff',
-          'projectStaff.staff',
-          'projectSteps',
-          'projectSteps.staff'
-        ]
+        relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
       })
     }
+  }
+  findProjectsMaintennceByStaffId (staffId: number) {
+    return this.projectRepository.find({
+      where: {
+        type: 'BAOTRI',
+        projectStaff: {
+          staff: {
+            id: staffId,
+          },
+        },
+      },
+      relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
+    })
   }
 
   findAllAction () {
     return this.projectRepository.find({
-      where: { status: 0 },
-      relations: ['projectStaff', 'projectStaff.staff', 'projectSteps']
+      where: {status: 0},
+      relations: ['projectStaff', 'projectStaff.staff', 'projectSteps'],
     })
   }
   findAlSuccess () {
     return this.projectRepository.find({
-      where: { status: 1 },
-      relations: ['projectStaff', 'projectStaff.staff', 'projectSteps']
+      where: {status: 1},
+      relations: ['projectStaff', 'projectStaff.staff', 'projectSteps'],
     })
   }
   findOne (id: number) {
     return this.projectRepository.findOne({
-      where: { id },
-      relations: ['projectStaff', 'projectStaff.staff']
+      where: {id},
+      relations: ['projectStaff', 'projectStaff.staff'],
     })
   }
   update (id: number, updateProjectDto: UpdateProjectDto) {
     return this.projectRepository.update(id, updateProjectDto)
   }
   async updateStatusProject (id: number) {
-    return await this.projectRepository.update(id, { status: 1 })
+    return await this.projectRepository.update(id, {status: 1})
   }
   remove (id: number) {
     return `This action removes a #${id} project`

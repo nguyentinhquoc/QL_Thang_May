@@ -22,9 +22,9 @@
   <div class>
     <div class="m-b-30">
       <h4>Thông tin danh sách lịch bảo trì</h4>
-      <!-- <button class="btn btn-primary m-3" type="button" data-bs-toggle="modal" data-bs-target="#error-modal">
+      <button class="btn btn-primary m-3" type="button" data-bs-toggle="modal" data-bs-target="#error-modal">
         + Thêm bảo trì
-      </button> -->
+      </button>
       <div class="modal fade" id="error-modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
           <div class="modal-content position-relative">
@@ -40,17 +40,22 @@
               <div class="p-4 pb-0">
                 <form class="myForm2" method="post" action="/maintenance/add">
                   <div class="mb-3">
-                    <label class="col-form-label" for="recipient-name2">Thông tin:</label>
+                    <div class="form-group mb-3">
+                      <label for="feeSelect" class="form-label">Loại phí:</label>
+                      <select name="fee" id="feeSelect" class="form-select">
+                        <option selected="" value="1">Mất phí</option>
+                        <option value="0">Miễn phí</option>
+                      </select>
+                    </div>
+                    <label class="col-form-label" for="recipient-name2">Thông tin công trình:</label>
                     <input class="form-control recipient-name2" type="text" oninput="filterList2(event)" />
                     <ul class="itemList itemList2">
                       <% projects.forEach(function(project) { %>
                       <li class="btn w-100 infor-staff" onclick="clickProject2('<%= project.full_name %>- <%= project.number_phone %>','<%=project.id%>')">
-                        <%= project.full_name %>- <%= project.number_phone %>
+                        <%= project.full_name %> - <%= project.code_project %>
                       </li>
                       <% }) %>
-                      <li class="btn w-100 infor-staff" onclick="clickProject2('!',0)">
-                        ! Không có công trình
-                      </li>
+
                     </ul>
                   </div>
                   <div class="mb-3" id="recipient-nameProject2" style="display: none">
@@ -78,7 +83,6 @@
           </div>
         </div>
       </div>
-
       <div class="tab-pane preview-tab-pane active" role="tabpanel" aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5" id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
         <div id="tableExample3" data-list='{"valueNames":["duan","noidung","thoigian","nhanvien","trangthai","loai"],"page":20,"pagination":true}'>
           <div class="row justify-content-end g-0">
@@ -140,30 +144,27 @@
                         <span class="badge rounded badge-subtle-warning false">
                           Chưa bảo trì
                         </span>
-
                         <% } else { let allCompleted =
                         item.maintenanceActions.every(function(action) { return
                         action.status != null; }); %> <% if(allCompleted) { %>
                         <span class="badge rounded badge-subtle-success false">
                           Đã hoàn thành
                         </span>
-
                         <% } else { %>
                         <span class="badge rounded badge-subtle-danger false">
                           Chưa hoàn thành
                         </span>
-
                         <% } %> <% } %>
                       </span>
                     </p>
                   </td>
-                    <td class="loai">
-                  <% if(item.fee) { %>
-                  <span class="badge rounded badge-subtle-warning">Mất phí</span>
-                  <% } else { %>
-                  <span class="badge rounded badge-subtle-success">Miễn phí</span>
-                  <% } %>
-                </td>
+                  <td class="loai">
+                    <% if(item.fee) { %>
+                    <span class="badge rounded badge-subtle-warning">Mất phí</span>
+                    <% } else { %>
+                    <span class="badge rounded badge-subtle-success">Miễn phí</span>
+                    <% } %>
+                  </td>
                 </tr>
                 <% }); %>
               </tbody>
@@ -214,7 +215,6 @@
     } else {
       list.style.display = 'none'
     }
-
     for (var i = 0; i < items.length; i++) {
       var itemText = items[i].textContent || items[i].innerText
       if (itemText.toLowerCase().includes(input)) {
@@ -390,7 +390,6 @@
       $('#staff-search').prop('disabled', true)
     }
   }
-
   document.addEventListener('DOMContentLoaded', function() {
     const baoTriInput = document.getElementById('baoTri')
     const monthInput = document.getElementById('month')
@@ -455,7 +454,6 @@
 
   function toggleWarrantyStyle() {
     const warrantyDiv = document.getElementById('add-warranty')
-
     if (warrantyDiv.style.display === 'none') {
       warrantyDiv.style.display = 'block'
     } else {

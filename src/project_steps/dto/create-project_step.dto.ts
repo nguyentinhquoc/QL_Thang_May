@@ -8,7 +8,6 @@ export class CreateProjectStepDto {
   @IsInt()
   @IsNotEmpty()
   workflowStep: WorkflowStep
-
   @IsInt()
   @IsNotEmpty()
   project: Project

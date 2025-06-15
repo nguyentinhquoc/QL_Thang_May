@@ -13,22 +13,22 @@ import {
   Req,
   SetMetadata,
   Redirect,
-} from '@nestjs/common';
-import { Request, Response } from 'express'
-import { StaffsService } from './staffs.service'
-import { CreateStaffDto } from './dto/create-staff.dto'
-import { UpdateStaffDto } from './dto/update-staff.dto'
-import { PositionsService } from 'src/positions/positions.service'
-import { DepartmensService } from 'src/departmens/departmens.service'
-import { FileInterceptor } from '@nestjs/platform-express'
-import { diskStorage } from 'multer'
-import { extname } from 'path'
-import { SendMailService } from 'src/send-mail/send-mail.service'
-import { MailerService } from '@nestjs-modules/mailer'
-import { ProjectStepsService } from 'src/project_steps/project_steps.service'
+} from '@nestjs/common'
+import {Request, Response} from 'express'
+import {StaffsService} from './staffs.service'
+import {CreateStaffDto} from './dto/create-staff.dto'
+import {UpdateStaffDto} from './dto/update-staff.dto'
+import {PositionsService} from 'src/positions/positions.service'
+import {DepartmensService} from 'src/departmens/departmens.service'
+import {FileInterceptor} from '@nestjs/platform-express'
+import {diskStorage} from 'multer'
+import {extname} from 'path'
+import {SendMailService} from 'src/send-mail/send-mail.service'
+import {MailerService} from '@nestjs-modules/mailer'
+import {ProjectStepsService} from 'src/project_steps/project_steps.service'
 import * as bcrypt from 'bcrypt'
-import { Permision } from '../permision/entities/permision.entity';
-import { PermisionService } from 'src/permision/permision.service';
+import {Permision} from '../permision/entities/permision.entity'
+import {PermisionService} from 'src/permision/permision.service'
 @Controller('staffs')
 export class StaffsController {
   constructor (
@@ -38,14 +38,14 @@ export class StaffsController {
     private readonly sendMailService: SendMailService,
     private mailerService: MailerService,
     private projectStepsService: ProjectStepsService,
-    private permisionService: PermisionService
+    private permisionService: PermisionService,
   ) {}
   @SetMetadata('permision', '6')
   @Get('busines')
   @Render('admin/staff/busines')
   async findBusinesList () {
     const staffsBusiness = await this.staffsService.findAllBusines()
-    return { staffsBusiness }
+    return {staffsBusiness}
   }
   @Get('/add')
   @Render('admin/staff/add')
@@ -55,7 +55,7 @@ export class StaffsController {
     return {
       positions,
       departmens,
-      activeMenu: 'staff'
+      activeMenu: 'staff',
     }
   }
   @Post('/add')
@@ -66,20 +66,19 @@ export class StaffsController {
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + extname(file.originalname)
           callback(null, file.fieldname + '-' + uniqueSuffix)
-        }
-      })
-    })
+        },
+      }),
+    }),
   )
   async postAdd (
     @UploadedFile() file: Express.Multer.File,
     @Body() createStaffDto: CreateStaffDto,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     if (file) {
       createStaffDto.avatar = file.filename
     }
-    const kyTu =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?'
+    const kyTu = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?'
     let matKhau = ''
     for (let i = 0; i < 8; i++) {
       const randomIndex = Math.floor(Math.random() * kyTu.length)
@@ -91,13 +90,13 @@ export class StaffsController {
       createStaffDto.full_name,
       createStaffDto.email,
       'Thông báo tạo tài khoản !!!',
-      '<p>Chúng tôi muốn thông báo rằng email của bạn vừa được đang ký tài khoản tại <strong>Thang Máy Tesla</strong>.</p>'
+      '<p>Chúng tôi muốn thông báo rằng email của bạn vừa được đang ký tài khoản tại <strong>Thang Máy Tesla</strong>.</p>',
     )
     this.mailerService
       .sendMail(contentSendMail)
       .then(() => {})
-      .catch(error => {
-        return { message: 'Gửi mail thất bại!', error: error.message }
+      .catch((error) => {
+        return {message: 'Gửi mail thất bại!', error: error.message}
       })
     return res.redirect('/staffs')
   }
@@ -112,48 +111,45 @@ export class StaffsController {
     @Req() req: Request,
     @Body('currentPassword') currentPassword: string,
     @Body('newPassword') newPassword: string,
-    @Body('confirmPassword') confirmPassword: string
+    @Body('confirmPassword') confirmPassword: string,
   ) {
     if (!currentPassword || !newPassword || !confirmPassword) {
       return res.render('admin/staff/changePass', {
         message: 'Vui lòng nhập đầy đủ thông tin!',
-        status: 'error'
+        status: 'error',
       })
     }
     if (currentPassword === newPassword) {
       return res.render('admin/staff/changePass', {
         message: 'Mật khẩu mới không được trùng với mật khẩu hiện tại!',
-        status: 'error'
+        status: 'error',
       })
     }
     const token = req.cookies['token']
     if (token) {
       const payload = await this.staffsService.payload(token)
       const Staff = await this.staffsService.findOne(payload.id)
-      const isPasswordValid = await bcrypt.compare(
-        currentPassword,
-        Staff.password
-      )
+      const isPasswordValid = await bcrypt.compare(currentPassword, Staff.password)
       if (isPasswordValid) {
         if (newPassword === confirmPassword) {
           await this.staffsService.update(payload.id, {
-            password: newPassword
+            password: newPassword,
           })
           res.render('login', {
             message: 'Đổi mật khẩu thành công vui lòng đang nhập lại !',
-            status: 'success'
+            status: 'success',
           })
           return res.clearCookie('token')
         } else {
           return res.render('admin/staff/changePass', {
             message: 'Mật khẩu mới và mật khẩu xác nhận không khớp!',
-            status: 'error'
+            status: 'error',
           })
         }
       } else {
         return res.render('admin/staff/changePass', {
           message: 'Mật khẩu cũ không chính xác !',
-          status: 'error'
+          status: 'error',
         })
       }
     }
@@ -169,13 +165,11 @@ export class StaffsController {
     if (inforAccount.role_admin) {
       staffs = await this.staffsService.findAllPayroll()
     } else {
-      staffs = await this.staffsService.findAllPayrollByDepartment(
-        inforAccount.department.id
-      )
+      staffs = await this.staffsService.findAllPayrollByDepartment(inforAccount.department.id)
     }
     return {
       staffs,
-      activeMenu: 'staff'
+      activeMenu: 'staff',
     }
   }
   @SetMetadata('permision', '3')
@@ -189,13 +183,11 @@ export class StaffsController {
     if (inforAccount.role_admin) {
       staffs = await this.staffsService.findAll()
     } else {
-      staffs = await this.staffsService.findStaffsByDepartment(
-        inforAccount.department.id
-      )
+      staffs = await this.staffsService.findStaffsByDepartment(inforAccount.department.id)
     }
     return {
       staffs,
-      activeMenu: 'staff'
+      activeMenu: 'staff',
     }
   }
   @Get(':id')
@@ -214,16 +206,17 @@ export class StaffsController {
     return {
       Staff,
       staff,
-      infoStaffs, permision, permisionPhanQuyen
+      infoStaffs,
+      permision,
+      permisionPhanQuyen,
     }
   }
   @Post('/payroll/:id')
   @Redirect('back')
-  async phaQuyen(@Param('id') id: string,@Body('quyen') quyen:any) {
+  async phaQuyen (@Param('id') id: string, @Body('quyen') quyen: any) {
     await this.permisionService.udpatePhanQuyen(+id) // Xóa hết quyền của người dùng
-    await this.permisionService.createQuyen(+id,quyen) // Xóa hết quyền của người dùng
-    return {
-    }
+    await this.permisionService.createQuyen(+id, quyen) // Xóa hết quyền của người dùng
+    return {}
   }
   @Patch(':id')
   update (@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto) {

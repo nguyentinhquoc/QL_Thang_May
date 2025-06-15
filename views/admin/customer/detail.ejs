@@ -19,13 +19,34 @@
             <label for="email">Địa chỉ email</label>
             <input type="email"  placeholder="Enter Address Email" id="email" value="<%= customer.email %>" name="email" class="form-control" maxlength="255" />
           </div>
+           <div class="form-group col-12">
+            <label for="city">Tỉnh/Thành phố:</label>
+            <select required id="city" name="city" class="form-control">
+              <option value="" selected disabled >Chọn tỉnh thành</option>
+            </select>
+          </div>
+
+          <div class="form-group col-12">
+            <label for="district">Quận/Huyện:</label>
+            <select id="district" name="district" class="form-control">
+              <option value="" selected disabled>Chọn quận huyện</option>
+            </select>
+          </div>
+
+          <div class="form-group col-12">
+            <label for="ward">Phường/Xã:</label>
+            <select id="ward" name="ward" class="form-control">
+              <option value="" selected disabled>Chọn phường xã</option>
+            </select>
+          </div>
+
           <div class="form-group">
             <label for="address">Địa chỉ lắp đặt <span style="color: red">*</span></label>
-            <textarea id="address"  placeholder="Enter Address" name="address" class="form-control"> <%= customer.address %>  </textarea>
+            <textarea id="address"  placeholder="Enter Address" name="address" class="form-control"></textarea>
           </div>
           <div class="form-group">
             <label for="description">Ghi chú</label>
-            <textarea id="description"  placeholder="Enter Description" name="description" class="form-control" maxlength="225"> <%= customer.description %> </textarea>
+            <textarea id="description"  placeholder="Enter Description" name="description" class="form-control" maxlength="225"><%= customer.description %></textarea>
           </div>
           <button class="btn btn-primary btn-lg btn-block mt-3 w-100">
             Sửa thông tin công trình
@@ -35,4 +56,88 @@
     </div>
   </div>
 </form>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+  const host = "https://provinces.open-api.vn/api/";
+  // === ✅ Chuỗi địa chỉ mặc định ===
+  const defaultAddress = '<%= customer.address %>'
+  // === ✅ Tách dữ liệu mặc định từ chuỗi ===
+  const [defaultCityName, defaultDistrictName, defaultWardName, detailAdress] = defaultAddress.split(',').map(s => s.trim());
+  document.querySelector('#address').value = detailAdress
+console.log(detailAdress)
+  // === ✅ Hàm render có so sánh theo tên (name) ===
+  const renderData = (array, selectId, defaultName = null) => {
+    let row = '<option disabled value="">Chọn</option>';
+    array.forEach(element => {
+      const selected = (defaultName && element.name.toLowerCase().includes(defaultName.toLowerCase())) ? 'selected' : '';
+      row += `<option data-id="${element.code}" value="${element.name}" ${selected}>${element.name}</option>`;
+    });
+    $("#" + selectId).html(row);
+  };
+  // === ✅ Gọi API tỉnh, quận, phường ===
+  const callAPI = () => {
+    return axios.get(`${host}?depth=1`).then(res => {
+      renderData(res.data, "city", defaultCityName);
+      const selectedCity = res.data.find(c => c.name.toLowerCase().includes(defaultCityName.toLowerCase()));
+      if (selectedCity) {
+        return axios.get(`${host}p/${selectedCity.code}?depth=2`).then(resDistrict => {
+          renderData(resDistrict.data.districts, "district", defaultDistrictName);
+
+          const selectedDistrict = resDistrict.data.districts.find(d => d.name.toLowerCase().includes(defaultDistrictName.toLowerCase()));
+          if (selectedDistrict) {
+            return axios.get(`${host}d/${selectedDistrict.code}?depth=2`).then(resWard => {
+              renderData(resWard.data.wards, "ward", defaultWardName);
+              printResult(); // Hiển thị kết quả
+            });
+          }
+        });
+      }
+    });
+  };
+
+  // === ✅ In kết quả địa chỉ đã chọn ===
+  const printResult = () => {
+    const cityText = $("#city option:selected").text();
+    const districtText = $("#district option:selected").text();
+    const wardText = $("#ward option:selected").text();
+
+    const cityCode = $("#city").find(':selected').data('id');
+    const districtCode = $("#district").find(':selected').data('id');
+    const wardCode = $("#ward").find(':selected').data('id');
+
+    if (cityCode && districtCode && wardCode) {
+      $("#result").text(`${cityText} | ${districtText} | ${wardText}`);
+    }
+  };
+
+  // === ✅ Sự kiện thay đổi ===
+  $("#city").on("change", function () {
+    const cityId = $(this).find(':selected').data('id');
+    if (cityId) {
+      axios.get(`${host}p/${cityId}?depth=2`).then(res => {
+        renderData(res.data.districts, "district");
+        $("#ward").html('<option disabled value="">Chọn</option>');
+      });
+    }
+    printResult();
+  });
+
+  $("#district").on("change", function () {
+    const districtId = $(this).find(':selected').data('id');
+    if (districtId) {
+      axios.get(`${host}d/${districtId}?depth=2`).then(res => {
+        renderData(res.data.wards, "ward");
+      });
+    }
+    printResult();
+  });
+
+  $("#ward").on("change", function () {
+    printResult();
+  });
+
+  // === ✅ Gọi khởi tạo ===
+  callAPI();
+</script>
+
 <%- include('../../layout/footer') %>

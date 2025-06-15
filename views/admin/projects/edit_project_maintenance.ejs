@@ -1,43 +1,8 @@
 <%- include('../../layout/header') %>
-<style>
-  .item-list {
-    display: none;
-  }
 
-  .infor-staff:hover {
-    opacity: 0.7;
-    background-color: rgb(45, 145, 227);
-    color: white;
-  }
-
-  .infor-staff {
-    border-bottom: 0.5px solid rgb(77, 211, 229);
-  }
-
-  #itemList {
-    padding: 0;
-    display: none;
-  }
-
-  .imgStep img {
-    cursor: pointer;
-  }
-
-  .imgStep img:hover {
-    opacity: 0.2;
-  }
-
-  .imgStep img:active {
-    opacity: 0.2;
-  }
-
-  .imgMainStaff:hover {
-    opacity: 0.2;
-  }
-</style>
 <form action="/project/<%= project.id %>?_method=Patch" method="POST" id="FormAdd">
   <div class="row m-t-15 m-b-15">
-    <div class="col-lg-6">
+    <div class="col-lg-12">
       <div class="card">
         <div class="card-body text-secondary">
           <h2 class=" m-b-30">Sửa công trình</h2>
@@ -90,6 +55,7 @@
             <input type="email" id="email" name="email" class="form-control"
               maxlength="255" value="<%= project.email %>">
           </div>
+
               <div class="form-group col-12">
             <label for="city">Tỉnh/Thành phố:</label>
             <select required id="city" name="city" class="form-control">
@@ -110,6 +76,7 @@
               <option value="" selected disabled>Chọn phường xã</option>
             </select>
           </div>
+
 
           <div class="form-group">
             <label for="address">Địa chỉ lắp đặt <span
@@ -232,76 +199,8 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-6">
-      <div class="card">
-        <div class="card-body text-secondary">
-          <div class="form-group">
-            <label for="workflow">Quy trình lắp đặt <span
-                style="color: red;">*</span></label>
-            <%
-            let displayedIds = new Set();
-            ProjectSteps.forEach(function(ProjectStep) {
-            if (!displayedIds.has(ProjectStep.workflowStep.id)) {
-            displayedIds.add(ProjectStep.workflowStep.id);
-            %>
-            <div class="step step<%= ProjectStep.workflow.id %> m-t-30">
-              <div class="d-flex justify-content-between btn-block mb-3 notification">
-                <span>
-                  <span class="w-75" style="text-align: start;">
-                    <%= ProjectStep.step.name %>
-                  </span>
-                  <br>
-                  <span class="w-75" style="opacity: 0.5;">
-                    <%= ProjectStep.step.description %>
-                  </span>
-                  <br>
-                  <span class="w-75 text-danger">
-                    Phòng ban:
-                    <%
-                    let departmentCan = [];
-                    let showIcon = false;
-                    ProjectStep.step.departmentsSteps.forEach(function(departmentStep,
-                    index, array) {
-                    departmentCan.push(departmentStep.department.id);
-                    %>
-                    <%= departmentStep.department.name %><%= index < array.length - 1 ?
-                    ', ' : '' %>
-                    <%
-                    if (departmentStep.department.id === 1) {
-                    showIcon = true;
-                    }
-                    });
-                    %>
-                  </span>
-                </span>
-                <div class="d-flex justify-content-center align-items-center">
-                  <div id="imgStep<%= ProjectStep.workflowStep.id %>" class="imgStep">
-                  </div>
-                  <% if (showIcon || role_admin) { %>
-                  <div class="add-new-position" departmentCan="[<%=departmentCan%>]"
-                    idValue="<%= ProjectStep.workflowStep.id %>"
-                    nameValue="<%= ProjectStep.step.name %>">
-                    <i class="fas fa-plus-square"
-                      style="font-size: 40px; color: rgb(31, 145, 238);"></i>
-                  </div>
-                  <% } else{ %>
-                  <div>
-                    <i class="fas fa-plus-square"
-                      style="font-size: 40px;color: rgb(237, 114, 73);"></i>
-                  </div>
-                  <% } %>
-                </div>
-              </div>
-            </div>
-            <%
-            }
-            });
-            %>
-          </section>
-        </div>
-      </div>
-    </form>
-    <script>
+  </form>
+  <script>
   function toggleStaffContainer() {
     const staffContainer = document.getElementById('staff-container');
     if (staffContainer.style.display === 'none') {
@@ -380,8 +279,6 @@
     const container = button.closest('.staff-select');
     container.remove();
   }
-</script>
-    <script>
   function removeMainStaff(projectStaff, element) {
     if (confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) {
       $.ajax({
@@ -397,201 +294,7 @@
       });
     }
   }
-  let ArrayObj = [];
-  let ProjectSteps = JSON.parse('<%- JSON.stringify(ProjectSteps).replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t") %>');
-  let filteredProjectSteps = ProjectSteps.filter(step => step.staff !== null);
-  filteredProjectSteps.forEach(element => {
-    ArrayObj.push(new Step(
-      element.staff.id,
-      element.workflowStep.id,
-      element.staff.avatar,
-      element.time,
-    ));
-  });
-
-  ArrayObj.forEach(element => {
-    $(`#imgStep${element.idStep}`).append(
-      `<img src="/images/avatar/${element.img}" alt="" width="30px" height="30px" style="border-radius: 100%; margin-right:5px" onclick="remove('${element.img}','${element.idStep}')">`
-    );
-  });
-
-  function changeDate() {
-    if ($('#date-time').val() != '') {
-      $('#staff-search').prop('disabled', false);
-    } else {
-      $('#staff-search').prop('disabled', true);
-    }
-  }
-
-  function SubmitForm(e) {
-    e.preventDefault()
-    $('#FormAdd input[name="steps"]').remove();
-    let jsonString = JSON.stringify(ArrayObj, (key, value) => {
-      if (key === 'img') {
-        return undefined;
-      }
-      return value;
-    });
-    $('#FormAdd').append(`<input type="hidden" name="steps" value='${jsonString}'>`)
-    document.getElementById("FormAdd").submit();
-  }
-
-  function pushStaff(value, id, avatar, department, departmentCan) {
-    departmentCan = JSON.parse(departmentCan);
-    if (Array.isArray(departmentCan)) {
-      if (!departmentCan.includes(department)) {
-        if (!confirm("Nhân viên này không thuộc phòng ban được chỉ định. Bạn có chắc chắn muốn thêm?")) {
-          return;
-        }
-      }
-    }
-    if ($('#date-time').val() != '') {
-      $('.clickXN').prop('disabled', false);
-      $('#imgStaff').attr('value', avatar);
-      $('#idStaffCheck').attr('value', id);
-    } else {
-      $('.clickXN').prop('disabled', true);
-    }
-    document.getElementById('staff-search').value = value;
-    document.getElementById('itemList').style.display = "none";
-  }
-
-  function filterList() {
-    document.getElementById('itemList').style.display = "block"
-    var input = document.getElementById('staff-search').value.toLowerCase();
-    var items = document.getElementById('itemList').getElementsByTagName('li');
-    var list = document.getElementById('itemList');
-    if (input) {
-      list.style.display = "block";
-    } else {
-      list.style.display = "none";
-    }
-    for (var i = 0; i < items.length; i++) {
-      var itemText = items[i].textContent || items[i].innerText;
-      var dataId = $(items[i]).attr('data-id');
-      var stepId = $(items[i]).attr('data-stepId');
-      if (itemText.toLowerCase().includes(input)) {
-        items[i].style.display = "";
-        ArrayObj.forEach(function(item) {
-          if (item.idStaffCheck == dataId && item.idStep == stepId) {
-            return items[i].style.display = "none";
-          }
-        })
-      } else {
-        items[i].style.display = "none";
-      }
-    }
-  }
-  $(document).ready(function() {
-    $("#workflow").change(function(e) {
-      let workflowId = e.target.value;
-      $(".step").slideUp();
-      $(`.step${workflowId}`).slideDown();
-    });
-    $('.add-new-position').click(function() {
-      $('#newPositionModal').remove();
-      var idValue = $(this).attr('idValue');
-      var departmentCan = $(this).attr('departmentCan');
-      var nameValue = $(this).attr('nameValue');
-      var form =
-        '<div class="modal fade" id="newPositionModal" tabindex="-1" aria-labelledby="newPositionModalLabel" aria-hidden="true">' +
-        '<div class="modal-dialog">' +
-        '<div class="modal-content">' +
-        '<div class="modal-header">' +
-        '<div class="d-flex justify-content-between w-100" >' +
-        `<h5 class="modal-title" id="newPositionModalLabel">Cài đặt quy trình:</h5>
-        <input type="hidden" value="${idValue}" id="idSteps">
-        <input type="hidden"  id="imgStaff">
-        <input type="hidden"  id="idStaffCheck">
-        ` +
-        '<button class="btn btn-success clickXN" disable onclick="clickXN()" style="white-space: nowrap; margin-left:10px;" disabled>Xác nhận</button>' +
-        '</div>' +
-        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
-        '</div>' +
-        '<div class="modal-body">' +
-        '<div >' +
-        '<div class="form-group">' +
-        '<label for="date-time">Chọn trọng số:</label>' +
-        `<select name="weight" id="weight-select" class="form-control">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-        </select>
-        ` +
-        '</div>' +
-        '<div class="form-group">' +
-        '<label for="staff">Thêm nhân viên:</label>' +
-        '<input  type="text" class="form-control" id="staff-search"  oninput="filterList()">' +
-        `<ul id="itemList" class="w-100" >
-  <% staffs.forEach(function(staff) { %>
-        <li class="btn w-100 infor-staff" data-stepId="${idValue}" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>','<%=staff.avatar%>',<%=staff.department.id%>,'${departmentCan}')">Nhân viên: <%=staff.department.name%> - <%=staff.full_name%></li>
-        <% }) %>
-</ul>` +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '</div>';
-      $('body').append(form);
-      $('#newPositionModal').modal('show');
-      $('#date-time').val('');
-      $('#staff-search').val('');
-    });
-  });
-
-  function clickXN() {
-    ArrayObj.push(new Step(
-      $('#idStaffCheck').val(),
-      $('#idSteps').val(),
-      $('#imgStaff').val(),
-      $('#weight-select').val()
-    ))
-    $(`.imgStep`).find('img').remove();
-    ArrayObj.forEach(element => {
-      $(`#imgStep${element.idStep}`).append(
-        `<img src="/images/avatar/${element.img}" alt="" width="30px" height="30px" style="border-radius: 100%; margin-right:5px" onclick="remove('${element.img}','${element.idStep}')"> `
-      )
-    });
-    $('#newPositionModal').modal('hide');
-  }
-
-  function remove(img, idStep) {
-    ArrayObj = ArrayObj.filter(function(item) {
-      return item.img != img || item.idStep != idStep
-    });
-    $(`.imgStep`).find('img').remove();
-    ArrayObj.forEach(element => {
-      $(`#imgStep${element.idStep}`).append(
-        `<img src="/images/avatar/${element.img}" alt="" width="30px" height="30px" style="border-radius: 100%; margin-right:5px" onclick="remove('${element.img}','${element.idStep}')"> `
-      )
-    });
-  }
-  // XỬ LÝ OBJ
-  function Step(idStaffCheck, idStep, img, weight) {
-    this.img = img;
-    this.idStaffCheck = idStaffCheck;
-    this.idStep = idStep;
-    this.weight = weight;
-    this.getImg = function() {
-      return this.img
-    };
-    this.getDate = function() {
-      return this.date
-    };
-    this.getId = function() {
-      return this.id
-    };
-  }
-</script>
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 <script>
   const defaultAddress = '<%= project.address %>'
@@ -676,4 +379,4 @@
     // === ✅ Gọi khởi tạo ===
     callAPI();
 </script>
-    <%- include('../../layout/footer') %>
+  <%- include('../../layout/footer') %>

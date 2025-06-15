@@ -1,18 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Res, SetMetadata } from '@nestjs/common';
-import { CustomerService } from './customer.service'
-import { CreateCustomerDto } from './dto/create-customer.dto'
-import { UpdateCustomerDto } from './dto/update-customer.dto'
-import { Response } from 'express';
+import {Controller, Get, Post, Body, Patch, Param, Delete, Render, Res, SetMetadata} from '@nestjs/common'
+import {CustomerService} from './customer.service'
+import {CreateCustomerDto} from './dto/create-customer.dto'
+import {UpdateCustomerDto} from './dto/update-customer.dto'
+import {Response} from 'express'
 
 @Controller('customer')
 export class CustomerController {
   constructor (private readonly customerService: CustomerService) {}
 
   @Post()
-  async create (
-    @Res() res: Response,
-    @Body() createCustomerDto: CreateCustomerDto
-  ) {
+  async create (@Res() res: Response, @Body() createCustomerDto: CreateCustomerDto) {
+    createCustomerDto.address = `${createCustomerDto.city}, ${createCustomerDto.district},${createCustomerDto.ward}, ${createCustomerDto.address}`
     await this.customerService.create(createCustomerDto)
     return res.redirect('/customer/infor')
   }
@@ -20,30 +18,29 @@ export class CustomerController {
   @Render('admin/customer/add')
   async addCustomer () {
     const customers = await this.customerService.findAll()
-    return { customers }
+    return {customers}
   }
   @SetMetadata('permision', '5')
   @Get('infor')
   @Render('admin/customer/infor')
   async findAll () {
     const customers = await this.customerService.findAll()
-    return { customers }
+    return {customers}
   }
 
   @Get(':id')
   @Render('admin/customer/detail')
   async findOne (@Param('id') id: string) {
     const customer = await this.customerService.findOne(+id)
-    return { customer }
+    return {customer}
   }
 
   @Patch(':id')
-  async update (
-    @Res() res: Response,
-    @Param('id') id: string,
-    @Body() updateCustomerDto: UpdateCustomerDto
-  ) {
-    await this.customerService.update(+id, updateCustomerDto)
+  async update (@Res() res: Response, @Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
+    updateCustomerDto.address = `${updateCustomerDto.city}, ${updateCustomerDto.district},${updateCustomerDto.ward}, ${updateCustomerDto.address}`
+    const {city, district, ward, ...newUpdateCustomerDto} = updateCustomerDto
+
+    await this.customerService.update(+id, newUpdateCustomerDto)
     return res.redirect(`/customer/${id}`)
   }
 

@@ -3,9 +3,9 @@
   <div class="tab-pane preview-tab-pane active" role="tabpanel"
     aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5"
     id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
-    <h4 class="mt-3">Danh sách công trình</h4>
+    <h4 class="mt-3">Danh sách công trình lắp đặt</h4>
     <div id="tableExample3"
-      data-list='{"valueNames":["stt","duan","phone","address","nvphutrach","phantramhoanthien","trangthai","action"],"page":20,"pagination":true}'>
+      data-list='{"valueNames":["stt","duan","phone","address","nvphutrach","phantramhoanthien","trangthai","action"],"page":10,"pagination":true}'>
       <div class="m-b-30">
         <a href="/project/add" type="button" class="btn btn-primary thead-backgroup"
           id="add-new-project"> <i class="fas fa-plus-square"></i>&nbsp; Thêm mới</a>
@@ -20,6 +20,7 @@
                   class="fa fa-search fs-10 text-600"></span></div>
             </div>
           </form>
+          <!-- <p id="countSearch"></p> -->
         </div>
       </div>
       <div class="table-responsive scrollbar">
@@ -33,7 +34,7 @@
               <th class="text-900 sort" data-sort="address">Địa chỉ</th>
               <th class="text-900 sort" data-sort="nvphutrach" style="width: 10%">Nhân
                 viên phụ trách</th>
-              <th class="text-900 sort" data-sort="phantramhoanthien">Tiến độ</th>
+              <th class="text-900 sort" data-sort="phantramhoanthien">Tiến độ lắp đặt</th>
               <th class="text-900 sort" data-sort="trangthai">Trạng thái</th>
               <th class="text-900 sort" data-sort="action">Tương tác</th>
             </tr>
@@ -119,5 +120,4 @@
     </div>
   </div>
 </div>
-
 <%- include('../../layout/footer') %>

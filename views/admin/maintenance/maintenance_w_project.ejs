@@ -20,40 +20,38 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         <span> <strong> Chủ công trình: </strong> <%= project.full_name %></span>
         <div>
           <div class="m-2">
-            <span id="warrantyBadge"
-              style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;"
-              class="badge rounded badge-subtle-success false "
-              onclick="toggleWarrantyStyle()"> <strong> Bảo hành: </strong> <%=
-              project.warranty ? formatDate(
-              project.warranty) : 'Chưa có' %> </span>
-            <div id="add-warranty" <% if(project.warranty ){%> style="display: none;"
-              <%}%>>
+            <span id="warrantyBadge" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-success false " onclick="toggleWarrantyStyle()"> <strong> Bảo hành: </strong>
+              <% if (!project.warrantyStart && !project.warrantyEnd) { %>
+              Chưa cài đặt
+              <% } else { %>
+              <%= formatDate(project.warrantyStart) %> - <%=
+              formatDate(project.warrantyEnd) %>
+              <% } %>
+            </span>
+            <div id="add-warranty" <% if(project.warrantyStart ){%> style="display: none;" <%}%>>
               <form
-                action="/project/addWarranty/<%= project.id %>" class="d-flex"
-                method="post">
-                <input class="form-control datetimepicker flatpickr-input" id="datepicker"
-                  type="text" placeholder="dd/mm/yy" data-options='{"disableMobile":true}'
-                  readonly="readonly" name="warranty" style="width: 140px" />
-                <button class="btn btn-primary">Xác nhận</button>
+                action="/project/addWarranty/<%= project.id %>" class="d-flex" method="post" id="formAddWarranty">
+              <input class="form-control datetimepicker" id="timepickerwarranty" type="text" placeholder="dd/mm/yy to dd/mm/yy" data-options='{"mode":"range","dateFormat":"d/m/y","disableMobile":true}' />
+              <!-- <input class="form-control datetimepicker flatpickr-input" id="datepicker" type="text" placeholder="dd/mm/yy" data-options='{"disableMobile":true}' readonly="readonly" name="warrantyStart" style="width: 140px" /> -->
+              <button class="btn btn-primary">Xác nhận</button>
               </form>
             </div>
           </div>
+
           <div class="m-2">
-            <span id="addmaintenanceFit"
-              style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;"
-              class="badge rounded badge-subtle-success false "
-              onclick="toggleWarrantyStyle2()"> <strong> Bảo trì: </strong>
-              <%= project.warranty ? formatDate(
-              project.maintenanceFit) : 'Chưa có' %></span>
-            <div id="add-maintenanceFit" <% if(project.maintenanceFit ){%>
-              style="display: none;" <%}%>>
-              <form
-                action="/project/addmaintenanceFit/<%= project.id %>" class="d-flex"
-                method="post">
-                <input class="form-control datetimepicker flatpickr-input" id="datepicker"
-                  type="text" placeholder="dd/mm/yy" data-options='{"disableMobile":true}'
-                  readonly="readonly" name="maintenanceFit" style="width: 140px" />
-                <button class="btn btn-primary">Xác nhận</button>
+            <span id="addmaintenanceFit" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-success false " onclick="toggleWarrantyStyle2()"> <strong> Bảo trì: </strong>
+              <% if (!project.maintenanceFitStart && !project.maintenanceFitEnd) { %>
+              Chưa cài đặt
+              <% } else { %>
+              <%= formatDate(project.maintenanceFitStart) %> - <%=
+                formatDate(project.maintenanceFitEnd) %>
+              <% } %>
+            </span>
+            <div id="add-maintenanceFit" <% if(project.maintenanceFitStart ){%> style="display: none;" <%}%>>
+              <form id="formAddmaintenanceFit"
+                action="/project/addmaintenanceFit/<%= project.id %>" class="d-flex" method="post">
+              <input class="form-control datetimepicker" id="maintenanceFit" type="text" placeholder="dd/mm/yy to dd/mm/yy" data-options='{"mode":"range","dateFormat":"d/m/y","disableMobile":true}' />
+              <button class="btn btn-primary">Xác nhận</button>
               </form>
             </div>
           </div>
@@ -66,8 +64,7 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
       <button class="btn btn-primary mt-3 mb-3" id="AddBaotriBtn">
         + Gia hạn bảo trì
       </button>
-      <form method="post" class="p-3" style="display: none; border: 1px solid"
-        id="baotriForm">
+      <form method="post" class="p-3" style="display: none; border: 1px solid" id="baotriForm">
         <div class="form-group mb-3">
           <label for="feeSelect" class="form-label">Loại phí:</label>
           <select name="fee" id="feeSelect" class="form-select">
@@ -78,8 +75,7 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         <div>
           <label for="baoTri">Bảo trì <span style="font-size: 10px">tháng</span></label>
           <div style="display: flex">
-            <input type="date" id="baoTri" class="form-control" /><input id="month"
-              type="number" class="form-control" />
+            <input type="date" id="baoTri" class="form-control" /><input id="month" type="number" class="form-control" />
           </div>
         </div>
         <div>
@@ -90,16 +86,12 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         </div>
         <button class="btn btn-primary mt-3 mb-3">Thêm lịch bảo trì</button>
       </form>
-      <div id="tableExample3"
-        data-list='{"valueNames":["noidung","thoigian","nhanvien","action","loai"],"page":10,"pagination":true}'>
+      <div id="tableExample3" data-list='{"valueNames":["noidung","thoigian","nhanvien","action","loai"],"page":10,"pagination":true}'>
         <div class="row justify-content-end g-0">
           <div class="col-auto col-sm-5 mb-3">
             <form>
-              <div class="input-group"><input
-                  class="form-control form-control-sm shadow-none search" type="search"
-                  placeholder="Search..." aria-label="search" />
-                <div class="input-group-text bg-transparent"><span
-                    class="fa fa-search fs-10 text-600"></span></div>
+              <div class="input-group"><input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
+                <div class="input-group-text bg-transparent"><span class="fa fa-search fs-10 text-600"></span></div>
               </div>
             </form>
           </div>
@@ -124,8 +116,7 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
                   item.time) %></td>
                 <td class="nhanvien">
                   <% item.maintenanceActions.forEach(function(action) { %>
-                  <img src="/images/avatar/<%=  action.staff.avatar %>" alt height="30px"
-                    width="30px" style="border-radius: 50%" />
+                  <img src="/images/avatar/<%=  action.staff.avatar %>" alt height="30px" width="30px" style="border-radius: 50%" />
                   <%= action.staff.full_name %>
                   <br />
                   <br />
@@ -142,7 +133,6 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
                       <span class=" badge rounded badge-subtle-warning false">
                         Chưa bảo trì
                       </span>
-
                       <% } else {
                       let allCompleted = item.maintenanceActions.every(function(action) {
                       return action.status != null;
@@ -178,12 +168,8 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
           </table>
 
         </div>
-        <div class="d-flex justify-content-center mt-3"><button
-            class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous"
-            data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
-          <ul class="pagination mb-0"></ul><button
-            class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next"
-            data-list-pagination="next"><span class="fas fa-chevron-right">
+        <div class="d-flex justify-content-center mt-3"><button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+          <ul class="pagination mb-0"></ul><button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next"><span class="fas fa-chevron-right">
             </span></button>
         </div>
       </div>
@@ -191,6 +177,46 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
   </div>
 </div>
 <script>
+  const input = document.querySelector('#timepickerwarranty');
+  const input2 = document.querySelector('#maintenanceFit');
+  const form = document.querySelector('#formAddWarranty');
+  const form2 = document.querySelector('#formAddmaintenanceFit');
+  form2.addEventListener('submit', function(e) {
+
+    const [start, end] = input2.value.split(' to ');
+    const startInput = document.createElement('input');
+    startInput.type = 'hidden';
+    startInput.name = 'maintenanceFitStart';
+    startInput.value = formatDate(start);
+    const endInput = document.createElement('input');
+    endInput.type = 'hidden';
+    endInput.name = 'maintenanceFitEnd';
+    endInput.value = formatDate(end);
+    console.log(1233333);
+    form2.appendChild(startInput);
+    form2.appendChild(endInput);
+  });
+  form.addEventListener('submit', function(e) {
+
+    const [start, end] = input.value.split(' to ');
+    const startInput = document.createElement('input');
+    startInput.type = 'hidden';
+    startInput.name = 'warrantyStart';
+    startInput.value = formatDate(start);
+    const endInput = document.createElement('input');
+    endInput.type = 'hidden';
+    endInput.name = 'warrantyEnd';
+    endInput.value = formatDate(end);
+    form.appendChild(startInput);
+    form.appendChild(endInput);
+  });
+
+  function formatDate(str) {
+    const [day, month, year] = str.split('/');
+    return `${year}-${month}-${day}`;
+  }
+
+
   document.addEventListener('DOMContentLoaded', function() {
     const today = new Date()
     const threeDaysFromNow = new Date(today)
@@ -282,13 +308,13 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         '<div class="modal-body">' +
         '<div >' +
 
-          `<div class="form-group mb-3">
+        `<div class="form-group mb-3">
           <label for="feeSelect" class="form-label">Loại phí:</label>
           <select name="fee" id="feeSelect" class="form-select">
             <option selected value="1">Mất phí</option>
             <option value="0">Miễn phí</option>
           </select>
-        </div>`+
+        </div>` +
 
         '<div class="form-group">' +
         '<label for="date-time">Chọn thời gian bảo trì:</label>' +
@@ -448,8 +474,8 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
   function updateWarrantyBadge() {
     const warrantyBadge = document.getElementById('warrantyBadge')
     const addmaintenanceFit = document.getElementById('addmaintenanceFit')
-    const warrantyDate = new Date('<%= project.warranty %>')
-    const addmaintenanceFitDate = new Date('<%= project.maintenanceFit %>')
+    const warrantyDate = new Date('<%= project.warrantyEnd %>')
+    const addmaintenanceFitDate = new Date('<%= project.maintenanceFitEnd %>')
     const currentDate = new Date()
     if (warrantyDate > currentDate) {
       warrantyBadge.className = 'badge rounded badge-subtle-success false'

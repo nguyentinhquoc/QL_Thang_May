@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common'
-import { CreateNotificationDto } from './dto/create-notification.dto'
-import { UpdateNotificationDto } from './dto/update-notification.dto'
-import { Notification } from './entities/notification.entity'
-import { Repository } from 'typeorm'
-import { InjectRepository } from '@nestjs/typeorm'
+import {Injectable} from '@nestjs/common'
+import {CreateNotificationDto} from './dto/create-notification.dto'
+import {UpdateNotificationDto} from './dto/update-notification.dto'
+import {Notification} from './entities/notification.entity'
+import {Repository} from 'typeorm'
+import {InjectRepository} from '@nestjs/typeorm'
 @Injectable()
 export class NotificationService {
   constructor (
@@ -18,16 +18,15 @@ export class NotificationService {
       .createQueryBuilder('notification')
       .innerJoinAndSelect('notification.staff', 'staff')
       .innerJoinAndSelect('notification.project', 'project')
-      .where('staff.id = :id', { id })
+      .where('staff.id = :id', {id})
       .orderBy('notification.createdAt', 'DESC')
-      .limit(6)
       .getMany()
   }
   async countUnreadNotifications (staffId: number): Promise<number> {
     return this.notificationRepository
       .createQueryBuilder('notification')
       .innerJoin('notification.staff', 'staff')
-      .where('staff.id = :staffId', { staffId })
+      .where('staff.id = :staffId', {staffId})
       .andWhere('notification.isRead = false')
       .getCount()
   }
@@ -38,7 +37,7 @@ export class NotificationService {
     return `This action returns a #${id} notification`
   }
   updateIsRead (id: number) {
-    return this.notificationRepository.update(id, { isRead: true })
+    return this.notificationRepository.update(id, {isRead: true})
   }
   remove (id: number) {
     return `This action removes a #${id} notification`

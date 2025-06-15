@@ -26,7 +26,7 @@ return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
           <h4 class="mb-1 text-white">Yêu cầu cập nhập dữ liệu công trình</h4>
         </div>
       </a>
-      <div class="card card-body mhOver">
+      <div class="card card-body mhOver"  style="height: 450px;">
         <% projectEdits.forEach(function(projectEdit, index) { %>
         <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4" href="/project/checkEdit/<%= projectEdit.id %>">
           <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
@@ -47,7 +47,7 @@ return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
           <h4 class="mb-1 text-white">Lịch bảo trì sắp tới</h4>
         </div>
       </a>
-      <div class="card card-body mhOver">
+      <div class="card card-body mhOver" style="height: 450px;">
         <% maintenanceComing.forEach(function(item, index) { %>
         <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4" href="/maintenance/project/<%= item.project && item.project.id ? item.project.id : '' %>">
           <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
@@ -74,7 +74,7 @@ return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
           <h4 class="mb-1 text-white">Yêu cầu thêm bảo trì</h4>
         </div>
       </a>
-      <div class="card card-body mhOver">
+      <div class="card card-body mhOver" style="height: 450px;">
         <% maintenanceYc.forEach(function(item, index) { %>
         <div class="mb-2">
           <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4" href="/maintenance/project/<%= item.project && item.project.id ? item.project.id : '' %>">
@@ -106,7 +106,7 @@ return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
           <h4 class="mb-1 text-white">Yêu cầu xác nhận công việc đã bảo trì</h4>
         </div>
       </a>
-      <div class="card card-body mhOver">
+      <div class="card card-body mhOver" style="height: 450px;">
         <% maintenanceYcHt.forEach(function(item, index) { %>
         <div class="mb-2">
           <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4" href="/maintenance/project/<%= item.project && item.project.id ? item.project.id : '' %>">

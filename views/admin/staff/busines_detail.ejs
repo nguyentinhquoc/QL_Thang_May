@@ -46,71 +46,7 @@
   </form>
   <% } %>
 </div>
-<div class="card mt-3 p-3">
-  <h5> Thống kê số lượng thang theo năm </h5>
 
-  <select id="yearSelect" class="form-control" style="width: fit-content;">
-  </select>
-  <canvas id="myChart" width="400" height="200"></canvas>
-</div>
-<script>
-  const data = JSON.parse('<%- JSON.stringify(staffsBusines) %>');
-  data.reverse()
-  const years = [...new Set(data.map(item => item.year))];
-  years.reverse()
-  const yearSelect = document.getElementById('yearSelect');
-  years.forEach(year => {
-    const option = document.createElement('option');
-    option.value = year;
-    option.textContent = year;
-    yearSelect.appendChild(option);
-  });
-  // Chọn năm mặc định
-  let selectedYear = years[0];
-  const chartData = filterDataByYear(selectedYear);
-  const myChart = new Chart(document.getElementById('myChart').getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: chartData.months,
-      datasets: [{
-        label: `Số dự án theo năm`,
-        data: chartData.counts,
-        backgroundColor: 'rgba(75, 192, 192)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-
-  // Hàm lọc dữ liệu theo năm
-  function filterDataByYear(year) {
-    const filteredData = data.filter(item => item.year == year);
-    console.log(filteredData);
-    const months = filteredData.map(item => `Tháng ${item.month}`);
-    const counts = filteredData.map(item => item.count);
-    return {
-      months,
-      counts
-    };
-  }
-  // Lắng nghe sự kiện chọn năm từ dropdown
-  yearSelect.addEventListener('change', (event) => {
-    selectedYear = event.target.value;
-    const newData = filterDataByYear(selectedYear);
-    myChart.data.labels = newData.months;
-    myChart.data.datasets[0].data = newData.counts;
-    selectedYear = selectedYear;
-    myChart.update();
-  });
-</script>
 <div class="card mt-3 p-3">
   <h5>Thống kê số lượng dự án theo tháng</h5>
   <div class="tab-pane preview-tab-pane active" role="tabpanel"

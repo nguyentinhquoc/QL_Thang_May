@@ -14,24 +14,24 @@ import {
 export class MaintenanceAction {
   @PrimaryGeneratedColumn()
   id: number
-  @Column({ default: true })
+  @Column({default: true})
   confirmSuccess: boolean
-  @Column({ default: null, nullable: true })
+  @Column({default: null, nullable: true})
   status: Date
-  @Column({ nullable: true })
+  @Column({nullable: true})
   weight: number
   @CreateDateColumn()
   createdAt: Date
-  @Column({ nullable: true })
+  @Column({type: 'text', nullable: true})
   feedback: string
-  @Column('json', { nullable: true })
+  @Column('json', {nullable: true})
   image: string
   @UpdateDateColumn()
   updatedAt: Date
   @DeleteDateColumn()
   deletedAt?: Date
-  @ManyToOne(() => Staff, staff => staff.maintenanceActions)
+  @ManyToOne(() => Staff, (staff) => staff.maintenanceActions)
   staff: Staff
-  @ManyToOne(() => Maintenance, maintenance => maintenance.maintenanceActions)
+  @ManyToOne(() => Maintenance, (maintenance) => maintenance.maintenanceActions)
   maintenance: Maintenance
 }
