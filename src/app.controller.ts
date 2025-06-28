@@ -27,9 +27,13 @@ export class AppController {
   @Post('forgot-password')
   @SetMetadata('isPublic', true)
   @Render('forgot-password')
-  forgotPasswordP (@Body('email') email: string) {
-    console.log(email)
-    return {}
+  async forgotPasswordP (@Body('email') email: string) {
+    const ischeck = await this.staffsService.forgotPassword(email)
+    if (ischeck) {
+      return {message: 'Mât khẩu mới đã đươc gửi về email !', status: 'success'}
+    } else {
+      return {message: 'Email chưa đươc đang ký !', status: 'error'}
+    }
   }
 
   @Get('quy-trinh-lam-viec')
