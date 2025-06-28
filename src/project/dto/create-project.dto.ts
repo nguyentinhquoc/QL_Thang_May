@@ -85,10 +85,10 @@ export class CreateProjectDto {
   city: string
   district: string
   ward: string
-
 }
 export class CreateProjectMaintenanceDto
  {
+  type:string
   @IsNotEmpty({message: 'Tên đầy đủ không được để trống'})
   @MaxLength(255, {message: 'Tên đầy đủ không được vượt quá 255 ký tự'})
   full_name: string

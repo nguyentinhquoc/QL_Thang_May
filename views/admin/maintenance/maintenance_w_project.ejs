@@ -4,33 +4,28 @@
     display: none;
   }
 </style>
-<% function formatDate(dateString) { const date=new Date(dateString); const
-day=String(date.getDate()).padStart(2, '0'
-); const month=String(date.getMonth() + 1).padStart(2, '0' ); const
-year=date.getFullYear(); const
-hours=String(date.getHours()).padStart(2, '0' ); const
-minutes=String(date.getMinutes()).padStart(2, '0' ); const
-seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${year}`;
-} %>
+<% function formatDate(dateString) { const date=new Date(dateString); const day=String(date.getDate()).padStart(2, '0'
+); const month=String(date.getMonth() + 1).padStart(2, '0' ); const year=date.getFullYear(); const
+hours=String(date.getHours()).padStart(2, '0' ); const minutes=String(date.getMinutes()).padStart(2, '0' ); const
+seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${year}`; } %>
 <div class="card p-3">
   <div>
     <div class="m-b-30">
       <h2>Thông tin bảo hành bảo trì</h2>
       <div class="d-flex justify-content-between">
-        <span> <strong> Chủ công trình: </strong> <%= project.full_name %></span>
+        <div>
+          <span> <strong> Chủ công trình: </strong> <%= project.full_name %></span>
+          <p><a href="/history-maintenance/<%= project.id %>">Chi tiết lịch sử bảo trì</a></p>
+        </div>
         <div>
           <div class="m-2">
-            <span id="warrantyBadge" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-success false " onclick="toggleWarrantyStyle()"> <strong> Bảo hành: </strong>
-              <% if (!project.warrantyStart && !project.warrantyEnd) { %>
-              Chưa cài đặt
-              <% } else { %>
-              <%= formatDate(project.warrantyStart) %> - <%=
-              formatDate(project.warrantyEnd) %>
-              <% } %>
+            <span id="warrantyBadge" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-success false " onclick="toggleWarrantyStyle()">
+              <strong> Bảo hành: </strong>
+              <% if (!project.warrantyStart && !project.warrantyEnd) { %> Chưa cài đặt <% } else { %> <%=
+              formatDate(project.warrantyStart) %> - <%= formatDate(project.warrantyEnd) %> <% } %>
             </span>
             <div id="add-warranty" <% if(project.warrantyStart ){%> style="display: none;" <%}%>>
-              <form
-                action="/project/addWarranty/<%= project.id %>" class="d-flex" method="post" id="formAddWarranty">
+              <form action="/project/addWarranty/<%= project.id %>" class="d-flex" method="post" id="formAddWarranty">
               <input class="form-control datetimepicker" id="timepickerwarranty" type="text" placeholder="dd/mm/yy to dd/mm/yy" data-options='{"mode":"range","dateFormat":"d/m/y","disableMobile":true}' />
               <!-- <input class="form-control datetimepicker flatpickr-input" id="datepicker" type="text" placeholder="dd/mm/yy" data-options='{"disableMobile":true}' readonly="readonly" name="warrantyStart" style="width: 140px" /> -->
               <button class="btn btn-primary">Xác nhận</button>
@@ -38,32 +33,31 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
             </div>
           </div>
 
-          <div class="m-2">
-            <span id="addmaintenanceFit" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-success false " onclick="toggleWarrantyStyle2()"> <strong> Bảo trì: </strong>
-              <% if (!project.maintenanceFitStart && !project.maintenanceFitEnd) { %>
-              Chưa cài đặt
-              <% } else { %>
-              <%= formatDate(project.maintenanceFitStart) %> - <%=
-                formatDate(project.maintenanceFitEnd) %>
-              <% } %>
-            </span>
-            <div id="add-maintenanceFit" <% if(project.maintenanceFitStart ){%> style="display: none;" <%}%>>
-              <form id="formAddmaintenanceFit"
-                action="/project/addmaintenanceFit/<%= project.id %>" class="d-flex" method="post">
-              <input class="form-control datetimepicker" id="maintenanceFit" type="text" placeholder="dd/mm/yy to dd/mm/yy" data-options='{"mode":"range","dateFormat":"d/m/y","disableMobile":true}' />
-              <button class="btn btn-primary">Xác nhận</button>
-              </form>
-            </div>
-          </div>
+          <div class="m-2" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;">
+              <% if (historyMaintenance.length === 0) { %>
+              <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;"  class="badge rounded badge-subtle-danger false" id="extension-maintenance">Bảo trì: Gia hạn bảo trì</p>
+              <% } else {
+                function toDateOnly(date) {
+                   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                }
+                const now =toDateOnly(  new Date());
+                const startDate = toDateOnly( new Date(historyMaintenance[0].timeStart));
+                const endDate = toDateOnly( new Date(historyMaintenance[0].timeEnd));
+                if (now >= startDate && now <= endDate) { %>
 
+                  <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;"  class="badge rounded badge-subtle-success false">Bảo trì:
+              <%= formatDate(historyMaintenance[0].timeStart) %> - <%= formatDate(historyMaintenance[0].timeEnd) %>
+                  </p>
+              <% } else { %>
+               <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;"  class="badge rounded badge-subtle-danger false" id="extension-maintenance">Bảo trì: Gia hạn bảo trì</p>
+              <% }
+              } %>
+            </span>
+          </div>
         </div>
       </div>
-      <button class="btn btn-primary mt-3 mb-3" id="add-maintenance">
-        + Trực sửa chữa và sự cố
-      </button>
-      <button class="btn btn-primary mt-3 mb-3" id="AddBaotriBtn">
-        + Gia hạn bảo trì
-      </button>
+      <button class="btn btn-primary mt-3 mb-3" id="add-maintenance">+ Thêm một bảo trì</button>
+      <button class="btn btn-primary mt-3 mb-3" id="AddBaotriBtn">+ Thêm nhiều lịch bảo trì</button>
       <form method="post" class="p-3" style="display: none; border: 1px solid" id="baotriForm">
         <div class="form-group mb-3">
           <label for="feeSelect" class="form-label">Loại phí:</label>
@@ -80,7 +74,6 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         </div>
         <div>
           Lịch bảo trì dự kiến
-
           <div id="result"></div>
           <p class="add-btn btn btn-primary" onclick="addInput()">+</p>
         </div>
@@ -90,7 +83,8 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         <div class="row justify-content-end g-0">
           <div class="col-auto col-sm-5 mb-3">
             <form>
-              <div class="input-group"><input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
+              <div class="input-group">
+                <input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
                 <div class="input-group-text bg-transparent"><span class="fa fa-search fs-10 text-600"></span></div>
               </div>
             </form>
@@ -101,8 +95,7 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
             <thead class="bg-200">
               <tr>
                 <th class="text-900 sort" data-sort="noidung">Nội dung bảo trì</th>
-                <th class="text-900 sort" data-sort="thoigian">Thời gian bảo trì dự
-                  tính</th>
+                <th class="text-900 sort" data-sort="thoigian">Thời gian bảo trì dự tính</th>
                 <th class="text-900 sort" data-sort="nhanvien">Nhân viên thực hiện</th>
                 <th class="text-900 sort" data-sort="action">Trạng thái</th>
                 <th class="text-900 sort" data-sort="loai">Loại</th>
@@ -112,8 +105,7 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
               <% maintenanceWProjects.forEach(function(item,index) { %>
               <tr>
                 <td class="noidung"><%=item.reason%></td>
-                <td class="thoigian"><%= formatDate(
-                  item.time) %></td>
+                <td class="thoigian"><%= formatDate( item.time) %></td>
                 <td class="nhanvien">
                   <% item.maintenanceActions.forEach(function(action) { %>
                   <img src="/images/avatar/<%=  action.staff.avatar %>" alt height="30px" width="30px" style="border-radius: 50%" />
@@ -121,38 +113,31 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
                   <br />
                   <br />
                   <% }) %>
-                  <p class="btn btn-primary add-staff" idValue="<%=item.id%>">
-                    + Thêm nhân viên
-                  </p>
+                  <p class="btn btn-primary add-staff" idValue="<%=item.id%>">+ Thêm nhân viên</p>
                 </td>
                 <td class="action" style="width: fit-content">
                   <p style="width: fit-content" id="maintenance-<%= index %>" class>
-                    <span class="font__weight-semibold">
-                      <% if (item.maintenanceActions.length
-                      === 0) { %>
-                      <span class=" badge rounded badge-subtle-warning false">
-                        Chưa bảo trì
+                      <span class="font__weight-semibold">
+                        <% if (item.maintenanceActions.length === 0) { %>
+                        <span class="badge rounded badge-subtle-warning false">
+                          Chưa bảo trì
+                        </span>
+                        <% } else { let allCompleted = true
+                        item.maintenanceActions.forEach(element => {
+                        if(element.status == null) allCompleted = false
+                        });
+                        %>
+                        <% if(allCompleted) { %>
+                        <span class="badge rounded badge-subtle-success false">
+                          Đã hoàn thành
+                        </span>
+                        <% } else { %>
+                        <span class="badge rounded badge-subtle-danger false">
+                          Chưa hoàn thành
+                        </span>
+                        <% } %> <% } %>
                       </span>
-                      <% } else {
-                      let allCompleted = item.maintenanceActions.every(function(action) {
-                      return action.status != null;
-                      });
-                      %>
-
-                      <% if(allCompleted) { %>
-                      <span class=" badge rounded badge-subtle-success false">
-                        Đã hoàn
-                        thành
-                      </span>
-
-                      <% } else { %>
-                      <span class=" badge rounded badge-subtle-danger false">
-                        Chưa hoàn thành
-                      </span>
-
-                      <% } %> <% } %>
-                    </span>
-                  </p>
+                    </p>
                 </td>
                 <td class="loai">
                   <% if(item.fee) { %>
@@ -163,14 +148,17 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
                 </td>
               </tr>
               <% }); %>
-
             </tbody>
           </table>
-
         </div>
-        <div class="d-flex justify-content-center mt-3"><button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
-          <ul class="pagination mb-0"></ul><button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next"><span class="fas fa-chevron-right">
-            </span></button>
+        <div class="d-flex justify-content-center mt-3">
+          <button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev">
+            <span class="fas fa-chevron-left"></span>
+          </button>
+          <ul class="pagination mb-0"></ul>
+          <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next">
+            <span class="fas fa-chevron-right"> </span>
+          </button>
         </div>
       </div>
     </div>
@@ -178,24 +166,8 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
 </div>
 <script>
   const input = document.querySelector('#timepickerwarranty');
-  const input2 = document.querySelector('#maintenanceFit');
   const form = document.querySelector('#formAddWarranty');
-  const form2 = document.querySelector('#formAddmaintenanceFit');
-  form2.addEventListener('submit', function(e) {
 
-    const [start, end] = input2.value.split(' to ');
-    const startInput = document.createElement('input');
-    startInput.type = 'hidden';
-    startInput.name = 'maintenanceFitStart';
-    startInput.value = formatDate(start);
-    const endInput = document.createElement('input');
-    endInput.type = 'hidden';
-    endInput.name = 'maintenanceFitEnd';
-    endInput.value = formatDate(end);
-    console.log(1233333);
-    form2.appendChild(startInput);
-    form2.appendChild(endInput);
-  });
   form.addEventListener('submit', function(e) {
 
     const [start, end] = input.value.split(' to ');
@@ -243,10 +215,10 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         '<div class="modal-header">' +
         '<div class="d-flex justify-content-between w-100" >' +
         `<h5 class="modal-title" id="newPositionModalLabel">Chọn người bảo trì</h5>
-        <input type="hidden" id="staffId" name="staff">
-        <input type="hidden" value="${id}" name="maintenance">
-        ` +
-        '<button class="btn btn-primary clickXN" disable onclick="clickXN()" disabled>Xác nhận</button>' +
+          <input type="hidden" id="staffId" name="staff">
+          <input type="hidden" value="${id}" name="maintenance">
+          ` +
+        '<button class="btn btn-primary clickXN" disable  disabled>Xác nhận</button>' +
         '</div>' +
         '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
         '</div>' +
@@ -256,27 +228,27 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         '<div class="form-group">' +
         '<label for="date-time">Chọn trọng số:</label>' +
         `<select name="weight" id="weight-select" class="form-control">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-        </select>
-        ` +
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+          ` +
         '</div>' +
         '<div class="form-group">' +
         '<label for="staff">Thêm nhân viên:</label>' +
         '<input  type="text" class="form-control" id="staff-search" oninput="filterList()" autocomplete="off">' +
         `<ul id="itemList">
-  <% staffs.forEach(function(staff) { %>
-        <li class="btn w-100 infor-staff" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>')"><%=staff.full_name%> - <%=staff.number_phone%></li>
-        <% }) %>
-</ul>`
+    <% staffs.forEach(function(staff) { %>
+          <li class="btn w-100 infor-staff" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>')"><%=staff.full_name%> - <%=staff.number_phone%></li>
+          <% }) %>
+  </ul>`
       '</div>' +
       '</div>' +
       '</div>' +
@@ -309,12 +281,12 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         '<div >' +
 
         `<div class="form-group mb-3">
-          <label for="feeSelect" class="form-label">Loại phí:</label>
-          <select name="fee" id="feeSelect" class="form-select">
-            <option selected value="1">Mất phí</option>
-            <option value="0">Miễn phí</option>
-          </select>
-        </div>` +
+            <label for="feeSelect" class="form-label">Loại phí:</label>
+            <select name="fee" id="feeSelect" class="form-select">
+              <option selected value="1">Mất phí</option>
+              <option value="0">Miễn phí</option>
+            </select>
+          </div>` +
 
         '<div class="form-group">' +
         '<label for="date-time">Chọn thời gian bảo trì:</label>' +
@@ -324,10 +296,10 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         '<label for="staff">Nội dung bảo trì:</label>' +
         '<input disabled type="text" class="form-control" id="staff-search" oninput="onpenSubmit()" name="reason" autocomplete="off">' +
         `<ul id="itemList">
-  <% staffs.forEach(function(staff) { %>
-        <li class="btn w-100 infor-staff" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>')"><%=staff.full_name%> - <%=staff.number_phone%></li>
-        <% }) %>
-</ul>`
+    <% staffs.forEach(function(staff) { %>
+          <li class="btn w-100 infor-staff" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>')"><%=staff.full_name%> - <%=staff.number_phone%></li>
+          <% }) %>
+  </ul>`
       '</div>' +
       '</div>' +
       '</div>' +
@@ -341,7 +313,78 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
       $('#date-time').val('')
       $('#staff-search').val('')
     })
+    $('#extension-maintenance').click(function() {
+      $('#newPositionModal').remove()
+      var id = $(this).attr('idValue')
+      var form =
+        '<form action="/history-maintenance" method="POST" class="modal fade" id="newPositionModal" tabindex="-1" aria-labelledby="newPositionModalLabel" aria-hidden="true">' +
+        '<div class="modal-dialog">' +
+        '<div class="modal-content">' +
+        '<div class="modal-header">' +
+        '<input type="hidden" id="staffId" name="project" value= "<%= project.id %>">' +
+        '<div class="d-flex justify-content-between w-100" >' +
+        `<h5 class="modal-title" id="newPositionModalLabel">Gia hạn bảo trì</h5>` +
+        '<button class="btn btn-primary clickXN" disable onclick="clickXN()" >Xác nhận</button>' +
+        '</div>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<div >' +
+        `<div class="form-group mb-3" id="fee-group">
+            <label for="feeSelect" class="form-label">Loại phí:</label>
+            <select name="free" id="feeSelect" class="form-select">
+              <option selected value="false">Mất phí</option>
+              <option value="true">Miễn phí</option>
+            </select>
+          </div>` +
+        `<div class="form-group mb-3">
+            <label  class="form-label">Phí bảo trì:</label>
+            <input type="text" class="form-control" value="0" onkeyup="formatCurrency(this)" >
+            <input type="hidden" class="form-control" id="price_value" name="price" value="0">
+          </div>` +
+        '<div class="form-group">' +
+        '<label for="date-time">Thời gian bắt đầu:</label>' +
+        '<input type="date" class="form-control" id="date-time" name="timeStart" >' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label for="date-time">Thời gian kết thúc:</label>' +
+        '<input type="date" class="form-control" id="date-time" name="timeEnd" >' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label for="date-time">Số lần bảo trì:</label>' +
+        '<input type="number" class="form-control" name="countMaintenance" >' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</form>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>'
+      $('body').append(form)
+      $('#newPositionModal').modal('show')
+      $('#date-time').val('')
+      $('#staff-search').val('')
+      $('#feeSelect').on('change', function() {
+        if ($(this).val() === 'true') {
+          $('#fee-group').hide();
+        } else {
+          $('#fee-group').show();
+        }
+      });
+      if ($('#feeSelect').val() === 'true') {
+        $('#fee-group').hide();
+      } else {
+        $('#fee-group').show();
+      }
+    })
   })
+
+  function formatCurrency(input) {
+    let value = input.value.replace(/\D/g, '');
+    input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    document.getElementById('price_value').value = value;
+  }
 
   function pushStaff(value, id) {
     if ($('#date-time').val() != '') {
@@ -410,12 +453,12 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         currentDate.setMonth(currentDate.getMonth() + monthInterval)
         if (currentDate <= endDate) {
           resultHtml.push(`<div class="input-group" style="margin-bottom: 2px;"> <input type="date" class="form-control" name="timeMaintenance[]" value="${currentDate
-            .toISOString()
-            .slice(
-              0,
-              10,
-            )}"><input type="text" value="Bảo trì định kì" name="reason[]" class="form-control" >
- <span class="remove-btn btn btn-danger" onclick="removeInput(this)">x</span></div> `)
+              .toISOString()
+              .slice(
+                0,
+                10,
+              )}"><input type="text" value="Bảo trì định kì" name="reason[]" class="form-control" >
+   <span class="remove-btn btn btn-danger" onclick="removeInput(this)">x</span></div> `)
         }
       }
       resultDiv.innerHTML = resultHtml.join('')
@@ -433,7 +476,9 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
     const newInput = document.createElement('div')
     newInput.style.marginBottom = '2px'
     newInput.className = 'input-group'
-    newInput.innerHTML = `<input type="date" class="form-control" name="timeMaintenance[]"> <input type="text" value="Bảo trì định kì" name="reason[]" class="form-control" > <span class="remove-btn btn btn-danger" onclick="removeInput(this)">x</span>`
+    newInput.innerHTML = `<input type="date" class="form-control" name="timeMaintenance[]
+      "> <input type="text" value="Bảo trì định kì" name="reason[]" class="form-control" >
+      <span class="remove-btn btn btn-danger" onclick="removeInput(this)">x</span>`
     resultDiv.appendChild(newInput)
   }
 
@@ -461,15 +506,15 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
     }
   }
 
-  function toggleWarrantyStyle2() {
-    const warrantyDiv = document.getElementById('add-maintenanceFit')
+  // function toggleWarrantyStyle2() {
+  //   const warrantyDiv = document.getElementById('add-maintenanceFit')
 
-    if (warrantyDiv.style.display === 'none') {
-      warrantyDiv.style.display = 'block'
-    } else {
-      warrantyDiv.style.display = 'none'
-    }
-  }
+  //   if (warrantyDiv.style.display === 'none') {
+  //     warrantyDiv.style.display = 'block'
+  //   } else {
+  //     warrantyDiv.style.display = 'none'
+  //   }
+  // }
 
   function updateWarrantyBadge() {
     const warrantyBadge = document.getElementById('warrantyBadge')
@@ -481,11 +526,6 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
       warrantyBadge.className = 'badge rounded badge-subtle-success false'
     } else {
       warrantyBadge.className = 'badge rounded badge-subtle-danger false'
-    }
-    if (addmaintenanceFitDate > currentDate) {
-      addmaintenanceFit.className = 'badge rounded badge-subtle-success false'
-    } else {
-      addmaintenanceFit.className = 'badge rounded badge-subtle-danger false'
     }
   }
   updateWarrantyBadge()

@@ -1,3 +1,4 @@
+import { HistoryMaintenance } from 'src/history-maintenance/entities/history-maintenance.entity'
 import { MaintenanceAction } from 'src/maintenance_actions/entities/maintenance_action.entity'
 import { Project } from 'src/project/entities/project.entity'
 import { Staff } from 'src/staffs/entities/staff.entity'
@@ -34,6 +35,8 @@ export class Maintenance {
   deletedAt?: Date
   @ManyToOne(() => Project, project => project.maintenances)
   project: Project
+  @ManyToOne(() => HistoryMaintenance, historyMaintenance => historyMaintenance.maintenance)
+  historyMaintenance: HistoryMaintenance
   @OneToMany(
     () => MaintenanceAction,
     maintenanceAction => maintenanceAction.maintenance

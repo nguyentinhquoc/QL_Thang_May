@@ -18,7 +18,7 @@ export class CreateProjectEditDto {
   @IsPhoneNumber('VN')
   number_phone: string
   @IsOptional()
-  @IsEmail()
+  // @IsEmail()
   @MaxLength(255)
   email?: string
   @IsOptional()

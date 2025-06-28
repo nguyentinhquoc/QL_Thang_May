@@ -193,8 +193,7 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
                 <div class="p-4 pb-0">
                   <form class="myForm2" method="post" action="/maintenance/add">
                     <div class="mb-3">
-                      <label class="col-form-label" for="recipient-name2">Thông
-                        tin:</label>
+                      <label class="col-form-label" for="recipient-name2">Thông tin công trình:</label>
                       <input class="form-control recipient-name2" type="text"
                         oninput="filterList2(event)" />
                       <ul class="itemList itemList2">
@@ -204,9 +203,6 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
                           <%= project.full_name %>- <%= project.number_phone %>
                         </li>
                         <% }) %>
-                        <li class="btn w-100 infor-staff" onclick="clickProject2('!',0)">!
-                          Không có công trình
-                        </li>
                       </ul>
                     </div>
                     <div class="mb-3" id="recipient-nameProject2" style="display: none;">

@@ -13,6 +13,20 @@ export class PermisionService {
   create(createPermisionDto: CreatePermisionDto) {
     return 'This action adds a new permision';
   }
+  // Lấy ra quyền của nhân viên từ bảng nhiều-nhiều (giả sử staffs và permision là quan hệ many-to-many)
+  async checkPermision(idStaff: number, idPermision: number) {
+    // Tìm xem nhân viên này có quyền này không thông qua bảng liên kết many-to-many
+    const permision = await this.permisionRepository.findOne({
+      where: {
+        id: idPermision,
+        staffs: {
+          id: idStaff
+        }
+      },
+      relations: ['staffs']
+    });
+   return permision.staffs[0].status ? true : false
+  }
   async findAll() {
     const permissions = await this.permisionRepository.find({
       order: {
@@ -62,7 +76,6 @@ export class PermisionService {
     try {
       // Create query builder to insert relations
       const queryBuilder = this.permisionRepository.manager.createQueryBuilder();
-
       // For each permission ID, create a relation with the staff
       for (const permissionId of permissionIds) {
         await queryBuilder
@@ -74,7 +87,6 @@ export class PermisionService {
           })
           .execute();
       }
-
       return { success: true, message: 'Permissions assigned successfully' };
     } catch (error) {
       return { success: false, message: 'Failed to assign permissions', error };

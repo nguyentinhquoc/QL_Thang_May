@@ -8,12 +8,17 @@ import * as bcrypt from 'bcrypt'
 import {LoginDto} from './dto/create-staff-logindto'
 import {JwtService} from '@nestjs/jwt'
 import {relative} from 'path'
+import {NotificationService} from 'src/notification/notification.service'
+import {SendMailService} from '../send-mail/send-mail.service'
+import {MailerService} from '@nestjs-modules/mailer'
 @Injectable()
 export class StaffsService {
   constructor (
     @InjectRepository(Staff)
     private staffsRepository: Repository<Staff>,
     private jwtService: JwtService,
+    private sendMailService: SendMailService,
+    private mailerService: MailerService,
   ) {}
 
   findNhanTBBaoTri () {
@@ -135,7 +140,6 @@ export class StaffsService {
     return this.staffsRepository.findOne({where: {email}})
   }
   async login (loginDto: LoginDto) {
-    console.log('123333333333')
     const staff = await this.staffsRepository.findOne({
       where: {email: loginDto.email, status: true},
       relations: ['department', 'position'],
@@ -184,6 +188,10 @@ export class StaffsService {
       await this.staffsRepository.update(id, {status: newStatus})
     }
   }
+  async checkStatus (id: number) {
+    const staff = await this.staffsRepository.findOne({where: {id, status: true}})
+    return staff
+  }
   async findAllBusines () {
     const currentYear = new Date().getFullYear()
     const staffs = await this.staffsRepository.find({
@@ -202,5 +210,34 @@ export class StaffsService {
       }
     })
     return result
+  }
+  async forgotPassword (email: string) {
+    const staff = await this.staffsRepository.findOne({
+      where: {
+        email,
+      },
+    })
+    if (staff) {
+      const kyTu = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+      let passwordNew = ''
+      for (let i = 0; i < 8; i++) {
+        const randomIndex = Math.floor(Math.random() * kyTu.length)
+        passwordNew += kyTu[randomIndex]
+      }
+      const saltRounds = 10
+      const passwordNewHash = await bcrypt.hash(passwordNew, saltRounds)
+      await this.staffsRepository.update(+staff.id, {password: passwordNewHash})
+      const nameStaff = staff.full_name
+      const contentSendMail = await this.sendMailService.notificationForgotPassword(nameStaff, email, passwordNew)
+      this.mailerService
+        .sendMail(contentSendMail)
+        .then(() => {})
+        .catch((error) => {
+          return {message: 'Gửi mail thất bại!', error: error.message}
+        })
+      return true
+    } else {
+      return false
+    }
   }
 }

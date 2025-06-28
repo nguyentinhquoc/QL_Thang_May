@@ -45,28 +45,28 @@
           </div>
 
           <div class="form-group col-12">
-            <label for="city">Tỉnh/Thành phố:</label>
+            <label for="city">Tỉnh/Thành phố: <span style="color: red">*</span></label>
             <select required id="city" name="city" class="form-control">
               <option value="" selected disabled>Chọn tỉnh thành</option>
             </select>
           </div>
 
           <div class="form-group col-12">
-            <label for="district">Quận/Huyện:</label>
-            <select id="district" name="district" class="form-control">
+            <label for="district">Quận/Huyện: <span style="color: red">*</span></label>
+            <select required id="district" name="district" class="form-control">
               <option value="" selected disabled>Chọn quận huyện</option>
             </select>
           </div>
 
           <div class="form-group col-12">
-            <label for="ward">Phường/Xã:</label>
-            <select id="ward" name="ward" class="form-control">
+            <label for="ward">Phường/Xã: <span style="color: red">*</span></label>
+            <select required id="ward" name="ward" class="form-control">
               <option value="" selected disabled>Chọn phường xã</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="address">Địa chỉ lắp đặt cụ thể <span style="color: red">*</span></label>
+            <label for="address">Địa chỉ lắp đặt cụ thể </label>
             <textarea id="address" placeholder="Enter Address" name="address" class="form-control"><%= data.address %></textarea>
           </div>
           <div class="d-flex" style="justify-content: space-between">
@@ -83,7 +83,7 @@
               </script>
             </div>
             <div class="form-group col-5">
-              <label for="tax">Thuế:</label>
+              <label for="tax">Thuế: <span style="color: red">*</span></label>
               <select id="tax" name="tax" class="form-control">
                 <option value disabled selected>Chọn</option>
                 <option value="Có">Có</option>
@@ -233,7 +233,6 @@
 
   function handleWorkflowChange(event) {
     let filteredSteps = workflowSteps.filter(step => Number(step.workflow.id) === Number(event.target.value));
-    console.log(filteredSteps);
   }
 
   function SubmitForm(e) {
@@ -244,9 +243,12 @@
       }
       return value
     })
-    $('#FormAdd').append(
-      `<input type="hidden" name="steps" value='${jsonString}'>`,
-    )
+    if (document.querySelector('#stepsJson')) {
+      document.querySelector('#stepsJson').remove()
+    }
+      $('#FormAdd').append(
+        `<input type="hidden" name="steps" id="stepsJson" value='${jsonString}'>`,
+      )
     document.getElementById('FormAdd').submit()
   }
 
@@ -288,6 +290,9 @@
       }
     }
   }
+  window.addEventListener('pageshow', function() {
+    stepsJson
+  });
   $(document).ready(function() {
     $('.step').slideUp()
     $('#workflow').change(function(e) {
@@ -373,7 +378,6 @@
       )
     })
     $('#newPositionModal').modal('hide')
-    console.log('ArrayObj', ArrayObj)
   }
   // XỬ LÝ OBJ
   function Step(idStaffCheck, idStep, img, weight) {

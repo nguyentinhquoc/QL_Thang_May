@@ -26,17 +26,42 @@ return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
           <h4 class="mb-1 text-white">Yêu cầu cập nhập dữ liệu công trình</h4>
         </div>
       </a>
-      <div class="card card-body mhOver"  style="height: 450px;">
+      <div class="card card-body mhOver" style="height: 450px;">
         <% projectEdits.forEach(function(projectEdit, index) { %>
-        <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4" href="/project/checkEdit/<%= projectEdit.id %>">
-          <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
-            <h5 class="mb-1">Công trình: <%= projectEdit.project.full_name %></h5>
+        <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4 " href="/project/checkEdit/<%= projectEdit.id %>">
+          <div class=" mb-1 mb-md-0">
+            <h5 class="mb-1 d-flex flex-column flex-sm-row justify-content-between">Công trình: <%= projectEdit.project.full_name %> <i onclick="remove1('<%= projectEdit.id %>')" class="col-3 fas fa-trash"></i></h5>
           </div>
           <p class="mb-1">Người đề xuất: <%= projectEdit.staff.full_name %></p>
           <small class="text-500 dark__text-500"><%= formatDate(projectEdit.createdAt)
             %></small>
         </a>
         <% }); %>
+        <script>
+          function remove1(id){
+          event.preventDefault();
+          event.stopPropagation();
+          if (confirm('Bạn có chắc chắn muốn xóa yêu cầu cập nhật này?')) {
+            fetch(`/project-edit/delete/${id}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            })
+            .then(response => {
+              if (response.ok) {
+                location.reload();
+              } else {
+                alert('Có lỗi xảy ra khi xóa yêu cầu cập nhật');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Có lỗi xảy ra khi xóa yêu cầu cập nhật');
+            });
+          }
+          }
+        </script>
       </div>
     </div>
   </div>
@@ -183,21 +208,21 @@ return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
       }]
     },
     options: {
-  responsive: true,
-  scales: {
-    y: {
-      beginAtZero: true,
-      ticks: {
-        stepSize: 1, // Hiển thị nhãn cách nhau 1 đơn vị
-        callback: function(value) {
-          if (Number.isInteger(value)) {
-            return value; // Chỉ hiển thị số nguyên
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1, // Hiển thị nhãn cách nhau 1 đơn vị
+            callback: function(value) {
+              if (Number.isInteger(value)) {
+                return value; // Chỉ hiển thị số nguyên
+              }
+            }
           }
         }
       }
     }
-  }
-}
   });
 
   // Biểu đồ thứ hai: Tổng giá trị

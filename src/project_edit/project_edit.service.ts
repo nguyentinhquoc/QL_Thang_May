@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { CreateProjectEditDto } from './dto/create-project_edit.dto'
 import { UpdateProjectEditDto } from './dto/update-project_edit.dto'
 import { ProjectEdit } from './entities/project_edit.entity'
@@ -60,5 +60,14 @@ export class ProjectEditService {
       relations: ['staff', 'project']
     })
   }
+async remove(id: number) {
+  const projectEdit = await this.projectEditRepository.findOne({
+    where: { id }
+  });
+  if (!projectEdit) {
+    throw new NotFoundException('Project edit not found');
+  }
+  return await this.projectEditRepository.remove(projectEdit);
+}
 
 }

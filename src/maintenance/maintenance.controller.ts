@@ -22,9 +22,13 @@ import {diskStorage} from 'multer'
 import {extname} from 'path'
 import {Response, Request} from 'express'
 import {MaintenanceActionsService} from 'src/maintenance_actions/maintenance_actions.service'
+import { HistoryMaintenance } from 'src/history-maintenance/entities/history-maintenance.entity'
+import { HistoryMaintenanceService } from 'src/history-maintenance/history-maintenance.service'
+import { MaintenanceAction } from '../maintenance_actions/entities/maintenance_action.entity';
 @Controller('maintenance')
 export class MaintenanceController {
-  constructor (
+  constructor(
+    private readonly historyMaintenanceService: HistoryMaintenanceService,
     private readonly maintenanceService: MaintenanceService,
     readonly projectService: ProjectService,
     readonly maintenanceActionsService: MaintenanceActionsService,
@@ -42,7 +46,7 @@ export class MaintenanceController {
       }),
     }),
   )
-  async createYc2 (
+  async createYc2(
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: Request,
     @Res() res: Response,
@@ -105,7 +109,7 @@ export class MaintenanceController {
     }
   }
   @Post('add')
-  async createYc (@Res() res: Response, @Body() createMaintenanceDto: CreateMaintenanceDto) {
+  async createYc(@Res() res: Response, @Body() createMaintenanceDto: CreateMaintenanceDto) {
     createMaintenanceDto.fee = String(createMaintenanceDto.fee) === '1' ? true : false
     let confirmSuccess = false
     if (createMaintenanceDto.confirmSuccess == true) {
@@ -126,21 +130,21 @@ export class MaintenanceController {
     return res.redirect('back')
   }
   @Delete('confirmEr')
-  async confirmEr (@Res() res: Response, @Body('id') id: string) {
+  async confirmEr(@Res() res: Response, @Body('id') id: string) {
     const numericId = parseInt(id, 10)
     await this.maintenanceActionsService.ConfirmDelete(+numericId)
     await this.maintenanceService.ConfirmDelete(+numericId)
     return res.status(200).json({success: true, message: 'Success'})
   }
   @Patch('confirm')
-  async confirm (@Res() res: Response, @Body('id') id: string) {
+  async confirm(@Res() res: Response, @Body('id') id: string) {
     const numericId = parseInt(id, 10)
     await this.maintenanceService.updateConfirmSuccess(+numericId)
     await this.maintenanceActionsService.updateConfirmSuccess(+numericId)
     return res.status(200).json({success: true, message: 'Success'})
   }
   @Post()
-  async create (@Res() res: Response, @Body() createMaintenanceDto: CreateMaintenanceDto) {
+  async create(@Res() res: Response, @Body() createMaintenanceDto: CreateMaintenanceDto) {
     createMaintenanceDto.fee = String(createMaintenanceDto.fee) === '1' ? true : false
     await this.maintenanceService.create(createMaintenanceDto)
     return res.redirect('back')
@@ -148,7 +152,7 @@ export class MaintenanceController {
   @SetMetadata('permision', '8')
   @Get()
   @Render('admin/maintenance/maintenance')
-  async findAll (@Req() req: Request) {
+  async findAll(@Req() req: Request) {
     const token = req.cookies['token']
     const payload = await this.staffsService.payload(token)
     const inforAccount = await this.staffsService.findOne(payload.id)
@@ -166,15 +170,16 @@ export class MaintenanceController {
   }
   @Get('project/:idProject')
   @Render('admin/maintenance/maintenance_w_project')
-  async findAllWProject (@Param('idProject') idProject: string) {
+  async findAllWProject(@Param('idProject') idProject: string) {
     const maintenanceWProjects = await this.maintenanceService.findAllWProject(+idProject)
     const staffs = await this.staffsService.findAll()
     const project = await this.projectService.findOne(+idProject)
-    return {staffs, project, maintenanceWProjects, activeMenu: 'maintenance'}
+    const historyMaintenance = await this.historyMaintenanceService.findOneByProjectNow(+idProject)
+    return {historyMaintenance, staffs, project, maintenanceWProjects, activeMenu: 'maintenance'}
   }
   @Post('project/:idProject')
   @Render('admin/maintenance/maintenance_w_project')
-  async addMaintenance (@Param('idProject') idProject: string, @Res() res: Response, @Body() body: any) {
+  async addMaintenance(@Param('idProject') idProject: string, @Res() res: Response, @Body() body: any) {
     const Project = await this.projectService.findOne(+idProject)
     const {timeMaintenance, reason} = body
     body.fee = String(body.fee) === '1' ? true : false

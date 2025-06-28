@@ -47,6 +47,8 @@ import {ScheduleModule} from '@nestjs/schedule'
 import {TasksService} from './tasks.service'
 import {PermisionModule} from './permision/permision.module'
 import {Permision} from './permision/entities/permision.entity'
+import { HistoryMaintenanceModule } from './history-maintenance/history-maintenance.module';
+import { HistoryMaintenance } from './history-maintenance/entities/history-maintenance.entity'
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -78,6 +80,7 @@ import {Permision} from './permision/entities/permision.entity'
           DepartmentsStep,
           TargetBusine,
           Permision,
+          HistoryMaintenance,
         ],
         synchronize: true,
       }),
@@ -118,6 +121,7 @@ import {Permision} from './permision/entities/permision.entity'
     DepartmentsStepsModule,
     TargetBusinesModule,
     PermisionModule,
+    HistoryMaintenanceModule,
   ],
   controllers: [AppController],
   providers: [
@@ -135,7 +139,7 @@ import {Permision} from './permision/entities/permision.entity'
   ],
 })
 export class AppModule implements NestModule {
-  configure (consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer) {
     consumer.apply(cookieParser()).forRoutes('*')
     consumer.apply(cookieParser()).forRoutes('*')
     consumer.apply(GlobalVariablesMiddleware).exclude({path: 'login', method: RequestMethod.ALL}).forRoutes('*')

@@ -301,12 +301,19 @@
         <li class="nav-item">
           <a class="nav-link" href="/client/list-task" role="button">
             <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-table-list"></i></span><span class="nav-link-text ps-1">Danh
-                sách nhiệm vụ</span></div>
+                sách nhiệm vụ </span></div>
           </a>
         </li>
         <% } %>
         <% permisionArr.forEach(element => { %>
-        <% if (element === 1) { %>
+        <% if (element === 9 ) { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/client/list-project-responsibility" role="button">
+            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fas fa-home"></i></span><span class="nav-link-text ps-1">Công trình phụ trách</span></div>
+          </a>
+        </li>
+        <% } %>
+        <% if (element === 1 ) { %>
         <li class="nav-item">
           <a class="nav-link" href="/" role="button">
             <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fas fa-home"></i></span><span class="nav-link-text ps-1">Trang

@@ -1,21 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Req,
-  SetMetadata,
-} from '@nestjs/common'
-import { ProjectEditService } from './project_edit.service'
-import { CreateProjectEditDto } from './dto/create-project_edit.dto'
-import { UpdateProjectEditDto } from './dto/update-project_edit.dto'
-import { StaffsService } from 'src/staffs/staffs.service'
-import { ProjectService } from 'src/project/project.service'
-import { Request, Response } from 'express'
-import { Res } from '@nestjs/common'
+import {Controller, Get, Post, Body, Patch, Param, Delete, Req, SetMetadata} from '@nestjs/common'
+import {ProjectEditService} from './project_edit.service'
+import {CreateProjectEditDto} from './dto/create-project_edit.dto'
+import {UpdateProjectEditDto} from './dto/update-project_edit.dto'
+import {StaffsService} from 'src/staffs/staffs.service'
+import {ProjectService} from 'src/project/project.service'
+import {Request, Response} from 'express'
+import {Res} from '@nestjs/common'
 @Controller('project-edit')
 export class ProjectEditController {
   constructor (
@@ -60,5 +50,8 @@ export class ProjectEditController {
       res.redirect('/login')
     }
   }
-
+  @Post('/delete/:idProjectEdit')
+  async deleteProjectEdit (@Param('idProjectEdit') idProjectEdit: number) {
+    return await this.projectEditService.remove(idProjectEdit)
+  }
 }

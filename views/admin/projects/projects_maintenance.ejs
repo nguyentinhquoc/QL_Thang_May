@@ -21,6 +21,8 @@
                   class="fa fa-search fs-10 text-600"></span></div>
             </div>
           </form>
+          <h6 style="margin-top:10px ;"  id="countSearch"></h6>
+
         </div>
       </div>
       <div class="table-responsive scrollbar">
@@ -95,5 +97,23 @@
     </div>
   </div>
 </div>
+<script>
+  const inputSearch = document.querySelector('.search')
+  const table = document.querySelector('tbody');
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    if(inputSearch.value !== ''){
+      const rowsTable = document.querySelectorAll('.stt')
+      document.querySelector('#countSearch').innerHTML = `Tổng có: ${rowsTable.length}`
+    }else{
+      document.querySelector('#countSearch').innerHTML = ``
+    }
+  });
 
+  observer.observe(table, {
+    childList: true, // theo dõi thêm/xóa node con
+    attributes: true, // theo dõi thuộc tính thay đổi
+    characterData: true, // theo dõi textNode thay đổi
+    subtree: true // theo dõi tất cả phần tử con
+  });
+</script>
 <%- include('../../layout/footer') %>

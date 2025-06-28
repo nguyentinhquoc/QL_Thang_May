@@ -597,11 +597,9 @@
   const defaultAddress = '<%= project.address %>'
     const host = "https://provinces.open-api.vn/api/";
     // === ✅ Chuỗi địa chỉ mặc định ===
-
     // === ✅ Tách dữ liệu mặc định từ chuỗi ===
     const [defaultCityName, defaultDistrictName, defaultWardName, detailAdress] = defaultAddress.split(',').map(s => s.trim());
-    document.querySelector('#address').value = detailAdress
-    console.log(detailAdress)
+    document.querySelector('#address').value = detailAdress ?? ''
     // === ✅ Hàm render có so sánh theo tên (name) ===
     const renderData = (array, selectId, defaultName = null) => {
       let row = '<option disabled value="">Chọn</option>';

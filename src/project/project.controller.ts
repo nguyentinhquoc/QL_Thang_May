@@ -49,8 +49,11 @@ export class ProjectController {
 
   @Post('maintenance')
   async createProjectMaintenance (@Body() createProjectDto: CreateProjectMaintenanceDto, @Res() res: Response) {
-    createProjectDto.address = `${createProjectDto.city}, ${createProjectDto.district},${createProjectDto.ward}, ${createProjectDto.address}`
-
+    if (createProjectDto.address) {
+      createProjectDto.address = `${createProjectDto.city}, ${createProjectDto.district},${createProjectDto.ward}, ${createProjectDto.address}`
+    } else {
+      createProjectDto.address = `${createProjectDto.city}, ${createProjectDto.district},${createProjectDto.ward}`
+    }
     // <+====================Tạo project====================+>
     const errors = await validate(createProjectDto)
     if (errors.length > 0) {
@@ -80,17 +83,26 @@ export class ProjectController {
     const newProject = {
       ...createProjectDto,
       workflow: null,
-      type: 'BAOTRI',
       infor_product: JSON.stringify(infor_product),
     }
-    const Project = await this.projectService.create(newProject)
+    const Project = await this.projectService.createProjectMaintenance(newProject)
     // <+====================Tạo project_step====================+>
-    return res.redirect('/project/aaceeimnnnt')
+    return res.redirect('/project/maintenance')
   }
   @Post()
   async create (@Body() createProjectDto: CreateProjectDto, @Res() res: Response) {
-    createProjectDto.address = `${createProjectDto.city}, ${createProjectDto.district},${createProjectDto.ward}, ${createProjectDto.address}`
-
+    console.log(
+      '🔱  WaveBear  --------------------------------------------------------------------------------------🔱  WaveBear ',
+    )
+    console.log('🔱  WaveBear  ~ ProjectController ~ create ~ createProjectDto⚡ ⚡ ⚡  :', createProjectDto)
+    console.log(
+      '🔱  WaveBear  --------------------------------------------------------------------------------------🔱  WaveBear ',
+    )
+    if (createProjectDto.address) {
+      createProjectDto.address = `${createProjectDto.city}, ${createProjectDto.district},${createProjectDto.ward}, ${createProjectDto.address}`
+    } else {
+      createProjectDto.address = `${createProjectDto.city}, ${createProjectDto.district},${createProjectDto.ward}`
+    }
     // <+====================Tạo project====================+>
     const errors = await validate(createProjectDto)
     if (errors.length > 0) {
@@ -184,7 +196,15 @@ export class ProjectController {
     @Req() req: Request,
     @Param('id') id: number,
   ) {
+    console.log(updateProjectDto)
+if (!updateProjectDto.checkEdit) {
+  console.log('check');
+  if (updateProjectDto.address) {
     updateProjectDto.address = `${updateProjectDto.city}, ${updateProjectDto.district},${updateProjectDto.ward}, ${updateProjectDto.address}`
+  } else {
+    updateProjectDto.address = `${updateProjectDto.city}, ${updateProjectDto.district},${updateProjectDto.ward}`
+  }
+}
     const project = await this.projectService.findOne(+id)
     const arr = updateProjectDto.staffMain
     const token = req.cookies['token']

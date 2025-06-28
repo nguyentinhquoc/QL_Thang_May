@@ -1,3 +1,4 @@
+import { HistoryMaintenance } from 'src/history-maintenance/entities/history-maintenance.entity'
 import {Maintenance} from 'src/maintenance/entities/maintenance.entity'
 import {Notification} from 'src/notification/entities/notification.entity'
 import {ProjectEdit} from 'src/project_edit/entities/project_edit.entity'
@@ -52,11 +53,7 @@ export class Project {
   @Column({type: 'date', nullable: true})
   warrantyStart: Date
   @Column({type: 'date', nullable: true})
-  maintenanceFitStart: Date
-  @Column({type: 'date', nullable: true})
   warrantyEnd: Date
-  @Column({type: 'date', nullable: true})
-  maintenanceFitEnd: Date
   @CreateDateColumn()
   createdAt: Date
   @UpdateDateColumn()
@@ -71,6 +68,8 @@ export class Project {
   notifications: Notification[]
   @OneToMany(() => Maintenance, (maintenance) => maintenance.project)
   maintenances: Maintenance[]
+  @OneToMany(() => HistoryMaintenance, (historyMaintenance) => historyMaintenance.project)
+  historyMaintenance: HistoryMaintenance[]
   @OneToMany(() => ProjectStaff, (projectStaff) => projectStaff.project)
   projectStaff: ProjectStaff[]
 }

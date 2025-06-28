@@ -1,17 +1,17 @@
 import {Injectable} from '@nestjs/common'
-import {CreateProjectDto} from './dto/create-project.dto'
+import {CreateProjectDto, CreateProjectMaintenanceDto} from './dto/create-project.dto'
 import {UpdateProjectDto} from './dto/update-project.dto'
 import {InjectRepository} from '@nestjs/typeorm'
 import {Project} from './entities/project.entity'
 import {Not, Repository} from 'typeorm'
 @Injectable()
 export class ProjectService {
-  constructor (
+  constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
   ) {}
 
-  async countProjectByMonth () {
+  async countProjectByMonth() {
     const projects = await this.projectRepository.find()
     // Đếm số lượng dự án và tính tổng giá trị (price - tax) theo tháng
     const monthlyCount = {}
@@ -51,7 +51,7 @@ export class ProjectService {
     })
     return result
   }
-  async countProjectByMonthByBusines (idStaff: number) {
+  async countProjectByMonthByBusines(idStaff: number) {
     const projects = await this.projectRepository.find({
       where: {
         projectStaff: {
@@ -101,7 +101,7 @@ export class ProjectService {
     return result
   }
 
-  create (createProjectDto: CreateProjectDto) {
+  create(createProjectDto: CreateProjectDto) {
     try {
       return this.projectRepository.save({
         code_project: createProjectDto.code_project,
@@ -117,12 +117,29 @@ export class ProjectService {
       console.log('🔴 ~ file: project.service.ts ~ line 116 ~ ProjectService ~ create ~ error', error)
     }
   }
-  findAll () {
+  createProjectMaintenance(createProjectMaintenanceDto: CreateProjectMaintenanceDto) {
+    try {
+      return this.projectRepository.save({
+        code_project: createProjectMaintenanceDto.code_project,
+        full_name: createProjectMaintenanceDto.full_name,
+        tax: createProjectMaintenanceDto.tax,
+        price: createProjectMaintenanceDto.price,
+        number_phone: createProjectMaintenanceDto.number_phone,
+        email: createProjectMaintenanceDto.email,
+        address: createProjectMaintenanceDto.address,
+        infor_product: createProjectMaintenanceDto.infor_product,
+        type:'BAOTRI'
+      })
+    } catch (error) {
+      console.log('🔴 ~ file: project.service.ts ~ line 116 ~ ProjectService ~ create ~ error', error)
+    }
+  }
+  findAll() {
     return this.projectRepository.find({
       relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
     })
   }
-  findAllByBusines (idStaff: number) {
+  findAllByBusines(idStaff: number) {
     return this.projectRepository.find({
       where: {
         projectStaff: {
@@ -135,7 +152,7 @@ export class ProjectService {
     })
   }
 
-  findAllStatus (status: number) {
+  findAllStatus(status: number) {
     if (status == 2) {
       return this.projectRepository.find({
         where: {type: 'LAPDAT'},
@@ -149,14 +166,14 @@ export class ProjectService {
     }
   }
 
-  findAllProjectsMaintennce () {
+  findAllProjectsMaintennce() {
     return this.projectRepository.find({
       where: {type: 'BAOTRI'},
       relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
     })
   }
 
-  findByStaffId (staffId: number, status: number) {
+  findByStaffId(staffId: number, status: number) {
     if (status == 2) {
       return this.projectRepository.find({
         where: {
@@ -184,7 +201,7 @@ export class ProjectService {
       })
     }
   }
-  findProjectsMaintennceByStaffId (staffId: number) {
+  findProjectsMaintennceByStaffId(staffId: number) {
     return this.projectRepository.find({
       where: {
         type: 'BAOTRI',
@@ -198,31 +215,31 @@ export class ProjectService {
     })
   }
 
-  findAllAction () {
+  findAllAction() {
     return this.projectRepository.find({
       where: {status: 0},
       relations: ['projectStaff', 'projectStaff.staff', 'projectSteps'],
     })
   }
-  findAlSuccess () {
+  findAlSuccess() {
     return this.projectRepository.find({
       where: {status: 1},
       relations: ['projectStaff', 'projectStaff.staff', 'projectSteps'],
     })
   }
-  findOne (id: number) {
+  findOne(id: number) {
     return this.projectRepository.findOne({
       where: {id},
       relations: ['projectStaff', 'projectStaff.staff'],
     })
   }
-  update (id: number, updateProjectDto: UpdateProjectDto) {
+  update(id: number, updateProjectDto: UpdateProjectDto) {
     return this.projectRepository.update(id, updateProjectDto)
   }
-  async updateStatusProject (id: number) {
+  async updateStatusProject(id: number) {
     return await this.projectRepository.update(id, {status: 1})
   }
-  remove (id: number) {
+  remove(id: number) {
     return `This action removes a #${id} project`
   }
 }

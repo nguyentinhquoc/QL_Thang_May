@@ -7,6 +7,8 @@ export class Permision {
 
   @Column({unique: true})
   code: string
+  @Column()
+  codeParent: string
 
   @Column({unique: true})
   name: string

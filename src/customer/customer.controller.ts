@@ -10,7 +10,11 @@ export class CustomerController {
 
   @Post()
   async create (@Res() res: Response, @Body() createCustomerDto: CreateCustomerDto) {
-    createCustomerDto.address = `${createCustomerDto.city}, ${createCustomerDto.district},${createCustomerDto.ward}, ${createCustomerDto.address}`
+    if (createCustomerDto.address) {
+      createCustomerDto.address = `${createCustomerDto.city}, ${createCustomerDto.district},${createCustomerDto.ward}, ${createCustomerDto.address}`
+    } else {
+      createCustomerDto.address = `${createCustomerDto.city}, ${createCustomerDto.district},${createCustomerDto.ward}`
+    }
     await this.customerService.create(createCustomerDto)
     return res.redirect('/customer/infor')
   }
@@ -37,7 +41,11 @@ export class CustomerController {
 
   @Patch(':id')
   async update (@Res() res: Response, @Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
-    updateCustomerDto.address = `${updateCustomerDto.city}, ${updateCustomerDto.district},${updateCustomerDto.ward}, ${updateCustomerDto.address}`
+    if (updateCustomerDto.address) {
+      updateCustomerDto.address = `${updateCustomerDto.city}, ${updateCustomerDto.district},${updateCustomerDto.ward}, ${updateCustomerDto.address}`
+    } else {
+      updateCustomerDto.address = `${updateCustomerDto.city}, ${updateCustomerDto.district},${updateCustomerDto.ward}`
+    }
     const {city, district, ward, ...newUpdateCustomerDto} = updateCustomerDto
 
     await this.customerService.update(+id, newUpdateCustomerDto)
