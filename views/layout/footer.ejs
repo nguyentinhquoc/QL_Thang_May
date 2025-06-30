@@ -138,6 +138,12 @@
   toastr['<%= status %>']('<%= message %>');
 </script>
 <% } %>
+<% if (locals.flash && flash('success').length > 0) { %>
+  <div class="alert alert-success"><%= flash('success') %></div>
+<% } %>
+<% if (locals.flash && flash('error').length > 0) { %>
+  <div class="alert alert-danger"><%= flash('error') %></div>
+<% } %>
 
 <script>
   function redirection(link) {

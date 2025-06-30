@@ -1,4 +1,5 @@
 import { IsDate, IsNotEmpty, IsString } from 'class-validator'
+import { HistoryMaintenance } from 'src/history-maintenance/entities/history-maintenance.entity'
 import { Project } from 'src/project/entities/project.entity'
 
 export class CreateMaintenanceDto {
@@ -11,4 +12,5 @@ export class CreateMaintenanceDto {
   projectName?: string
   confirmSuccess?: boolean
   fee?: boolean
+  historyMaintenance:HistoryMaintenance
 }

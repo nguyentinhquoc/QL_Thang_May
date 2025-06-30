@@ -32,19 +32,19 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
     display: none;
   }
 </style>
-<div class="card">
+<div class="">
   <div class="mb-3 card d-flex flex-column flex-md-row justify-content-between">
     <div class="w-75 d-flex">
       <button class="btn btn-primary me-1 m-3 btnbt mr" id="btn-lapdat">Lắp đặt</button>
       <button class="btn btn-primary me-1 m-3 btnbt " id="btn-baotri">Bảo trì</button>
     </div>
     <div>
-      <select class="form-select form-select-sm" aria-label=".form-select-sm example">
+      <!-- <select class="form-select form-select-sm" aria-label=".form-select-sm example">
         <option selected="selected">Tất cả công việc</option>
         <option>Việc cần làm</option>
         <option>Việc đã làm</option>
         <option>Việc đã bỏ lỡ</option>
-      </select>
+      </select> -->
     </div>
   </div>
   <div class="card mb-3 mb-lg-0 lapdat">
@@ -102,10 +102,10 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
     <div class="card-body fs-10">
       <div class="row">
         <div class="d-flex mb-2">
-          <button class="btn btn-primary m-3" type="button" data-bs-toggle="modal"
-            data-bs-target="#error-modal">+ Đề xuất thêm bảo trì</button>
-          <button class="btn btn-primary m-3" type="button" data-bs-toggle="modal"
-            data-bs-target="#error-modal2">+ Đề xuất xác nhận bảo trì</button>
+          <!-- <button class="btn btn-primary m-3" type="button" data-bs-toggle="modal"
+            data-bs-target="#error-modal">+ Đề xuất thêm bảo trì</button> -->
+          <!-- <button class="btn btn-primary m-3" type="button" data-bs-toggle="modal"
+            data-bs-target="#error-modal2">+ Đề xuất xác nhận bảo trì</button>  -->
         </div>
         <div class="modal fade" id="error-modal2" tabindex="-1" role="dialog"
           aria-hidden="true">
@@ -139,9 +139,6 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
                           project.number_phone %>
                         </li>
                         <% }) %>
-                        <li class="btn w-100 infor-staff" onclick="clickProject1('!',0)">!
-                          Không có công trình
-                        </li>
                       </ul>
                     </div>
                     <div class="mb-3" id="recipient-nameProject1" style="display: none;">

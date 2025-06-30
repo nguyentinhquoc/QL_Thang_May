@@ -194,6 +194,9 @@ async findByNotifycation() {
   updateConfirmSuccess (id: number) {
     return this.maintenanceRepository.update(id, { confirmSuccess: true })
   }
+  updateConfirmNoSuccess (id: number) {
+    return this.maintenanceRepository.update(id, { confirmSuccess: false })
+  }
   ConfirmDelete (id: number) {
     return this.maintenanceRepository.delete(id)
   }

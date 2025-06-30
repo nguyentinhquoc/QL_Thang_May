@@ -197,14 +197,14 @@ export class ProjectController {
     @Param('id') id: number,
   ) {
     console.log(updateProjectDto)
-if (!updateProjectDto.checkEdit) {
-  console.log('check');
-  if (updateProjectDto.address) {
-    updateProjectDto.address = `${updateProjectDto.city}, ${updateProjectDto.district},${updateProjectDto.ward}, ${updateProjectDto.address}`
-  } else {
-    updateProjectDto.address = `${updateProjectDto.city}, ${updateProjectDto.district},${updateProjectDto.ward}`
-  }
-}
+    if (!updateProjectDto.checkEdit) {
+      console.log('check')
+      if (updateProjectDto.address) {
+        updateProjectDto.address = `${updateProjectDto.city}, ${updateProjectDto.district},${updateProjectDto.ward}, ${updateProjectDto.address}`
+      } else {
+        updateProjectDto.address = `${updateProjectDto.city}, ${updateProjectDto.district},${updateProjectDto.ward}`
+      }
+    }
     const project = await this.projectService.findOne(+id)
     const arr = updateProjectDto.staffMain
     const token = req.cookies['token']

@@ -26,7 +26,7 @@
               <th class="text-900 sort" data-sort="timeEnd">Thời gian kết thúc</th>
               <th class="text-900 sort" data-sort="countMaintenance">Số lần bảo trì</th>
               <th class="text-900 sort" data-sort="countMaintenance1">Số lịch bảo trì đã đặt</th>
-              <th class="text-900 sort" data-sort="countMaintenance2">Số lần đã bảo trì</th>
+              <th class="text-900 sort" data-sort="countMaintenance2">Số lịch cần đặt còn lại</th>
               <th class="text-900 sort" data-sort="free">Loại phí</th>
               <th class="text-900 sort" data-sort="price">Phí bảo trì</th>
             </tr>
@@ -37,8 +37,11 @@
               <td class="timeStart"><%=value.timeStart%></td>
               <td class="timeEnd"><%=value.timeEnd%></td>
               <td class="countMaintenance"><%=value.countMaintenance%></td>
-              <td class="countMaintenance1"></td>
-              <td class="countMaintenance2"></td>
+              <td class="countMaintenance1"><%= value.maintenance.length %></td>
+
+              <td class="countMaintenance2">
+                <%=value.countMaintenance - value.maintenance.length%>
+              </td>
               <td class="free"><%=!value.free ? 'Mất phí' : 'Miễn phí'%></td>
               <td class="price">
                 <span class="d-none"><%= value.price %></span>

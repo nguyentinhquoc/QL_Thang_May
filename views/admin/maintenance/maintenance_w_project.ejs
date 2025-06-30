@@ -8,35 +8,42 @@
 ); const month=String(date.getMonth() + 1).padStart(2, '0' ); const year=date.getFullYear(); const
 hours=String(date.getHours()).padStart(2, '0' ); const minutes=String(date.getMinutes()).padStart(2, '0' ); const
 seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${year}`; } %>
-<div class="card p-3">
-  <div>
-    <div class="m-b-30">
-      <h2>Thông tin bảo hành bảo trì</h2>
-      <div class="d-flex justify-content-between">
-        <div>
-          <span> <strong> Chủ công trình: </strong> <%= project.full_name %></span>
-          <p><a href="/history-maintenance/<%= project.id %>">Chi tiết lịch sử bảo trì</a></p>
-        </div>
-        <div>
-          <div class="m-2">
-            <span id="warrantyBadge" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-success false " onclick="toggleWarrantyStyle()">
-              <strong> Bảo hành: </strong>
-              <% if (!project.warrantyStart && !project.warrantyEnd) { %> Chưa cài đặt <% } else { %> <%=
-              formatDate(project.warrantyStart) %> - <%= formatDate(project.warrantyEnd) %> <% } %>
-            </span>
-            <div id="add-warranty" <% if(project.warrantyStart ){%> style="display: none;" <%}%>>
-              <form action="/project/addWarranty/<%= project.id %>" class="d-flex" method="post" id="formAddWarranty">
-              <input class="form-control datetimepicker" id="timepickerwarranty" type="text" placeholder="dd/mm/yy to dd/mm/yy" data-options='{"mode":"range","dateFormat":"d/m/y","disableMobile":true}' />
-              <!-- <input class="form-control datetimepicker flatpickr-input" id="datepicker" type="text" placeholder="dd/mm/yy" data-options='{"disableMobile":true}' readonly="readonly" name="warrantyStart" style="width: 140px" /> -->
-              <button class="btn btn-primary">Xác nhận</button>
-              </form>
-            </div>
-          </div>
 
-          <div class="m-2" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;">
-              <% if (historyMaintenance.length === 0) { %>
-              <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;"  class="badge rounded badge-subtle-danger false" id="extension-maintenance">Bảo trì: Gia hạn bảo trì</p>
-              <% } else {
+<% if (success && success.length > 0) { %>
+<div class="alert alert-success"><%= success[0] %></div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+<div class="alert alert-danger"><%= error[0] %></div>
+<% } %>
+
+<div class="card p-3">
+  <div class="m-b-30">
+    <h2>Thông tin bảo hành bảo trì</h2>
+    <div class="d-flex justify-content-between">
+      <div>
+        <span> <strong> Chủ công trình: </strong> <%= project.full_name %></span>
+        <p><a href="/history-maintenance/<%= project.id %>">Chi tiết lịch sử bảo trì</a></p>
+      </div>
+      <div>
+        <div class="m-2">
+          <span id="warrantyBadge" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-success false " onclick="toggleWarrantyStyle()">
+            <strong> Bảo hành: </strong>
+            <% if (!project.warrantyStart && !project.warrantyEnd) { %> Chưa cài đặt <% } else { %> <%=
+              formatDate(project.warrantyStart) %> - <%= formatDate(project.warrantyEnd) %> <% } %>
+          </span>
+          <div id="add-warranty" <% if(project.warrantyStart ){%> style="display: none;" <%}%>>
+              <form action="/project/addWarranty/<%= project.id %>" class="d-flex" method="post" id="formAddWarranty">
+            <input class="form-control datetimepicker" id="timepickerwarranty" type="text" placeholder="dd/mm/yy to dd/mm/yy" data-options='{"mode":"range","dateFormat":"d/m/y","disableMobile":true}' />
+            <!-- <input class="form-control datetimepicker flatpickr-input" id="datepicker" type="text" placeholder="dd/mm/yy" data-options='{"disableMobile":true}' readonly="readonly" name="warrantyStart" style="width: 140px" /> -->
+            <button class="btn btn-primary">Xác nhận</button>
+            </form>
+          </div>
+        </div>
+        <div class="m-2" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;">
+          <% if (historyMaintenance.length === 0) { %>
+          <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-danger false" id="extension-maintenance">Bảo trì: Gia hạn bảo trì</p>
+          <% } else {
                 function toDateOnly(date) {
                    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
                 }
@@ -44,122 +51,120 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
                 const startDate = toDateOnly( new Date(historyMaintenance[0].timeStart));
                 const endDate = toDateOnly( new Date(historyMaintenance[0].timeEnd));
                 if (now >= startDate && now <= endDate) { %>
-
-                  <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;"  class="badge rounded badge-subtle-success false">Bảo trì:
-              <%= formatDate(historyMaintenance[0].timeStart) %> - <%= formatDate(historyMaintenance[0].timeEnd) %>
-                  </p>
-              <% } else { %>
-               <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;"  class="badge rounded badge-subtle-danger false" id="extension-maintenance">Bảo trì: Gia hạn bảo trì</p>
-              <% }
+          <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-success false">Bảo trì:
+            <%= formatDate(historyMaintenance[0].timeStart) %> - <%= formatDate(historyMaintenance[0].timeEnd) %>
+          </p>
+          <% } else { %>
+          <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-danger false" id="extension-maintenance">Bảo trì: Gia hạn bảo trì</p>
+          <% }
               } %>
-            </span>
-          </div>
         </div>
       </div>
-      <button class="btn btn-primary mt-3 mb-3" id="add-maintenance">+ Thêm một bảo trì</button>
-      <button class="btn btn-primary mt-3 mb-3" id="AddBaotriBtn">+ Thêm nhiều lịch bảo trì</button>
-      <form method="post" class="p-3" style="display: none; border: 1px solid" id="baotriForm">
-        <div class="form-group mb-3">
-          <label for="feeSelect" class="form-label">Loại phí:</label>
-          <select name="fee" id="feeSelect" class="form-select">
-            <option selected value="1">Mất phí</option>
-            <option value="0">Miễn phí</option>
-          </select>
+    </div>
+    <!-- <button class="btn btn-primary mt-3 mb-3" id="add-maintenance">+ Thêm một bảo trì</button> -->
+    <button class="btn btn-primary mt-3 mb-3" id="AddBaotriBtn">+ Thêm bảo trì</button>
+    <form method="post" class="p-3" style="display: none; border: 1px solid" id="baotriForm">
+      <div class="form-group mb-3">
+        <label for="feeSelect" class="form-label">Loại phí:</label>
+        <select name="fee" id="feeSelect" class="form-select">
+          <option selected value="1">Mất phí</option>
+          <option value="0">Miễn phí</option>
+        </select>
+      </div>
+      <!--  <div>
+        <label for="baoTri">Tạo bảo trì hàng loạt</label>
+        <div style="display: flex">
+          <input type="date" id="baoTri" class="form-control" /><input id="month" type="number" class="form-control" />
         </div>
-        <div>
-          <label for="baoTri">Bảo trì <span style="font-size: 10px">tháng</span></label>
-          <div style="display: flex">
-            <input type="date" id="baoTri" class="form-control" /><input id="month" type="number" class="form-control" />
-          </div>
+      </div>
+    -->
+      <div>
+        Bảo trì đơn
+        <div id="result"></div>
+        <p class="add-btn btn btn-primary" onclick="addInput()">+</p>
+      </div>
+      <button class="btn btn-primary mt-3 mb-3">Thêm lịch bảo trì</button>
+    </form>
+    <div id="tableExample3" data-list='{"valueNames":["noidung","thoigian","nhanvien","action","loai"],"page":10,"pagination":true}'>
+      <div class="row justify-content-end g-0">
+        <div class="col-auto col-sm-5 mb-3">
+          <form>
+            <div class="input-group">
+              <input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
+              <div class="input-group-text bg-transparent"><span class="fa fa-search fs-10 text-600"></span></div>
+            </div>
+          </form>
         </div>
-        <div>
-          Lịch bảo trì dự kiến
-          <div id="result"></div>
-          <p class="add-btn btn btn-primary" onclick="addInput()">+</p>
-        </div>
-        <button class="btn btn-primary mt-3 mb-3">Thêm lịch bảo trì</button>
-      </form>
-      <div id="tableExample3" data-list='{"valueNames":["noidung","thoigian","nhanvien","action","loai"],"page":10,"pagination":true}'>
-        <div class="row justify-content-end g-0">
-          <div class="col-auto col-sm-5 mb-3">
-            <form>
-              <div class="input-group">
-                <input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
-                <div class="input-group-text bg-transparent"><span class="fa fa-search fs-10 text-600"></span></div>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div class="table-responsive scrollbar">
-          <table class="table table-bordered table-hover table-striped fs-10 mb-0">
-            <thead class="bg-200">
-              <tr>
-                <th class="text-900 sort" data-sort="noidung">Nội dung bảo trì</th>
-                <th class="text-900 sort" data-sort="thoigian">Thời gian bảo trì dự tính</th>
-                <th class="text-900 sort" data-sort="nhanvien">Nhân viên thực hiện</th>
-                <th class="text-900 sort" data-sort="action">Trạng thái</th>
-                <th class="text-900 sort" data-sort="loai">Loại</th>
-              </tr>
-            </thead>
-            <tbody class="list">
-              <% maintenanceWProjects.forEach(function(item,index) { %>
-              <tr>
-                <td class="noidung"><%=item.reason%></td>
-                <td class="thoigian"><%= formatDate( item.time) %></td>
-                <td class="nhanvien">
-                  <% item.maintenanceActions.forEach(function(action) { %>
-                  <img src="/images/avatar/<%=  action.staff.avatar %>" alt height="30px" width="30px" style="border-radius: 50%" />
-                  <%= action.staff.full_name %>
-                  <br />
-                  <br />
-                  <% }) %>
-                  <p class="btn btn-primary add-staff" idValue="<%=item.id%>">+ Thêm nhân viên</p>
-                </td>
-                <td class="action" style="width: fit-content">
-                  <p style="width: fit-content" id="maintenance-<%= index %>" class>
-                      <span class="font__weight-semibold">
-                        <% if (item.maintenanceActions.length === 0) { %>
-                        <span class="badge rounded badge-subtle-warning false">
-                          Chưa bảo trì
-                        </span>
-                        <% } else { let allCompleted = true
+      </div>
+      <div class="table-responsive scrollbar">
+        <table class="table table-bordered table-hover table-striped fs-10 mb-0">
+          <thead class="bg-200">
+            <tr>
+              <th class="text-900 sort" data-sort="noidung">Nội dung bảo trì</th>
+              <th class="text-900 sort" data-sort="thoigian">Thời gian bảo trì dự tính</th>
+              <th class="text-900 sort" data-sort="nhanvien">Nhân viên thực hiện</th>
+              <th class="text-900 sort" data-sort="action">Trạng thái</th>
+              <th class="text-900 sort" data-sort="loai">Loại</th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <% maintenanceWProjects.forEach(function(item,index) { %>
+            <tr>
+              <td class="noidung"><%=item.reason%></td>
+              <td class="thoigian"><%= formatDate( item.time) %></td>
+              <td class="nhanvien">
+                <% item.maintenanceActions.forEach(function(action) { %>
+                <img src="/images/avatar/<%=  action.staff.avatar %>" alt height="30px" width="30px" style="border-radius: 50%" />
+                <%= action.staff.full_name %>
+                <br />
+                <br />
+                <% }) %>
+                <p class="btn btn-primary add-staff" idValue="<%=item.id%>">+ Thêm nhân viên</p>
+              </td>
+              <td class="action" style="width: fit-content">
+                <p style="width: fit-content" id="maintenance-<%= index %>" class>
+                  <span class="font__weight-semibold">
+                    <% if (item.maintenanceActions.length === 0) { %>
+                    <span class="badge rounded badge-subtle-warning false">
+                      Chưa bảo trì
+                    </span>
+                    <% } else { let allCompleted = true
                         item.maintenanceActions.forEach(element => {
                         if(element.status == null) allCompleted = false
                         });
                         %>
-                        <% if(allCompleted) { %>
-                        <span class="badge rounded badge-subtle-success false">
-                          Đã hoàn thành
-                        </span>
-                        <% } else { %>
-                        <span class="badge rounded badge-subtle-danger false">
-                          Chưa hoàn thành
-                        </span>
-                        <% } %> <% } %>
-                      </span>
-                    </p>
-                </td>
-                <td class="loai">
-                  <% if(item.fee) { %>
-                  <span class="badge rounded badge-subtle-warning">Mất phí</span>
-                  <% } else { %>
-                  <span class="badge rounded badge-subtle-success">Miễn phí</span>
-                  <% } %>
-                </td>
-              </tr>
-              <% }); %>
-            </tbody>
-          </table>
-        </div>
-        <div class="d-flex justify-content-center mt-3">
-          <button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev">
-            <span class="fas fa-chevron-left"></span>
-          </button>
-          <ul class="pagination mb-0"></ul>
-          <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next">
-            <span class="fas fa-chevron-right"> </span>
-          </button>
-        </div>
+                    <% if(allCompleted) { %>
+                    <span class="badge rounded badge-subtle-success false">
+                      Đã hoàn thành
+                    </span>
+                    <% } else { %>
+                    <span class="badge rounded badge-subtle-danger false">
+                      Chưa hoàn thành
+                    </span>
+                    <% } %> <% } %>
+                  </span>
+                </p>
+              </td>
+              <td class="loai">
+                <% if(item.fee) { %>
+                <span class="badge rounded badge-subtle-warning">Mất phí</span>
+                <% } else { %>
+                <span class="badge rounded badge-subtle-success">Miễn phí</span>
+                <% } %>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center mt-3">
+        <button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev">
+          <span class="fas fa-chevron-left"></span>
+        </button>
+        <ul class="pagination mb-0"></ul>
+        <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next">
+          <span class="fas fa-chevron-right"> </span>
+        </button>
       </div>
     </div>
   </div>
@@ -262,57 +267,57 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
       $('#date-time').val('')
       $('#staff-search').val('')
     })
-    $('#add-maintenance').click(function() {
-      $('#newPositionModal').remove()
-      var id = $(this).attr('idValue')
-      var form =
-        '<form action="/maintenance" method="POST" class="modal fade" id="newPositionModal" tabindex="-1" aria-labelledby="newPositionModalLabel" aria-hidden="true">' +
-        '<div class="modal-dialog">' +
-        '<div class="modal-content">' +
-        '<div class="modal-header">' +
-        '<input type="hidden" id="staffId" name="project" value= "<%= project.id %>">' +
-        '<div class="d-flex justify-content-between w-100" >' +
-        `<h5 class="modal-title" id="newPositionModalLabel">Thêm bảo trì</h5>` +
-        '<button class="btn btn-primary clickXN" disable onclick="clickXN()" disabled>Xác nhận</button>' +
-        '</div>' +
-        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
-        '</div>' +
-        '<div class="modal-body">' +
-        '<div >' +
+    //   $('#add-maintenance').click(function() {
+    //     $('#newPositionModal').remove()
+    //     var id = $(this).attr('idValue')
+    //     var form =
+    //       '<form action="/maintenance" method="POST" class="modal fade" id="newPositionModal" tabindex="-1" aria-labelledby="newPositionModalLabel" aria-hidden="true">' +
+    //       '<div class="modal-dialog">' +
+    //       '<div class="modal-content">' +
+    //       '<div class="modal-header">' +
+    //       '<input type="hidden" id="staffId" name="project" value= "<%= project.id %>">' +
+    //       '<div class="d-flex justify-content-between w-100" >' +
+    //       `<h5 class="modal-title" id="newPositionModalLabel">Thêm bảo trì</h5>` +
+    //       '<button class="btn btn-primary clickXN" disable onclick="clickXN()" disabled>Xác nhận</button>' +
+    //       '</div>' +
+    //       '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+    //       '</div>' +
+    //       '<div class="modal-body">' +
+    //       '<div >' +
 
-        `<div class="form-group mb-3">
-            <label for="feeSelect" class="form-label">Loại phí:</label>
-            <select name="fee" id="feeSelect" class="form-select">
-              <option selected value="1">Mất phí</option>
-              <option value="0">Miễn phí</option>
-            </select>
-          </div>` +
+    //       `<div class="form-group mb-3">
+    //           <label for="feeSelect" class="form-label">Loại phí:</label>
+    //           <select name="fee" id="feeSelect" class="form-select">
+    //             <option selected value="1">Mất phí</option>
+    //             <option value="0">Miễn phí</option>
+    //           </select>
+    //         </div>` +
 
-        '<div class="form-group">' +
-        '<label for="date-time">Chọn thời gian bảo trì:</label>' +
-        '<input type="datetime-local" class="form-control" id="date-time" name="time" onchange="changeDate()">' +
-        '</div>' +
-        '<div class="form-group">' +
-        '<label for="staff">Nội dung bảo trì:</label>' +
-        '<input disabled type="text" class="form-control" id="staff-search" oninput="onpenSubmit()" name="reason" autocomplete="off">' +
-        `<ul id="itemList">
-    <% staffs.forEach(function(staff) { %>
-          <li class="btn w-100 infor-staff" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>')"><%=staff.full_name%> - <%=staff.number_phone%></li>
-          <% }) %>
-  </ul>`
-      '</div>' +
-      '</div>' +
-      '</div>' +
-      '</form>' +
-      '</div>' +
-      '</div>' +
-      '</div>' +
-      '</div>'
-      $('body').append(form)
-      $('#newPositionModal').modal('show')
-      $('#date-time').val('')
-      $('#staff-search').val('')
-    })
+    //       '<div class="form-group">' +
+    //       '<label for="date-time">Chọn thời gian bảo trì:</label>' +
+    //       '<input type="datetime-local" class="form-control" id="date-time" name="time" onchange="changeDate()">' +
+    //       '</div>' +
+    //       '<div class="form-group">' +
+    //       '<label for="staff">Nội dung bảo trì:</label>' +
+    //       '<input disabled type="text" class="form-control" id="staff-search" oninput="onpenSubmit()" name="reason" autocomplete="off">' +
+    //       `<ul id="itemList">
+    //   <% staffs.forEach(function(staff) { %>
+    //         <li class="btn w-100 infor-staff" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>')"><%=staff.full_name%> - <%=staff.number_phone%></li>
+    //         <% }) %>
+    // </ul>`
+    //     '</div>' +
+    //     '</div>' +
+    //     '</div>' +
+    //     '</form>' +
+    //     '</div>' +
+    //     '</div>' +
+    //     '</div>' +
+    //     '</div>'
+    //     $('body').append(form)
+    //     $('#newPositionModal').modal('show')
+    //     $('#date-time').val('')
+    //     $('#staff-search').val('')
+    //   })
     $('#extension-maintenance').click(function() {
       $('#newPositionModal').remove()
       var id = $(this).attr('idValue')

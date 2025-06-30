@@ -46,6 +46,11 @@ export class MaintenanceActionsController {
     if (+id == 0) {
       await this.maintenanceActionsService.create(createMaintenanceActionDto)
       const Maintenance = await this.maintenanceService.findOne(+createMaintenanceActionDto.maintenance)
+
+      console.log('🔱  WaveBear  ------------------------------------------------------------------------------🔱  WaveBear ')
+      console.log('🔱  WaveBear  ~ MaintenanceActionsController ~ Maintenance⚡ ⚡ ⚡  :', Maintenance)
+      console.log('🔱  WaveBear  ------------------------------------------------------------------------------🔱  WaveBear ')
+
       const Staff = await this.staffsService.findOne(+createMaintenanceActionDto.staff)
       await this.notificationService.create({
         title: 'Thông báo về nhiệm vụ mới của bạn !!!',
@@ -67,6 +72,8 @@ export class MaintenanceActionsController {
           return {message: 'Gửi mail thất bại!', error: error.message}
         })
     } else {
+      const Maintenance = await this.maintenanceService.findOne(+createMaintenanceActionDto.maintenance)
+      await this.maintenanceService.updateConfirmNoSuccess(+Maintenance.id)
       await this.maintenanceActionsService.create(createMaintenanceActionDto)
       const Project = await this.projectService.findOne(+id)
       const Staff = await this.staffsService.findOne(+createMaintenanceActionDto.staff)
