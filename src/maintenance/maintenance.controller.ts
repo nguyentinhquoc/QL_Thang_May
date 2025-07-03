@@ -196,4 +196,11 @@ export class MaintenanceController {
       return res.redirect('back')
     }
   }
+  @Get('classify')
+  @Render('admin/maintenance/classify')
+  async classify(){
+    const project = await this.projectService.findAllProject()
+    return {project}
+  }
+
 }

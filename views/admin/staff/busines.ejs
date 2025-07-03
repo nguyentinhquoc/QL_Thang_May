@@ -52,7 +52,7 @@
                 <% if (staff.totalTarget == 0) { %>
                 <span class="text-danger">Chưa có chỉ tiêu</span>
                 <% } else { %>
-                <%= ((staff.totalProjectStaff / staff.totalTarget) * 100).toFixed(3) %> %
+                <%= ((staff.totalProjectStaff / staff.totalTarget) * 100).toFixed(0) %> %
                 <% } %>
               </td>
               <td class="chitiet">
