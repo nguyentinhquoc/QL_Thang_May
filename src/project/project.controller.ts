@@ -1,25 +1,27 @@
-import {Maintenance} from 'src/maintenance/entities/maintenance.entity'
-import {Controller, Get, Post, Body, Patch, Param, Render, Res, Req, Query, SetMetadata} from '@nestjs/common'
-import {ProjectService} from './project.service'
-import {CreateProjectDto, CreateProjectMaintenanceDto} from './dto/create-project.dto'
-import {UpdateProjectDto} from './dto/update-project.dto'
-import {WorkflowStepsService} from 'src/workflow_steps/workflow_steps.service'
-import {WorkflowsService} from 'src/workflows/workflows.service'
-import {Request, Response} from 'express'
-import {StepsService} from 'src/steps/steps.service'
-import {StaffsService} from 'src/staffs/staffs.service'
-import {ProjectStepsService} from 'src/project_steps/project_steps.service'
-import {ProjectEditService} from 'src/project_edit/project_edit.service'
-import {NotificationService} from 'src/notification/notification.service'
-import {SendMailService} from 'src/send-mail/send-mail.service'
-import {MailerService} from '@nestjs-modules/mailer'
-import {MaintenanceService} from 'src/maintenance/maintenance.service'
-import {DepartmensService} from 'src/departmens/departmens.service'
-import {ProjectStaffService} from 'src/project_staff/project_staff.service'
-import {validate} from 'class-validator'
+import { Maintenance } from 'src/maintenance/entities/maintenance.entity'
+import { Controller, Get, Post, Body, Patch, Param, Render, Res, Req, Query, SetMetadata } from '@nestjs/common'
+import { ProjectService } from './project.service'
+import { CreateProjectDto, CreateProjectMaintenanceDto } from './dto/create-project.dto'
+import { UpdateProjectDto } from './dto/update-project.dto'
+import { WorkflowStepsService } from 'src/workflow_steps/workflow_steps.service'
+import { WorkflowsService } from 'src/workflows/workflows.service'
+import { Request, Response } from 'express'
+import { StepsService } from 'src/steps/steps.service'
+import { StaffsService } from 'src/staffs/staffs.service'
+import { ProjectStepsService } from 'src/project_steps/project_steps.service'
+import { ProjectEditService } from 'src/project_edit/project_edit.service'
+import { NotificationService } from 'src/notification/notification.service'
+import { SendMailService } from 'src/send-mail/send-mail.service'
+import { MailerService } from '@nestjs-modules/mailer'
+import { MaintenanceService } from 'src/maintenance/maintenance.service'
+import { DepartmensService } from 'src/departmens/departmens.service'
+import { ProjectStaffService } from 'src/project_staff/project_staff.service'
+import { validate } from 'class-validator'
+import * as ExcelJS from 'exceljs'
+
 @Controller('project')
 export class ProjectController {
-  constructor (
+  constructor(
     private readonly projectService: ProjectService,
     private readonly workflowsService: WorkflowsService,
     private readonly workflowStepsService: WorkflowStepsService,
@@ -33,22 +35,100 @@ export class ProjectController {
     private readonly maintenanceService: MaintenanceService,
     private readonly departmensService: DepartmensService,
     private readonly projectStaffService: ProjectStaffService,
-  ) {}
+  ) { }
+
+  @Get('statistical/export')
+  async exportExcel(@Res() res: Response) {
+    const workbook = new ExcelJS.Workbook()
+    const worksheet = workbook.addWorksheet('Thống kê')
+    // Set width cột
+    worksheet.columns = [
+      { header: 'STT', key: 'stt', width: 7 },
+      { header: 'Nội dung', key: 'noiDung', width: 70 },
+      { header: 'Số lượng', key: 'soLuong', width: 15 },
+    ]
+    // Định nghĩa hàm tạo dòng nhóm (header xanh)
+    let rowIndex = 2
+    const addGroupRow = (stt: string, noiDung: string, soLuong: number) => {
+      const row = worksheet.addRow({ stt, noiDung, soLuong })
+      row.eachCell((cell) => {
+        cell.font = { bold: true, color: { argb: 'FFFFFFFF' } }
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: '3DCD3D' },
+        }
+      })
+      worksheet.getRow(rowIndex).height = 40
+      worksheet.getRow(rowIndex).alignment = { vertical: 'middle' }
+      rowIndex++
+    }
+    const addNormalRow = (stt: string, noiDung: string, soLuong: number) => {
+      worksheet.addRow({ stt, noiDung, soLuong })
+      worksheet.getRow(rowIndex).height = 30
+      worksheet.getRow(rowIndex).alignment = { vertical: 'middle' }
+      rowIndex++
+    }
+    // === DỮ LIỆU GIẢ ĐỊNH ===
+    const statisticalWarranty = { tong: 3, haNoi: 1, quangNinh: 2, khac: 0 }
+    const statisticalMaintenanceFree = { tong: 2, haNoi: 1, quangNinh: 1, khac: 0 }
+    const statisticalMaintenance = { tong: 2, haNoi: 1, quangNinh: 1, khac: 0 }
+    // ============== Xuất bảng giống ảnh =====================
+    // Nhóm 1: Bảo hành
+    addGroupRow('1', 'Tổng số lượng thang máy trong thời gian bảo hành', statisticalWarranty.tong)
+    addNormalRow('1.1', 'Hà Nội', statisticalWarranty.haNoi)
+    addNormalRow('1.2', 'Quảng Ninh', statisticalWarranty.quangNinh)
+    addNormalRow('1.3', 'Khác', statisticalWarranty.khac)
+    // Nhóm 2: Bảo trì theo HĐ
+    addGroupRow(
+      '2',
+      'Tổng số lượng thang máy trong thời gian bảo trì có thu phí',
+      statisticalMaintenanceFree.tong,
+    )
+    addNormalRow('2.1', 'Hà Nội', statisticalMaintenanceFree.haNoi)
+    addNormalRow('2.2', 'Quảng Ninh', statisticalMaintenanceFree.quangNinh)
+    addNormalRow('2.3', 'Khác', statisticalMaintenanceFree.khac)
+    // Nhóm 3: Bảo trì mất phí
+    addGroupRow('3', 'Tổng số lượng thang máy trong thời gian bảo trì không thu phí', statisticalMaintenance.tong)
+    addNormalRow('3.1', 'Hà Nội', statisticalMaintenance.haNoi)
+    addNormalRow('3.2', 'Quảng Ninh', statisticalMaintenance.quangNinh)
+    addNormalRow('3.3', 'Khác', statisticalMaintenance.khac)
+    // ==============================================
+    // Gửi file
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    res.setHeader('Content-Disposition', 'attachment; filename=thongke.xlsx')
+
+    await workbook.xlsx.write(res)
+    res.end()
+  }
+
+  @Get('statistical')
+  @Render('admin/statistical')
+  async getStatistical() {
+    // Danh sách công trình trong thời gian bảo hành
+    const statisticalWarranty = await this.projectService.statisticalWarranty()
+    // Danh sách công trình bảo trì miễn phí
+    const statisticalMaintenanceFree = await this.projectService.statisticalMaintenanceFree()
+    // Danh sách công trình bảo trì mất phí
+    const statisticalMaintenance = await this.projectService.statisticalMaintenance()
+    //  console.log(data1)
+    return { statisticalWarranty, statisticalMaintenanceFree, statisticalMaintenance }
+  }
 
   @Get('add/maintenance')
   @Render('admin/projects/add_projects_maintenance')
-  getAdd () {
+  getAdd() {
     return {}
   }
 
   @Patch('SuccessProject/:id')
-  async SuccessProject (@Param('id') id: string, @Res() res: Response) {
+  async SuccessProject(@Param('id') id: string, @Res() res: Response) {
     await this.projectService.updateStatusProject(+id)
     return res.redirect('back')
   }
 
   @Post('maintenance')
-  async createProjectMaintenance (@Body() createProjectDto: CreateProjectMaintenanceDto, @Res() res: Response) {
+  async createProjectMaintenance(@Body() createProjectDto: CreateProjectMaintenanceDto, @Res() res: Response) {
     if (createProjectDto.address) {
       createProjectDto.address = `${createProjectDto.city}, ${createProjectDto.district},${createProjectDto.ward}, ${createProjectDto.address}`
     } else {
@@ -65,7 +145,7 @@ export class ProjectController {
         .filter(Boolean)
 
       if (errorMessages.length > 0) {
-        return res.render('400', {errors: errorMessages})
+        return res.render('400', { errors: errorMessages })
       }
     }
     const infor_product = {
@@ -90,7 +170,7 @@ export class ProjectController {
     return res.redirect('/project/maintenance')
   }
   @Post()
-  async create (@Body() createProjectDto: CreateProjectDto, @Res() res: Response) {
+  async create(@Body() createProjectDto: CreateProjectDto, @Res() res: Response) {
     console.log(
       '🔱  WaveBear  --------------------------------------------------------------------------------------🔱  WaveBear ',
     )
@@ -115,7 +195,7 @@ export class ProjectController {
         .filter(Boolean)
 
       if (errorMessages.length > 0) {
-        return res.render('400', {errors: errorMessages})
+        return res.render('400', { errors: errorMessages })
       }
     }
     const infor_product = {
@@ -181,16 +261,16 @@ export class ProjectController {
       )
       this.mailerService
         .sendMail(contentSendMail)
-        .then(() => {})
+        .then(() => { })
         .catch((error) => {
           console.error('Error sending email:', error)
-          return {message: 'Gửi mail thất bại!', error: error.message}
+          return { message: 'Gửi mail thất bại!', error: error.message }
         })
     }
     return res.redirect('/project/trang-thai/tat-ca')
   }
   @Patch('/:id')
-  async updateP (
+  async updateP(
     @Body() updateProjectDto: UpdateProjectDto,
     @Res() res: Response,
     @Req() req: Request,
@@ -321,10 +401,10 @@ export class ProjectController {
           )
           this.mailerService
             .sendMail(contentSendMail)
-            .then(() => {})
+            .then(() => { })
             .catch((error) => {
               console.error('Error sending email:', error)
-              return {message: 'Gửi mail thất bại!', error: error.message}
+              return { message: 'Gửi mail thất bại!', error: error.message }
             })
           ArrayIdProjectStepNew.push(addProjectStep.id)
         } else {
@@ -350,10 +430,10 @@ export class ProjectController {
         )
         this.mailerService
           .sendMail(contentSendMail)
-          .then(() => {})
+          .then(() => { })
           .catch((error) => {
             console.error('Error sending email:', error)
-            return {message: 'Gửi mail thất bại!', error: error.message}
+            return { message: 'Gửi mail thất bại!', error: error.message }
           })
         const projectStepAll = await this.projectStepsService.findWworkflowStepAProject(
           projectStep.workflowStep.id,
@@ -361,7 +441,7 @@ export class ProjectController {
         )
         if (projectStepAll.length == 1) {
           await this.projectStepsService.update(
-            {id: +id},
+            { id: +id },
             {
               weight: null,
               staff: null,
@@ -379,7 +459,7 @@ export class ProjectController {
   }
   @Get('/add')
   @Render('admin/projects/add_project')
-  async renderAdd (
+  async renderAdd(
     @Query('full_name') fullName: string,
     @Query('number_phone') numberPhone: string,
     @Query('email') email: string,
@@ -419,7 +499,7 @@ export class ProjectController {
   @SetMetadata('permision', '7')
   @Get('/trang-thai/:status')
   @Render('admin/projects/projects')
-  async filterProjects (@Param('status') status: string, @Req() req: Request) {
+  async filterProjects(@Param('status') status: string, @Req() req: Request) {
     const token = req.cookies['token']
     const payload = await this.staffsService.payload(token)
     const inforAccount = await this.staffsService.findOne(payload.id)
@@ -442,7 +522,7 @@ export class ProjectController {
   }
   @Get('/maintenance')
   @Render('admin/projects/projects_maintenance')
-  async filterProjectsMaintennce (@Param('status') status: string, @Req() req: Request) {
+  async filterProjectsMaintennce(@Param('status') status: string, @Req() req: Request) {
     const token = req.cookies['token']
     const payload = await this.staffsService.payload(token)
     const inforAccount = await this.staffsService.findOne(payload.id)
@@ -459,7 +539,7 @@ export class ProjectController {
   }
   @Get('/maintenance/:id')
   @Render('admin/projects/edit_project_maintenance')
-  async findOneMaintenance (@Param('id') id: number, @Req() req: Request) {
+  async findOneMaintenance(@Param('id') id: number, @Req() req: Request) {
     const departments = await this.departmensService.findAll()
     const project = await this.projectService.findOne(+id)
     const token = req.cookies['token']
@@ -481,7 +561,7 @@ export class ProjectController {
   }
   @Get('/:id')
   @Render('admin/projects/edit_project')
-  async findOne (@Param('id') id: number, @Req() req: Request) {
+  async findOne(@Param('id') id: number, @Req() req: Request) {
     const departments = await this.departmensService.findAll()
     const project = await this.projectService.findOne(+id)
     const token = req.cookies['token']
@@ -508,7 +588,7 @@ export class ProjectController {
     }
   }
   @Post('/addWarranty/:id')
-  async addWarranty (
+  async addWarranty(
     @Param('id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,
     @Req() req: Request,
@@ -518,7 +598,7 @@ export class ProjectController {
     res.redirect('back')
   }
   @Post('/addmaintenanceFit/:id')
-  async addmaintenanceFit (
+  async addmaintenanceFit(
     @Param('id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,
     @Req() req: Request,
@@ -529,9 +609,9 @@ export class ProjectController {
   }
   @Get('/checkEdit/:projectEdit')
   @Render('admin/projects/checkEdit_project')
-  async checkEdit (@Param('projectEdit') projectEditId: number) {
+  async checkEdit(@Param('projectEdit') projectEditId: number) {
     const projectEdit = await this.projectEditService.findOne(+projectEditId)
     const project = await this.projectService.findOne(+projectEdit.project.id)
-    return {projectEdit, project, activeMenu: 'project'}
+    return { projectEdit, project, activeMenu: 'project' }
   }
 }

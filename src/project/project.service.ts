@@ -3,20 +3,125 @@ import {CreateProjectDto, CreateProjectMaintenanceDto} from './dto/create-projec
 import {UpdateProjectDto} from './dto/update-project.dto'
 import {InjectRepository} from '@nestjs/typeorm'
 import {Project} from './entities/project.entity'
-import {Not, Repository} from 'typeorm'
+import {LessThan, MoreThan, Not, Repository} from 'typeorm'
 import {relative} from 'path'
+import {HistoryMaintenance} from 'src/history-maintenance/entities/history-maintenance.entity'
 @Injectable()
 export class ProjectService {
   constructor (
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    @InjectRepository(HistoryMaintenance)
+    private readonly historyMaintenanceRepository: Repository<HistoryMaintenance>,
   ) {}
+
+
+
+
+
+  async statisticalMaintenance () {
+    const toDay = new Date()
+    // lấy ra project dạng bảo trì mất phí
+    // const projects = await this.projectRepository
+    //   .createQueryBuilder('project')
+    //   .leftJoinAndSelect('project.historyMaintenance', 'history')
+    //   .where('project.type = :type', {type: 'BAOTRI'})
+    //   .andWhere('history.timeStart < :toDay', {toDay})
+    //   .andWhere('history.timeEnd > :toDay', {toDay})
+    //   .andWhere('history.free = :free', {free: false})
+    //   .getMany()
+    const projects = await this.historyMaintenanceRepository.find({
+      where: {
+        timeStart: LessThan(toDay),
+        timeEnd: MoreThan(toDay),
+        free: false,
+      },
+      relations: ['project'],
+    })
+     const objData = {
+       quangNinh: 0,
+       haNoi: 0,
+       khac: 0,
+       tong: 0,
+     }
+     projects.forEach((element) => {
+       if (element.project.address.toUpperCase().includes('QUẢNG NINH')) {
+         objData.quangNinh += 1
+         objData.tong += 1
+       } else if (element.project.address.toUpperCase().includes('HÀ NỘI')) {
+         objData.haNoi += 1
+         objData.tong += 1
+       } else {
+         objData.khac += 1
+         objData.tong += 1
+       }
+     })
+     return objData
+  }
+  async statisticalMaintenanceFree () {
+    const toDay = new Date()
+    const project = await this.historyMaintenanceRepository.find({
+      where: {
+        timeStart: LessThan(toDay),
+        timeEnd: MoreThan(toDay),
+        free: true,
+      },
+      relations: ['project'],
+    })
+    const objData = {
+      quangNinh: 0,
+      haNoi: 0,
+      khac: 0,
+      tong: 0,
+    }
+    project.forEach((element) => {
+      if (element.project.address.toUpperCase().includes('QUẢNG NINH')) {
+        objData.quangNinh += 1
+        objData.tong += 1
+      } else if (element.project.address.toUpperCase().includes('HÀ NỘI')) {
+        objData.haNoi += 1
+        objData.tong += 1
+      } else {
+        objData.khac += 1
+        objData.tong += 1
+      }
+    })
+    return objData
+  }
+  async statisticalWarranty () {
+    const toDay = new Date()
+    const project = await this.projectRepository.find({
+      where: {
+        warrantyStart: LessThan(toDay),
+        warrantyEnd: MoreThan(toDay),
+      },
+    })
+    const objData = {
+      quangNinh: 0,
+      haNoi: 0,
+      khac: 0,
+      tong: 0,
+    }
+    project.forEach((element) => {
+      if (element.address.toUpperCase().includes('QUẢNG NINH')) {
+        objData.quangNinh += 1
+        objData.tong += 1
+      } else if (element.address.toUpperCase().includes('HÀ NỘI')) {
+        objData.haNoi += 1
+        objData.tong += 1
+      } else {
+        objData.khac += 1
+        objData.tong += 1
+      }
+    })
+    return objData
+  }
 
   async findAllProject () {
     const project = await this.projectRepository.find({
       relations: ['historyMaintenance'],
     })
-    return project;
+    return project
   }
 
   async countProjectByMonth () {

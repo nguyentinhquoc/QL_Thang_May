@@ -42,7 +42,7 @@ seconds=String(date.getSeconds()).padStart(2, '0' ); return `${day}/${month}/${y
         </div>
         <div class="m-2" style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;">
           <% if (historyMaintenance.length === 0) { %>
-          <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-danger false" id="extension-maintenance">Bảo trì: Gia hạn bảo trì</p>
+          <p style="font-size: 16px; align-items: center; cursor: pointer; padding-top: 10px;" class="badge rounded badge-subtle-danger false" >Bảo trì: Gia hạn bảo trì</p>
           <% } else {
                 function toDateOnly(date) {
                    return new Date(date.getFullYear(), date.getMonth(), date.getDate());

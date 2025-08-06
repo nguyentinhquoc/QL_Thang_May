@@ -33,8 +33,8 @@ export class Maintenance {
   id: number
   @Column({type: 'date'})
   time: Date
-  @Column({default: true})
-  confirmSuccess: boolean
+  // @Column({default: true})
+  // confirmSuccess: boolean
   @Column()
   reason: string
   @Column({default: true})

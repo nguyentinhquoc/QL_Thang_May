@@ -14,8 +14,8 @@ import {
 export class MaintenanceAction {
   @PrimaryGeneratedColumn()
   id: number
-  @Column({default: true})
-  confirmSuccess: boolean
+  // @Column({default: true})
+  // confirmSuccess: boolean
   @Column({default: null, nullable: true})
   status: Date
   @Column({nullable: true})

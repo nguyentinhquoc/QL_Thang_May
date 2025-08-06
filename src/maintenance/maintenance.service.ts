@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { CreateMaintenanceDto } from './dto/create-maintenance.dto'
-import { UpdateMaintenanceDto } from './dto/update-maintenance.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Maintenance } from './entities/maintenance.entity'
 import { Between, Repository } from 'typeorm'
@@ -24,7 +23,7 @@ async findByNotifycation() {
   return this.maintenanceRepository.find({
     relations: ['project'],
     where: {
-      confirmSuccess: true,
+      // confirmSuccess: true,
       time: Between(currentDate, twoDaysLater)
     },
     order: { time: 'ASC' }
@@ -34,13 +33,13 @@ async findByNotifycation() {
   async create3 (createMaintenanceActionDto: CreateMaintenanceActionDto) {
     return this.maintenanceActionRepository.save({
       ...createMaintenanceActionDto,
-      confirmSuccess: false
+      // confirmSuccess: false
     })
   }
   create2 (createMaintenanceDto: CreateMaintenanceDto, confirmSuccess: boolean) {
     return this.maintenanceRepository.save({
       ...createMaintenanceDto,
-      confirmSuccess: confirmSuccess
+      // confirmSuccess: confirmSuccess
     })
   }
   create (createMaintenanceDto: CreateMaintenanceDto) {
@@ -54,7 +53,7 @@ async findByNotifycation() {
     return this.maintenanceRepository.find({
       relations: ['project'],
       where: {
-        confirmSuccess: true,
+        // confirmSuccess: true,
         time: Between(currentDate, threeDaysLater)
       },
       order: { time: 'ASC' }
@@ -68,7 +67,7 @@ async findByNotifycation() {
     return this.maintenanceRepository.find({
       relations: ['project', 'project.projectStaff', 'project.projectStaff.staff'],
       where: {
-        confirmSuccess: true,
+        // confirmSuccess: true,
         time: Between(currentDate, threeDaysLater),
         project: {
           projectStaff: {
@@ -83,7 +82,7 @@ async findByNotifycation() {
     return this.maintenanceRepository.find({
       relations: ['project', 'maintenanceActions', 'maintenanceActions.staff'],
       where: {
-        confirmSuccess: true
+        // confirmSuccess: true
       },
       order: {
         time: 'ASC'
@@ -100,7 +99,7 @@ async findByNotifycation() {
         'maintenanceActions.staff'
       ],
       where: {
-        confirmSuccess: true,
+        // confirmSuccess: true,
         project: {
           projectStaff: {
             staff: { id: idStaff }
@@ -117,9 +116,6 @@ async findByNotifycation() {
       .createQueryBuilder('maintenance')
       .leftJoinAndSelect('maintenance.project', 'project')
       .leftJoinAndSelect('maintenance.maintenanceActions', 'maintenanceActions')
-      .where('maintenance.confirmSuccess = :confirmSuccess', {
-        confirmSuccess: false
-      })
       .andWhere('maintenanceActions.status IS NULL')
       .orderBy('maintenance.time', 'ASC')
       .getMany()
@@ -131,9 +127,7 @@ async findByNotifycation() {
       .leftJoinAndSelect('project.projectStaff', 'projectStaff')
       .leftJoinAndSelect('projectStaff.staff', 'staff')
       .leftJoinAndSelect('maintenance.maintenanceActions', 'maintenanceActions')
-      .where('maintenance.confirmSuccess = :confirmSuccess', {
-        confirmSuccess: false
-      })
+
       .andWhere('maintenanceActions.status IS NULL')
       .andWhere('staff.id = :staffId', { staffId: idStaff })
       .orderBy('maintenance.time', 'ASC')
@@ -147,9 +141,9 @@ async findByNotifycation() {
       .leftJoinAndSelect('project.projectStaff', 'projectStaff')
       .leftJoinAndSelect('projectStaff.staff', 'staff')
       .leftJoinAndSelect('maintenance.maintenanceActions', 'maintenanceActions')
-      .where('maintenance.confirmSuccess = :confirmSuccess', {
-        confirmSuccess: false
-      })
+      // .where('maintenance.confirmSuccess = :confirmSuccess', {
+      //   confirmSuccess: false
+      // })
       .andWhere('maintenanceActions.status IS NOT NULL')
       .andWhere('staff.id = :staffId', { staffId: idStaff })
       .orderBy('maintenance.time', 'ASC')
@@ -161,9 +155,9 @@ async findByNotifycation() {
       .createQueryBuilder('maintenance')
       .leftJoinAndSelect('maintenance.project', 'project')
       .leftJoinAndSelect('maintenance.maintenanceActions', 'maintenanceActions')
-      .where('maintenance.confirmSuccess = :confirmSuccess', {
-        confirmSuccess: false
-      })
+      // .where('maintenance.confirmSuccess = :confirmSuccess', {
+      //   confirmSuccess: false
+      // })
       .andWhere('maintenanceActions.status IS NOT NULL')
       .orderBy('maintenance.time', 'ASC')
       .getMany()
@@ -172,7 +166,7 @@ async findByNotifycation() {
     return this.maintenanceRepository.find({
       relations: ['project', 'maintenanceActions', 'maintenanceActions.staff'],
       where: {
-        confirmSuccess: true,
+        // confirmSuccess: true,
         project: {
           id: idProject
         }
@@ -186,17 +180,17 @@ async findByNotifycation() {
     return this.maintenanceRepository.findOne({
       relations: ['project', 'maintenanceActions'],
       where: {
-        confirmSuccess: true,
+        // confirmSuccess: true,
         id: id
       }
     })
   }
-  updateConfirmSuccess (id: number) {
-    return this.maintenanceRepository.update(id, { confirmSuccess: true })
-  }
-  updateConfirmNoSuccess (id: number) {
-    return this.maintenanceRepository.update(id, { confirmSuccess: false })
-  }
+  // updateConfirmSuccess (id: number) {
+  //   return this.maintenanceRepository.update(id, { confirmSuccess: true })
+  // }
+  // updateConfirmNoSuccess (id: number) {
+  //   return this.maintenanceRepository.update(id, { confirmSuccess: false })
+  // }
   ConfirmDelete (id: number) {
     return this.maintenanceRepository.delete(id)
   }

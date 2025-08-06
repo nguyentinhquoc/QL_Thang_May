@@ -17,13 +17,16 @@ export class MaintenanceActionsService {
   }
   findAll () {
     return this.maintenanceActionRepository.find({
-      where: { confirmSuccess: true },
+      where: {
+        //  confirmSuccess: true
+
+       },
     })
   }
   findProject (id: number) {
     return this.maintenanceActionRepository.find({
       where: {
-        confirmSuccess: true,
+        // confirmSuccess: true,
         maintenance: {
           project: {
             id: id,
@@ -36,7 +39,7 @@ export class MaintenanceActionsService {
   async findAllWStaff (id: number) {
     return await this.maintenanceActionRepository.find({
       where: {
-        confirmSuccess: true,
+        // confirmSuccess: true,
         staff: {
           id,
         },

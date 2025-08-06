@@ -15,9 +15,11 @@ import { MaintenanceModule } from 'src/maintenance/maintenance.module'
 import { DepartmensModule } from 'src/departmens/departmens.module'
 import { ProjectStaff } from 'src/project_staff/entities/project_staff.entity'
 import { ProjectStaffModule } from 'src/project_staff/project_staff.module'
+import { HistoryMaintenance } from 'src/history-maintenance/entities/history-maintenance.entity'
+import { HistoryMaintenanceModule } from 'src/history-maintenance/history-maintenance.module'
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Project]),
+    TypeOrmModule.forFeature([Project,HistoryMaintenance]),
     WorkflowsModule,
     StepsModule,
     WorkflowStepsModule,
@@ -26,6 +28,7 @@ import { ProjectStaffModule } from 'src/project_staff/project_staff.module'
     ProjectStaffModule,
     NotificationModule,
     DepartmensModule,
+    HistoryMaintenanceModule,
     forwardRef(() => MaintenanceModule),
     forwardRef(() => ProjectEditModule),
   ],

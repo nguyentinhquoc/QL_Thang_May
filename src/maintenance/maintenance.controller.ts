@@ -121,7 +121,7 @@ export class MaintenanceController {
   @Patch('confirm')
   async confirm (@Res() res: Response, @Body('id') id: string) {
     const numericId = parseInt(id, 10)
-    await this.maintenanceService.updateConfirmSuccess(+numericId)
+    // await this.maintenanceService.updateConfirmSuccess(+numericId)
     await this.maintenanceActionsService.updateConfirmSuccess(+numericId)
     return res.status(200).json({success: true, message: 'Success'})
   }
@@ -154,6 +154,11 @@ export class MaintenanceController {
   @Render('admin/maintenance/maintenance_w_project')
   async findAllWProject (@Param('idProject') idProject: string) {
     const maintenanceWProjects = await this.maintenanceService.findAllWProject(+idProject)
+
+    console.log('🔱  WaveBear  -----------------------------------------------------------------------------------------------------------🔱  WaveBear ')
+    console.log('🔱  WaveBear  ~ MaintenanceController ~ findAllWProject ~ maintenanceWProjects⚡ ⚡ ⚡  :', maintenanceWProjects)
+    console.log('🔱  WaveBear  -----------------------------------------------------------------------------------------------------------🔱  WaveBear ')
+
     const staffs = await this.staffsService.findAll()
     const project = await this.projectService.findOne(+idProject)
     const historyMaintenance = await this.historyMaintenanceService.findByProjectNow(+idProject)

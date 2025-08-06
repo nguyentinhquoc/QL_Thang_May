@@ -37,6 +37,7 @@
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.7",
     "ejs": "^3.1.10",
+    "exceljs": "^4.4.0",
     "express-session": "^1.18.1",
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
