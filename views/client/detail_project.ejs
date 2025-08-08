@@ -213,46 +213,52 @@ ${hours}:${minutes}:${seconds}`; } %>
                     <th scope="col">Giá trị</th>
                   </tr>
                 </thead>
+                   <%
+                    let infor_product;
+                    if (project.infor_product) {
+                        infor_product = JSON.parse(project.infor_product);
+                    }
+                    %>
                 <tbody>
                   <tr>
                     <td><label for="dongCo">Động cơ</label></td>
-                    <td><input type="text" id="dongCo" name="dongCo" value="<%= project.infor_product.dongCo %>" disabled></td>
+                    <td><input type="text" id="dongCo" name="dongCo" value="<%= infor_product.dongCo %>" disabled></td>
                   </tr>
                   <tr>
                     <td><label for="tuDien">Tủ điện</label></td>
-                    <td><input type="text" id="tuDien" name="tuDien" value="<%= project.infor_product.tuDien %>" disabled></td>
+                    <td><input type="text" id="tuDien" name="tuDien" value="<%= infor_product.tuDien %>" disabled></td>
                   </tr>
                   <tr>
                     <td><label for="capTai">Cáp Tải</label></td>
-                    <td><input type="text" id="capTai" name="capTai" value="<%= project.infor_product.capTai %>" disabled></td>
+                    <td><input type="text" id="capTai" name="capTai" value="<%= infor_product.capTai %>" disabled></td>
                   </tr>
                   <tr>
                     <td><label for="congSuat">Công suất</label></td>
-                    <td><input type="text" id="congSuat" name="congSuat" value="<%= project.infor_product.congSuat %>" disabled></td>
+                    <td><input type="text" id="congSuat" name="congSuat" value="<%= infor_product.congSuat %>" disabled></td>
                   </tr>
                   <tr>
                     <td><label for="hoThang">Hố thang</label></td>
-                    <td><input type="text" id="hoThang" name="hoThang" value="<%= project.infor_product.hoThang %>" disabled></td>
+                    <td><input type="text" id="hoThang" name="hoThang" value="<%= infor_product.hoThang %>" disabled></td>
                   </tr>
                   <tr>
                     <td><label for="cabin">Cabin</label></td>
-                    <td><input type="text" id="cabin" name="cabin" value="<%= project.infor_product.cabin %>" disabled></td>
+                    <td><input type="text" id="cabin" name="cabin" value="<%= infor_product.cabin %>" disabled></td>
                   </tr>
                   <tr>
                     <td><label for="cua">Cửa</label></td>
-                    <td><input type="text" id="cua" name="cua" value="<%= project.infor_product.cua %>" disabled></td>
+                    <td><input type="text" id="cua" name="cua" value="<%= infor_product.cua %>" disabled></td>
                   </tr>
                   <tr>
                     <td><label for="pit">Pít </label></td>
-                    <td><input type="text" id="pit" name="pit" value="<%= project.infor_product.pit %>" disabled></td>
+                    <td><input type="text" id="pit" name="pit" value="<%= infor_product.pit %>" disabled></td>
                   </tr>
                   <tr>
                     <td><label for="oh">OH </label></td>
-                    <td><input type="text" id="oh" name="oh" value="<%= project.infor_product.oh %>" disabled></td>
+                    <td><input type="text" id="oh" name="oh" value="<%= infor_product.oh %>" disabled></td>
                   </tr>
                   <tr>
                     <td><label for="phongMay">Phòng máy</label></td>
-                    <td><input type="text" id="phongMay" name="phongMay" value="<%= project.infor_product.phongMay %>" disabled></td>
+                    <td><input type="text" id="phongMay" name="phongMay" value="<%= infor_product.phongMay %>" disabled></td>
                   </tr>
                 </tbody>
               </table>
@@ -560,15 +566,11 @@ ${hours}:${minutes}:${seconds}`; } %>
         input.classList.add('form-control');
       }
     });
-    const scrollDuration = 500;
-    const scrollStep = -window.scrollY / (scrollDuration / 15);
-    const scrollInterval = setInterval(function() {
-      if (window.scrollY !== 0) {
-        window.scrollBy(0, scrollStep);
-      } else {
-        clearInterval(scrollInterval);
-      }
-    }, 15);
+ window.scrollTo({
+  top: 0,
+  behavior: "smooth"
+});
+
     const editBtn = document.getElementById('editBtn');
     const newButton = document.createElement('button');
     newButton.className = editBtn.className;

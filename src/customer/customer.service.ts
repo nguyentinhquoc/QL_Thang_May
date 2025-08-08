@@ -13,11 +13,17 @@ export class CustomerService {
   ) {}
 
   create (createCustomerDto: CreateCustomerDto) {
+    console.log("🚀 ~ CustomerService ~ create ~ createCustomerDto:", createCustomerDto)
     return this.customersRepository.save(createCustomerDto)
   }
 
   findAll () {
-    return this.customersRepository.find()
+    return this.customersRepository.find(
+      {
+        relations: ['staff'],
+        order: { createdAt: 'DESC' },
+      }
+    )
   }
 
   findOne (id: number) {

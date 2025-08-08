@@ -1,3 +1,4 @@
+import { Staff } from 'src/staffs/entities/staff.entity'
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -5,6 +6,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm'
 
 @Entity()
@@ -29,4 +32,6 @@ export class Customer {
   updatedAt: Date
   @DeleteDateColumn()
   deletedAt?: Date
+  @ManyToOne(() => Staff, staff => staff.customers, { nullable: true })
+  staff: Staff;
 }

@@ -1,4 +1,5 @@
-import {IsNotEmpty, IsOptional, IsPhoneNumber, IsString, MaxLength} from 'class-validator'
+import {IsArray, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, MaxLength} from 'class-validator'
+import { Staff } from 'src/staffs/entities/staff.entity'
 export class CreateCustomerDto {
   @IsNotEmpty()
   @MaxLength(255)
@@ -20,4 +21,8 @@ export class CreateCustomerDto {
   district: string
   @IsString()
   ward: string
+  @IsOptional()
+  @IsString({each: true, message: 'Mỗi nhân viên chính phải là chuỗi'})
+  staffMain?: Staff 
+  staff?: Staff 
 }

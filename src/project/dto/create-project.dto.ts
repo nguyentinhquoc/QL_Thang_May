@@ -30,7 +30,7 @@ export class CreateProjectDto {
   @IsOptional()
   @Transform(({value}) => (value === '' ? undefined : value))
   @IsString({message: 'Thông tin sản phẩm phải là chuỗi'})
-  infor_product?: any
+  infor_product: string
   @IsOptional()
   @Transform(({value}) => (value === '' ? undefined : value))
   @MaxLength(225, {message: 'Mô tả không được vượt quá 225 ký tự'})
@@ -116,7 +116,7 @@ export class CreateProjectMaintenanceDto
   @IsOptional()
   @Transform(({value}) => (value === '' ? undefined : value))
   @IsString({message: 'Thông tin sản phẩm phải là chuỗi'})
-  infor_product?: any
+  infor_product: any
   @IsOptional()
   @Transform(({value}) => (value === '' ? undefined : value))
   @MaxLength(225, {message: 'Mô tả không được vượt quá 225 ký tự'})

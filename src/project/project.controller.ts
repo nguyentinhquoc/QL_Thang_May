@@ -204,6 +204,7 @@ export class ProjectController {
       oh: createProjectDto.oh,
       phongMay: createProjectDto.phongMay,
     }
+    console.log('infor_product',infor_product);
     const newProject = {
       ...createProjectDto,
       infor_product: JSON.stringify(infor_product),
@@ -589,6 +590,7 @@ export class ProjectController {
   async findOne(@Param('id') id: number, @Req() req: Request) {
     const departments = await this.departmensService.findAll()
     const project = await this.projectService.findOne(+id)
+    console.log("🚀 ~ ProjectController ~ findOne ~ project:", project)
     const token = req.cookies['token']
     const payload = await this.staffsService.payload(token)
     const inforAccount = await this.staffsService.findOne(payload.id)
@@ -635,8 +637,11 @@ export class ProjectController {
   @Get('/checkEdit/:projectEdit')
   @Render('admin/projects/checkEdit_project')
   async checkEdit(@Param('projectEdit') projectEditId: number) {
+    
     const projectEdit = await this.projectEditService.findOne(+projectEditId)
+    console.log("🚀 ~ ProjectController ~ checkEdit ~ projectEdit:", projectEdit)
     const project = await this.projectService.findOne(+projectEdit.project.id)
+    console.log("🚀 ~ ProjectController ~ checkEdit ~ project:", project)
     return { projectEdit, project, activeMenu: 'project' }
   }
 }

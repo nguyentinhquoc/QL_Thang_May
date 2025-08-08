@@ -26,7 +26,7 @@ export class CreateProjectEditDto {
   address?: string
   @IsOptional()
   @IsString()
-  infor_product?: string
+  infor_product: string
   staff: Staff
   project: Project
   @IsOptional()
