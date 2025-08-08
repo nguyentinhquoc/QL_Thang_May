@@ -170,14 +170,8 @@ export class ProjectController {
     return res.redirect('/project/maintenance')
   }
   @Post()
-  async create(@Body() createProjectDto: CreateProjectDto, @Res() res: Response) {
-    console.log(
-      '🔱  WaveBear  --------------------------------------------------------------------------------------🔱  WaveBear ',
-    )
-    console.log('🔱  WaveBear  ~ ProjectController ~ create ~ createProjectDto⚡ ⚡ ⚡  :', createProjectDto)
-    console.log(
-      '🔱  WaveBear  --------------------------------------------------------------------------------------🔱  WaveBear ',
-    )
+  async create(@Body() createProjectDto: CreateProjectDto, @Res() res: Response , @Req() req: Request) {
+
     if (createProjectDto.address) {
       createProjectDto.address = `${createProjectDto.city}, ${createProjectDto.district},${createProjectDto.ward}, ${createProjectDto.address}`
     } else {
@@ -215,9 +209,41 @@ export class ProjectController {
       infor_product: JSON.stringify(infor_product),
     }
     const Project = await this.projectService.create(newProject)
-    // <+====================Tạo project_step====================+>
+
+
+
+     const token = req.cookies['token']
+    const payload = await this.staffsService.payload(token)
+    const inforAccount = await this.staffsService.findOne(payload.id)
+    const arr = createProjectDto.staffMain
+    if (inforAccount.department.id == 1 && inforAccount.position.id == 1) {
+      if (arr != null && arr.length > 0) {
+        const count = arr.reduce((acc, num) => {
+          acc[num] = (acc[num] || 0) + 1
+          return acc
+        }, {})
+        const duplicates = Object.keys(count).filter((key) => count[key] > 1)
+        const result = [...new Set([...arr, ...duplicates])]
+        const result2 = result.filter((item) => item !== '')
+        if (result2.length > 0) {
+          result.forEach(async (staff) => {
+            const Staff = await this.staffsService.findOne(+staff)
+            await this.notificationService.create({
+              title: 'Thông báo công trình mới !!!',
+              message: `Bạn được giao phụ trách tại công trình :${Project.full_name}`,
+              staff: Staff,
+              project: Project,
+            })
+            await this.projectStaffService.create({
+              project: Project,
+              staff: Staff,
+            })
+          })
+        }
+      }
+    }
+    console.log("🚀 ~ ProjectController ~ create ~ Project:", Project)
     let workflowSteps = await this.workflowStepsService.findWorkflow(+createProjectDto.workflow)
-    // <+====================Edit projectStep(Xử lý obj)====================+>
     const stepsArray = JSON.parse(createProjectDto.steps)
     const validStepIds = workflowSteps.map((step) => step.id)
     let workflowStepIds = workflowSteps.map((step) => step.id)
@@ -225,8 +251,6 @@ export class ProjectController {
     const filteredStepsArray = stepsArray.filter((step) => validStepIds.includes(Number(step.idStep)))
     const stepNulls = workflowStepIds.filter((id) => !filteredStepsArray.some((step) => +step.idStep === id))
     //Data sử dụng
-    // Find IDs in `workflowStepId` that are not in `filteredStepIds`
-    // const missingSteps = workflowStepId.filter(id => !filteredStepIds.includes(id));
     for (const stepNull of stepNulls) {
       const WorkflowSteps = await this.workflowStepsService.findOne(stepNull)
       await this.projectStepsService.create({
@@ -236,6 +260,7 @@ export class ProjectController {
         weight: null,
       })
     }
+
     for (const step of filteredStepsArray) {
       const WorkflowSteps = await this.workflowStepsService.findOne(step.idStep)
       const Staff = await this.staffsService.findOne(step.idStaffCheck)
