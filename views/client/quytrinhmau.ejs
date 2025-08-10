@@ -1,0 +1,72 @@
+<%- include('../layout/header') %>
+<div class="card p-4">
+  <div class="tab-pane preview-tab-pane active" role="tabpanel">
+    <h4>Quy trình làm việc mẫu</h4>
+    <% Object.entries(workflowSteps).forEach(function([workflowId, steps]) { %>
+    <div class="mb-4 pt-3">
+      <h5>Quy trình : <%= steps.name %></h5>
+      <div id="tableExample<%= workflowId %>" data-list='{"valueNames":["ten","phongban","chucvu","sdt","email","action"],"page":10,"pagination":true}'>
+        <div class="row justify-content-end g-0">
+          <div class="col-auto col-sm-5 mb-3">
+            <form>
+              <div class="input-group">
+                <input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
+                <div class="input-group-text bg-transparent">
+                  <span class="fa fa-search fs-10 text-600"></span>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="table-responsive scrollbar">
+          <table class="table table-bordered table-hover table-striped fs-10 mb-0">
+            <thead class="bg-200">
+              <tr>
+                <th class="text-900 sort" data-sort="ten">Bước</th>
+                <th class="text-900 sort" data-sort="phongban">Tên Bước</th>
+                <th class="text-900 sort" data-sort="chucvu">Mô tả</th>
+                <th class="text-900 sort" data-sort="sdt">Phòng ban thực hiện</th>
+              </tr>
+            </thead>
+            <tbody class="list">
+              <% steps.steps.forEach(function(workflowStep, key) { %>
+              <tr>
+                <td class="chucvu">Bước : <%= key+=1 %></td>
+                <td class="ten"><%= workflowStep.step.name %></td>
+                <td class="phongban"><%= workflowStep.step.description %></td>
+                <td class="sdt">Phòng ban:
+                  <%
+                  let departmentCan = [];
+                  let showIcon = false;
+                  workflowStep.step.departmentsSteps.forEach(function(departmentStep, index, array) {
+                    departmentCan.push(departmentStep.department.id);
+                  %>
+                  <%= departmentStep.department.name %><%= index < array.length - 1 ? ', ' : '' %>
+                  <%
+                    if (departmentStep.department.id === 1) {
+                      showIcon = true;
+                    }
+                  });
+                  %>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3">
+          <button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev">
+            <span class="fas fa-chevron-left"></span>
+          </button>
+          <ul class="pagination mb-0"></ul>
+          <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next">
+            <span class="fas fa-chevron-right"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <% }); %>
+  </div>
+</div>
+<%- include('../layout/footer') %>

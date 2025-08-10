@@ -1,0 +1,684 @@
+<%- include('../../layout/header') %>
+<style>
+  .item-list {
+    display: none;
+  }
+
+  .infor-staff:hover {
+    opacity: 0.7;
+    background-color: rgb(45, 145, 227);
+    color: white;
+  }
+
+  .infor-staff {
+    border-bottom: 0.5px solid rgb(77, 211, 229);
+  }
+
+  #itemList {
+    padding: 0;
+    display: none;
+  }
+
+  .imgStep img {
+    cursor: pointer;
+  }
+
+  .imgStep img:hover {
+    opacity: 0.2;
+  }
+
+  .imgStep img:active {
+    opacity: 0.2;
+  }
+
+  .imgMainStaff:hover {
+    opacity: 0.2;
+  }
+</style>
+<form action="/project/<%= project.id %>?_method=Patch" method="POST" id="FormAdd">
+  <div class="row m-t-15 m-b-15">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body text-secondary">
+          <h2 class=" m-b-30">Sửa công trình</h2>
+          <div class="row d-flex align-items-center">
+            <div class="col-auto">
+              Nhân viên phụ trách:</div>
+            <% project.projectStaff.forEach(function(item, index) { %>
+            <div class="col-auto">
+              <div class="avatar avatar-2xl imgMainStaff" <%
+                if(manager && busines) {
+                %> onclick="removeMainStaff('<%= item.id %>', this)" <% } %>
+                data-bs-toggle="tooltip" data-bs-placement="top"
+                data-bs-original-title="<%= item.staff.full_name %>">
+                <img class="rounded-circle" src="/images/avatar/<%= item.staff.avatar %>"
+                  alt>
+              </div>
+            </div>
+            <% }) %>
+            <%
+            if(manager && busines) {
+            %>
+            <a class="btn btn-primary mb-2" style="width: fit-content;"
+              onclick="addStaff()">+</a>
+            <% } %>
+          </div>
+          <div id="staff-container" class="mt-3 mb-3"></div>
+          <div class="d-flex justify-content-between">
+            <div class="form-group col-7">
+              <label for="full_name">Tên công trình <span
+                  style="color: red;">*</span></label>
+              <input type="text" id="full_name" name="full_name" class="form-control"
+                required maxlength="255" value="<%= project.full_name %>">
+            </div>
+            <div class="form-group col-3">
+              <label for="code_project">Mã công trình <span
+                  style="color: red;">*</span></label>
+              <input type="text" placeholder="Enter code" id="code_project"
+                name="code_project" class="form-control" required maxlength="255"
+                value="<%= project.code_project %>">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="number_phone">Số điện thoại <span
+                style="color: red;">*</span></label>
+            <input type="tel" id="number_phone" name="number_phone" class="form-control"
+              required maxlength="15" value="<%= project.number_phone %>">
+          </div>
+          <div class="form-group">
+            <label for="email">Địa chỉ email</label>
+            <input type="email" id="email" name="email" class="form-control"
+              maxlength="255" value="<%= project.email %>">
+          </div>
+              <div class="form-group col-12">
+            <label for="city">Tỉnh/Thành phố:</label>
+            <select required id="city" name="city" class="form-control">
+              <option value="" selected disabled>Chọn tỉnh thành</option>
+            </select>
+          </div>
+
+          <div class="form-group col-12">
+            <label for="district">Quận/Huyện:</label>
+            <select id="district" name="district" class="form-control">
+              <option value="" selected disabled>Chọn quận huyện</option>
+            </select>
+          </div>
+
+          <div class="form-group col-12">
+            <label for="ward">Phường/Xã:</label>
+            <select id="ward" name="ward" class="form-control">
+              <option value="" selected disabled>Chọn phường xã</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Địa chỉ lắp đặt <span
+                style="color: red;">*</span></label>
+            <textarea id="address" name="address"
+              class="form-control"></textarea>
+          </div>
+          <div class="d-flex" style="justify-content: space-between;">
+            <div class="form-group">
+              <label for="price">Giá trị hợp đồng: <span
+                  style="color: red;">*</span></label>
+              <input type="text"
+                value="<%= new Intl.NumberFormat('vi-VN').format(project.price) %>"
+                placeholder="Nhập giá trị hợp đồng" id="price" class="form-control"
+                onkeyup="formatCurrency(this)">
+              <input type="hidden" name="price" id="price_hidden"
+                value="<%= project.price %>">
+              <script>
+                function formatCurrency(input) {
+                  // Remove non-numeric characters
+                  let value = input.value.replace(/[^\d]/g, '');
+
+                  // Store the raw value in hidden field
+                  document.getElementById('price_hidden').value = value;
+
+                  // Format with thousands separators
+                  if (value) {
+                    input.value = new Intl.NumberFormat('vi-VN').format(value);
+                  }
+                }
+              </script>
+            </div>
+            <div class="form-group">
+              <label for="tax">Thuế:</label>
+              <select id="tax" name="tax" class="form-control">
+                <option value="Có" <%=project.tax == 'Có' ? 'selected' : '' %>>Có</option>
+                <option value="Không" <%=project.tax == 'Không' ? 'selected' : ''
+                  %>>Không</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description">Ghi chú</label>
+            <textarea id="description" name="description" class="form-control"
+              maxlength="225"><%= project.description %></textarea>
+            <p>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Thông tin</th>
+                    <th scope="col">Giá trị</th>
+                  </tr>
+                </thead>
+              <%
+              let infor_product;
+              if (project.infor_product) {
+                  infor_product = JSON.parse(project.infor_product);
+              }
+              %>
+
+                <tbody>
+                  <tr>
+                    <td><label for="dongCo">Động cơ</label></td>
+                    <td><input type="text" id="dongCo" name="dongCo"
+                        value="<%= infor_product.dongCo %>"
+                        class="form-control"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="tuDien">Tủ điện</label></td>
+                    <td><input type="text" id="tuDien" name="tuDien"
+                        value="<%= infor_product.tuDien %>"
+                        class="form-control"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="capTai">Cáp Tải</label></td>
+                    <td><input type="text" id="capTai" name="capTai"
+                        value="<%= infor_product.capTai %>"
+                        class="form-control"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="congSuat">Công suất</label></td>
+                    <td><input type="text" id="congSuat" name="congSuat"
+                        value="<%= infor_product.congSuat %>"
+                        class="form-control"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="hoThang">Hố thang</label></td>
+                    <td><input type="text" id="hoThang" name="hoThang"
+                        value="<%= infor_product.hoThang %>"
+                        class="form-control"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="cabin">Cabin</label></td>
+                    <td><input type="text" id="cabin" name="cabin"
+                        value="<%= infor_product.cabin %>"
+                        class="form-control"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="cua">Cửa</label></td>
+                    <td><input type="text" id="cua" name="cua"
+                        value="<%= infor_product.cua %>"
+                        class="form-control"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="pit">Pít</label></td>
+                    <td><input type="text" id="pit" name="pit"
+                        value="<%= infor_product.pit %>"
+                        class="form-control"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="oh">OH</label></td>
+                    <td><input type="text" id="oh" name="oh"
+                        value="<%= infor_product.oh %>" class="form-control"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="phongMay">Phòng máy</label></td>
+                    <td><input type="text" id="phongMay" name="phongMay"
+                        value="<%= infor_product.phongMay %>"
+                        class="form-control"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <button class="btn btn-primary btn-lg btn-block w-100"
+                onclick="SubmitForm(event)">Sửa công trình</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body text-secondary">
+          <div class="form-group">
+            <label for="workflow">Quy trình lắp đặt <span
+                style="color: red;">*</span></label>
+            <%
+            let displayedIds = new Set();
+            ProjectSteps.forEach(function(ProjectStep) {
+            if (!displayedIds.has(ProjectStep.workflowStep.id)) {
+            displayedIds.add(ProjectStep.workflowStep.id);
+            %>
+            <div class="step step<%= ProjectStep.workflow.id %> m-t-30">
+              <div class="d-flex justify-content-between btn-block mb-3 notification">
+                <span>
+                  <span class="w-75" style="text-align: start;">
+                    <%= ProjectStep.step.name %>
+                  </span>
+                  <br>
+                  <span class="w-75" style="opacity: 0.5;">
+                    <%= ProjectStep.step.description %>
+                  </span>
+                  <br>
+                  <span class="w-75 text-danger">
+                    Phòng ban:
+                    <%
+                    let departmentCan = [];
+                    let showIcon = false;
+                    ProjectStep.step.departmentsSteps.forEach(function(departmentStep,
+                    index, array) {
+                    departmentCan.push(departmentStep.department.id);
+                    %>
+                    <%= departmentStep.department.name %><%= index < array.length - 1 ?
+                    ', ' : '' %>
+                    <%
+                    if (departmentStep.department.id === 1) {
+                    showIcon = true;
+                    }
+                    });
+                    %>
+                  </span>
+                </span>
+                <div class="d-flex justify-content-center align-items-center">
+                  <div id="imgStep<%= ProjectStep.workflowStep.id %>" class="imgStep">
+                  </div>
+                  <% if (showIcon || role_admin) { %>
+                  <div class="add-new-position" departmentCan="[<%=departmentCan%>]"
+                    idValue="<%= ProjectStep.workflowStep.id %>"
+                    nameValue="<%= ProjectStep.step.name %>">
+                    <i class="fas fa-plus-square"
+                      style="font-size: 40px; color: rgb(31, 145, 238);"></i>
+                  </div>
+                  <% } else{ %>
+                  <div>
+                    <i class="fas fa-plus-square"
+                      style="font-size: 40px;color: rgb(237, 114, 73);"></i>
+                  </div>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+            <%
+            }
+            });
+            %>
+          </section>
+        </div>
+      </div>
+    </form>
+    <script>
+  function toggleStaffContainer() {
+    const staffContainer = document.getElementById('staff-container');
+    if (staffContainer.style.display === 'none') {
+      staffContainer.style.display = 'block';
+    } else {
+      staffContainer.style.display = 'none';
+    }
+  }
+
+  function selectStaff(element, name, id) {
+    const searchBox = element.closest('.d-flex').querySelector('.staff-search');
+    const hiddenInput = element.closest('.d-flex').querySelector('.staff-main-id');
+    const list = element.closest('.d-flex').querySelector('.item-list');
+    searchBox.value = name;
+    hiddenInput.value = id;
+    list.style.display = "none";
+  }
+
+  function filterList2(element) {
+    const container = element.closest('.d-flex');
+    const input = container.querySelector('.staff-search').value.toLowerCase();
+    const selectedDepartment = container.querySelector('.department-select').value;
+    const items = container.querySelectorAll('.item-list li');
+    const list = container.querySelector('.item-list');
+    if (input || selectedDepartment) {
+      list.style.display = "block";
+    } else {
+      list.style.display = "none";
+    }
+    items.forEach(item => {
+      const itemText = item.textContent.toLowerCase();
+      const departmentId = item.getAttribute('idDepartment');
+      if (
+        (itemText.includes(input) || !input) &&
+        (departmentId === selectedDepartment || !selectedDepartment)
+      ) {
+        item.style.display = "";
+      } else {
+        item.style.display = "none";
+      }
+    });
+  }
+  /// Thêm nhân viên
+  function addStaff() {
+    const container = document.getElementById('staff-container');
+    const newStaff = document.createElement('div');
+    newStaff.classList.add('d-flex', 'staff-select');
+    newStaff.innerHTML = `
+    <select class="form-select form-select-sm department-select" style="width: fit-content;"
+      aria-label=".form-select-sm example" onchange="filterList2(this)">
+      <% departments.forEach(function(department, key) { %>
+      <option value="<%=department.id %>" >
+        <%=department.name %>
+      </option>
+      <% }) %>
+    </select>
+    <div class="w-100">
+      <input type="text" class="form-control staff-search" placeholder="Nhập tên nhân viên"
+        aria-label="Recipient's username" aria-describedby="button-addon2" oninput="filterList2(this)">
+      <ul style="position: absolute;" class="card item-list">
+        <% staffs.forEach(function(staff) { %>
+        <li class="btn w-100 infor-staff" idDepartment="<%=staff.department.id%>"
+          onclick="selectStaff(this, '<%=staff.full_name%>', '<%=staff.id%>')">
+          <%=staff.full_name%> - <%=staff.number_phone%>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+    <input type="hidden" class="staff-main-id" name="staffMain[]">
+    <button class="btn btn-danger" onclick="removeStaff(this)">Xóa</button>
+  `;
+    container.appendChild(newStaff);
+  }
+
+  function removeStaff(button) {
+    const container = button.closest('.staff-select');
+    container.remove();
+  }
+</script>
+    <script>
+  function removeMainStaff(projectStaff, element) {
+    if (confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) {
+      $.ajax({
+        url: `/project-staff/${projectStaff}`,
+        type: 'DELETE',
+        data: {},
+        success: function(response) {
+          $(element).closest('.col-auto').remove();
+        },
+        error: function(xhr, status, error) {
+          console.log(error);
+        }
+      });
+    }
+  }
+  let ArrayObj = [];
+  let ProjectSteps = JSON.parse('<%- JSON.stringify(ProjectSteps).replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t") %>');
+  let filteredProjectSteps = ProjectSteps.filter(step => step.staff !== null);
+  filteredProjectSteps.forEach(element => {
+    ArrayObj.push(new Step(
+      element.staff.id,
+      element.workflowStep.id,
+      element.staff.avatar,
+      element.time,
+    ));
+  });
+
+  ArrayObj.forEach(element => {
+    $(`#imgStep${element.idStep}`).append(
+      `<img src="/images/avatar/${element.img}" alt="" width="30px" height="30px" style="border-radius: 100%; margin-right:5px" onclick="remove('${element.img}','${element.idStep}')">`
+    );
+  });
+
+  function changeDate() {
+    if ($('#date-time').val() != '') {
+      $('#staff-search').prop('disabled', false);
+    } else {
+      $('#staff-search').prop('disabled', true);
+    }
+  }
+
+  function SubmitForm(e) {
+    e.preventDefault()
+    $('#FormAdd input[name="steps"]').remove();
+    let jsonString = JSON.stringify(ArrayObj, (key, value) => {
+      if (key === 'img') {
+        return undefined;
+      }
+      return value;
+    });
+    $('#FormAdd').append(`<input type="hidden" name="steps" value='${jsonString}'>`)
+    document.getElementById("FormAdd").submit();
+  }
+
+  function pushStaff(value, id, avatar, department, departmentCan) {
+    departmentCan = JSON.parse(departmentCan);
+    if (Array.isArray(departmentCan)) {
+      if (!departmentCan.includes(department)) {
+        if (!confirm("Nhân viên này không thuộc phòng ban được chỉ định. Bạn có chắc chắn muốn thêm?")) {
+          return;
+        }
+      }
+    }
+    if ($('#date-time').val() != '') {
+      $('.clickXN').prop('disabled', false);
+      $('#imgStaff').attr('value', avatar);
+      $('#idStaffCheck').attr('value', id);
+    } else {
+      $('.clickXN').prop('disabled', true);
+    }
+    document.getElementById('staff-search').value = value;
+    document.getElementById('itemList').style.display = "none";
+  }
+
+  function filterList() {
+    document.getElementById('itemList').style.display = "block"
+    var input = document.getElementById('staff-search').value.toLowerCase();
+    var items = document.getElementById('itemList').getElementsByTagName('li');
+    var list = document.getElementById('itemList');
+    if (input) {
+      list.style.display = "block";
+    } else {
+      list.style.display = "none";
+    }
+    for (var i = 0; i < items.length; i++) {
+      var itemText = items[i].textContent || items[i].innerText;
+      var dataId = $(items[i]).attr('data-id');
+      var stepId = $(items[i]).attr('data-stepId');
+      if (itemText.toLowerCase().includes(input)) {
+        items[i].style.display = "";
+        ArrayObj.forEach(function(item) {
+          if (item.idStaffCheck == dataId && item.idStep == stepId) {
+            return items[i].style.display = "none";
+          }
+        })
+      } else {
+        items[i].style.display = "none";
+      }
+    }
+  }
+  $(document).ready(function() {
+    $("#workflow").change(function(e) {
+      let workflowId = e.target.value;
+      $(".step").slideUp();
+      $(`.step${workflowId}`).slideDown();
+    });
+    $('.add-new-position').click(function() {
+      $('#newPositionModal').remove();
+      var idValue = $(this).attr('idValue');
+      var departmentCan = $(this).attr('departmentCan');
+      var nameValue = $(this).attr('nameValue');
+      var form =
+        '<div class="modal fade" id="newPositionModal" tabindex="-1" aria-labelledby="newPositionModalLabel" aria-hidden="true">' +
+        '<div class="modal-dialog">' +
+        '<div class="modal-content">' +
+        '<div class="modal-header">' +
+        '<div class="d-flex justify-content-between w-100" >' +
+        `<h5 class="modal-title" id="newPositionModalLabel">Cài đặt quy trình:</h5>
+        <input type="hidden" value="${idValue}" id="idSteps">
+        <input type="hidden"  id="imgStaff">
+        <input type="hidden"  id="idStaffCheck">
+        ` +
+        '<button class="btn btn-success clickXN" disable onclick="clickXN()" style="white-space: nowrap; margin-left:10px;" disabled>Xác nhận</button>' +
+        '</div>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<div >' +
+        '<div class="form-group">' +
+        '<label for="date-time">Chọn trọng số:</label>' +
+        `<select name="weight" id="weight-select" class="form-control">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+        ` +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label for="staff">Thêm nhân viên:</label>' +
+        '<input  type="text" class="form-control" id="staff-search"  oninput="filterList()">' +
+        `<ul id="itemList" class="w-100" >
+  <% staffs.forEach(function(staff) { %>
+        <li class="btn w-100 infor-staff" data-stepId="${idValue}" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>','<%=staff.avatar%>',<%=staff.department.id%>,'${departmentCan}')">Nhân viên: <%=staff.department.name%> - <%=staff.full_name%></li>
+        <% }) %>
+</ul>` +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+      $('body').append(form);
+      $('#newPositionModal').modal('show');
+      $('#date-time').val('');
+      $('#staff-search').val('');
+    });
+  });
+
+  function clickXN() {
+    ArrayObj.push(new Step(
+      $('#idStaffCheck').val(),
+      $('#idSteps').val(),
+      $('#imgStaff').val(),
+      $('#weight-select').val()
+    ))
+    $(`.imgStep`).find('img').remove();
+    ArrayObj.forEach(element => {
+      $(`#imgStep${element.idStep}`).append(
+        `<img src="/images/avatar/${element.img}" alt="" width="30px" height="30px" style="border-radius: 100%; margin-right:5px" onclick="remove('${element.img}','${element.idStep}')"> `
+      )
+    });
+    $('#newPositionModal').modal('hide');
+  }
+
+  function remove(img, idStep) {
+    ArrayObj = ArrayObj.filter(function(item) {
+      return item.img != img || item.idStep != idStep
+    });
+    $(`.imgStep`).find('img').remove();
+    ArrayObj.forEach(element => {
+      $(`#imgStep${element.idStep}`).append(
+        `<img src="/images/avatar/${element.img}" alt="" width="30px" height="30px" style="border-radius: 100%; margin-right:5px" onclick="remove('${element.img}','${element.idStep}')"> `
+      )
+    });
+  }
+  // XỬ LÝ OBJ
+  function Step(idStaffCheck, idStep, img, weight) {
+    this.img = img;
+    this.idStaffCheck = idStaffCheck;
+    this.idStep = idStep;
+    this.weight = weight;
+    this.getImg = function() {
+      return this.img
+    };
+    this.getDate = function() {
+      return this.date
+    };
+    this.getId = function() {
+      return this.id
+    };
+  }
+</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+  const defaultAddress = '<%= project.address %>'
+    const host = "https://provinces.open-api.vn/api/";
+    // === ✅ Chuỗi địa chỉ mặc định ===
+    // === ✅ Tách dữ liệu mặc định từ chuỗi ===
+    const [defaultCityName, defaultDistrictName, defaultWardName, detailAdress] = defaultAddress.split(',').map(s => s.trim());
+    document.querySelector('#address').value = detailAdress ?? ''
+    // === ✅ Hàm render có so sánh theo tên (name) ===
+    const renderData = (array, selectId, defaultName = null) => {
+      let row = '<option disabled value="">Chọn</option>';
+      array.forEach(element => {
+        const selected = (defaultName && element.name.toLowerCase().includes(defaultName.toLowerCase())) ? 'selected' : '';
+        row += `<option data-id="${element.code}" value="${element.name}" ${selected}>${element.name}</option>`;
+      });
+      $("#" + selectId).html(row);
+    };
+    // === ✅ Gọi API tỉnh, quận, phường ===
+    const callAPI = () => {
+      return axios.get(`${host}?depth=1`).then(res => {
+        renderData(res.data, "city", defaultCityName);
+        const selectedCity = res.data.find(c => c.name.toLowerCase().includes(defaultCityName.toLowerCase()));
+        if (selectedCity) {
+          return axios.get(`${host}p/${selectedCity.code}?depth=2`).then(resDistrict => {
+            renderData(resDistrict.data.districts, "district", defaultDistrictName);
+
+            const selectedDistrict = resDistrict.data.districts.find(d => d.name.toLowerCase().includes(defaultDistrictName.toLowerCase()));
+            if (selectedDistrict) {
+              return axios.get(`${host}d/${selectedDistrict.code}?depth=2`).then(resWard => {
+                renderData(resWard.data.wards, "ward", defaultWardName);
+                printResult(); // Hiển thị kết quả
+              });
+            }
+          });
+        }
+      });
+    };
+
+    // === ✅ In kết quả địa chỉ đã chọn ===
+    const printResult = () => {
+      const cityText = $("#city option:selected").text();
+      const districtText = $("#district option:selected").text();
+      const wardText = $("#ward option:selected").text();
+
+      const cityCode = $("#city").find(':selected').data('id');
+      const districtCode = $("#district").find(':selected').data('id');
+      const wardCode = $("#ward").find(':selected').data('id');
+
+      if (cityCode && districtCode && wardCode) {
+        $("#result").text(`${cityText} | ${districtText} | ${wardText}`);
+      }
+    };
+
+    // === ✅ Sự kiện thay đổi ===
+    $("#city").on("change", function() {
+      const cityId = $(this).find(':selected').data('id');
+      if (cityId) {
+        axios.get(`${host}p/${cityId}?depth=2`).then(res => {
+          renderData(res.data.districts, "district");
+          $("#ward").html('<option disabled value="">Chọn</option>');
+        });
+      }
+      printResult();
+    });
+
+    $("#district").on("change", function() {
+      const districtId = $(this).find(':selected').data('id');
+      if (districtId) {
+        axios.get(`${host}d/${districtId}?depth=2`).then(res => {
+          renderData(res.data.wards, "ward");
+        });
+      }
+      printResult();
+    });
+
+    $("#ward").on("change", function() {
+      printResult();
+    });
+
+    // === ✅ Gọi khởi tạo ===
+    callAPI();
+</script>
+    <%- include('../../layout/footer') %>

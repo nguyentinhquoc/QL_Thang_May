@@ -1,0 +1,627 @@
+<%- include('../../layout/header') %>
+  <style>
+    .item-list {
+      display: none;
+    }
+
+    .infor-staff:hover {
+      opacity: 0.7;
+      background-color: rgb(45, 145, 227);
+      color: white;
+    }
+
+    .infor-staff {
+      border-bottom: 0.5px solid rgb(77, 211, 229);
+    }
+
+    #itemList {
+      display: none;
+    }
+  </style>
+  <form action="/project" method="POST" id="FormAdd">
+    <div class="row m-t-15 m-b-15">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body text-secondary">
+            <h2 class="m-b-30">Tạo mới công trình lắp đặt</h2>
+            <div class="row d-flex align-items-center">
+              <div class="col-auto">
+                Nhân viên phụ trách:</div>
+              <% if(manager && busines) { %>
+                <a class="btn btn-primary mb-2" style="width: fit-content;" onclick="addStaff()">+</a>
+                <% } %>
+            </div>
+            <div id="staff-container" class="mt-3 mb-3"></div>
+            <input type="hidden" name="type" value="LAPDAT">
+            <div class="d-flex justify-content-between">
+              <div class="form-group col-7">
+                <label for="full_name">Tên công trình<span style="color: red">*</span></label>
+                <input type="text" placeholder="Enter Name" id="full_name" name="full_name" class="form-control"
+                  required maxlength="255" value="<%= data.fullName %>" />
+              </div>
+              <div class="form-group col-3">
+                <label for="code_project">Mã công trình <span style="color: red">*</span></label>
+                <input type="text" placeholder="Enter code" id="code_project" name="code_project" class="form-control"
+                  required maxlength="255" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="number_phone">Số điện thoại <span style="color: red">*</span></label>
+              <input type="tel" placeholder="Enter Number Phone" id="number_phone" name="number_phone"
+                class="form-control" required maxlength="15" value="<%= data.numberPhone %>" />
+            </div>
+            <div class="form-group">
+              <label for="email">Địa chỉ email</label>
+              <input type="email" placeholder="Enter Address Email" id="email" name="email" class="form-control"
+                maxlength="255" value="<%= data.email %>" />
+            </div>
+
+            <div class="form-group col-12">
+              <label for="city">Tỉnh/Thành phố: <span style="color: red">*</span></label>
+              <select required id="city" name="city" class="form-control">
+                <option value="" selected disabled>Chọn tỉnh thành</option>
+              </select>
+            </div>
+
+            <div class="form-group col-12">
+              <label for="district">Quận/Huyện: <span style="color: red">*</span></label>
+              <select required id="district" name="district" class="form-control">
+                <option value="" selected disabled>Chọn quận huyện</option>
+              </select>
+            </div>
+
+            <div class="form-group col-12">
+              <label for="ward">Phường/Xã: <span style="color: red">*</span></label>
+              <select required id="ward" name="ward" class="form-control">
+                <option value="" selected disabled>Chọn phường xã</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="address">Địa chỉ lắp đặt cụ thể </label>
+              <textarea id="address" placeholder="Enter Address" name="address"
+                class="form-control"><%= data.address %></textarea>
+            </div>
+            <div class="d-flex" style="justify-content: space-between">
+              <div class="form-group col-5">
+                <label for="price">Giá trị hợp đồng: <span style="color: red">*</span></label>
+                <input type="text" placeholder="Nhập giá trị hợp đồng" id="price" class="form-control"
+                  onkeyup="formatCurrency(this)" />
+                <input type="hidden" id="price_value" name="price" />
+                <script>
+                  function formatCurrency(input) {
+                    let value = input.value.replace(/\D/g, '');
+                    input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                    document.getElementById('price_value').value = value;
+                  }
+                </script>
+              </div>
+              <div class="form-group col-5">
+                <label for="tax">Thuế: <span style="color: red">*</span></label>
+                <select id="tax" name="tax" class="form-control">
+                  <option value disabled selected>Chọn</option>
+                  <option value="Có">Có</option>
+                  <option value="Không">Không</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="description">Ghi chú</label>
+              <textarea id="description" placeholder="Enter Description" name="description" class="form-control"
+                maxlength="225"><%= data.description %></textarea>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Thông tin</th>
+                  <th scope="col">Giá trị</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><label for="dongCo">Động cơ</label></td>
+                  <td>
+                    <input type="text" id="dongCo" name="dongCo" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td><label for="tuDien">Tủ điện</label></td>
+                  <td>
+                    <input type="text" id="tuDien" name="tuDien" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td><label for="capTai">Cáp Tải</label></td>
+                  <td>
+                    <input type="text" id="capTai" name="capTai" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td><label for="congSuat">Công suất</label></td>
+                  <td>
+                    <input type="text" id="congSuat" name="congSuat" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td><label for="hoThang">Hố thang</label></td>
+                  <td>
+                    <input type="text" id="hoThang" name="hoThang" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td><label for="cabin">Cabin</label></td>
+                  <td>
+                    <input type="text" id="cabin" name="cabin" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td><label for="cua">Cửa</label></td>
+                  <td>
+                    <input type="text" id="cua" name="cua" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td><label for="pit">Pít</label></td>
+                  <td>
+                    <input type="text" id="pit" name="pit" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td><label for="oh">OH</label></td>
+                  <td>
+                    <input type="text" id="oh" name="oh" class="form-control" />
+                  </td>
+                </tr>
+                <tr>
+                  <td><label for="phongMay">Phòng máy</label></td>
+                  <td>
+                    <input type="text" id="phongMay" name="phongMay" class="form-control" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-primary btn-lg btn-block mt-3 w-100" onclick="SubmitForm(event)">
+              Tạo mới công trình
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body text-secondary">
+            <div class="form-group">
+              <label for="workflow">Chọn quy trình lắp đặt <span style="color: red">*</span></label>
+              <select id="workflow" name="workflow" class="form-control m-b-30" oninput="handleWorkflowChange(event)"
+                required>
+                <option selected>Chọn quy trình</option>
+                <% workflows.forEach(function(workflow, key) { %>
+                  <option value="<%= workflow.id %>">
+                    <%= workflow.name %>
+                  </option>
+                  <% }) %>
+              </select>
+              <% workflowSteps.forEach(function(workflowStep) { %>
+                <div class="step step<%= workflowStep.workflow.id %> mt-2">
+                  <div class="d-flex justify-content-between btn btn-primary btn-lg btn-block mb-2 notification">
+                    <span class="w-75" style="text-align: start;">
+                      <%= workflowStep.step.name %>
+                        <br>
+                        <span class="w-75" style="opacity: 0.5;">
+                          <%= workflowStep.step.description %>
+                        </span>
+                        <br>
+                        <span class="w-75 text-danger">
+                          Phòng ban:
+                          <% let departmentCan=[]; let showIcon=false;
+                            workflowStep.step.departmentsSteps.forEach(function(departmentStep, index, array) {
+                            departmentCan.push(departmentStep.department.id); %>
+                            <%= departmentStep.department.name %>
+                              <%= index < array.length - 1 ? ', ' : '' %>
+                                <% if (departmentStep.department.id===1) { showIcon=true; } }); %>
+                        </span>
+
+                    </span>
+                    <div class="d-flex justify-content-center align-items-center">
+                      <div id="imgStep<%= workflowStep.id %>" class="imgStep"></div>
+                      <div class="add-new-position" idValue="<%= workflowStep.id %>"
+                        nameValue="<%= workflowStep.step.name %>">
+                        <i class="fas fa-plus-square" style="font-size: 40px"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <script>
+
+    let workflowSteps = JSON.parse('<%- JSON.stringify(workflowSteps) %>')
+    function handleWorkflowChange(event) {
+      let filteredSteps = workflowSteps.filter(step => Number(step.workflow.id) === Number(event.target.value));
+    }
+
+    function SubmitForm(e) {
+      e.preventDefault()
+      const jsonString = JSON.stringify(ArrayObj, (key, value) => {
+        if (key === 'img') {
+          return undefined
+        }
+        return value
+      })
+      if (document.querySelector('#stepsJson')) {
+        document.querySelector('#stepsJson').remove()
+      }
+      $('#FormAdd').append(
+        `<input type="hidden" name="steps" id="stepsJson" value='${jsonString}'>`,
+      )
+      document.getElementById('FormAdd').submit()
+    }
+
+    function pushStaff(value, id, avatar) {
+      if ($('#date-time').val() != '') {
+        $('.clickXN').prop('disabled', false)
+        $('#imgStaff').attr('value', avatar)
+        $('#idStaffCheck').attr('value', id)
+      } else {
+        $('.clickXN').prop('disabled', true)
+      }
+      document.getElementById('staff-search').value = value
+      document.getElementById('itemList').style.display = 'none'
+    }
+
+    function filterList() {
+      document.getElementById('itemList').style.display = 'block'
+      var input = document.getElementById('staff-search').value.toLowerCase()
+      var items = document.getElementById('itemList').getElementsByTagName('li')
+      var list = document.getElementById('itemList')
+      if (input) {
+        list.style.display = 'block'
+      } else {
+        list.style.display = 'none'
+      }
+      for (var i = 0; i < items.length; i++) {
+        var itemText = items[i].textContent || items[i].innerText
+        var dataId = $(items[i]).attr('data-id')
+        var stepId = $(items[i]).attr('data-stepId')
+        if (itemText.toLowerCase().includes(input)) {
+          items[i].style.display = ''
+          ArrayObj.forEach(function (item) {
+            if (item.idStaffCheck == dataId && item.idStep == stepId) {
+              return (items[i].style.display = 'none')
+            }
+          })
+        } else {
+          items[i].style.display = 'none'
+        }
+      }
+    }
+    // window.addEventListener('pageshow', function () {
+    //   stepsJson
+    // });
+    $(document).ready(function () {
+      $('.step').slideUp()
+      $('#workflow').change(function (e) {
+        const workflowId = e.target.value
+        $('.step').slideUp()
+        $(`.step${workflowId}`).slideDown()
+      })
+      $('.add-new-position').click(function () {
+        $('#newPositionModal').remove()
+        var idValue = $(this).attr('idValue')
+        var nameValue = $(this).attr('nameValue')
+        var form =
+          '<div class="modal fade" id="newPositionModal" tabindex="-1" aria-labelledby="newPositionModalLabel" aria-hidden="true">' +
+          '<div class="modal-dialog">' +
+          '<div class="modal-content">' +
+          '<div class="modal-header">' +
+          '<div class="d-flex justify-content-between w-100" >' +
+          `<h5 class="modal-title" id="newPositionModalLabel">Cài đặt quy trình:</h5>
+        <input type="hidden" value="${idValue}" id="idSteps">
+        <input type="hidden"  id="imgStaff">
+        <input type="hidden"  id="idStaffCheck">
+        ` +
+          '<button class="btn btn-primary clickXN" disable onclick="clickXN()" disabled style="white-space: nowrap; margin-left:10px;">Xác nhận</button>' +
+          '</div>' +
+          '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+          '</div>' +
+          '<div class="modal-body">' +
+          '<div>' +
+          '<div class="form-group">' +
+          '<label for="date-time">Chọn trọng số:</label>' +
+          `<select name="weight" id="weight-select" class="form-control">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+        ` +
+          '</div>' +
+          '<div class="form-group">' +
+          '<label for="staff">Thêm nhân viên:</label>' +
+          '<input  type="text" class="form-control" id="staff-search"  oninput="filterList()">' +
+          `<ul id="itemList">
+        <% staffs.forEach(function(staff) { %>
+              <li class="btn w-100 infor-staff" data-stepId="${idValue}" data-id="<%=staff.id%>" onclick="pushStaff('<%=staff.full_name%>','<%=staff.id%>','<%=staff.avatar%>')"><%=staff.full_name%> - <%=staff.number_phone%></li>
+              <% }) %>
+      </ul>
+      `
+        '</div>' +
+          '</div>' +
+          '</div>' +
+          '</form>' +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '</div>'
+        $('body').append(form)
+        $('#newPositionModal').modal('show')
+        $('#date-time').val('')
+        $('#staff-search').val('')
+      })
+    })
+    let ArrayObj = []
+
+    function clickXN() {
+      ArrayObj.push(
+        new Step(
+          $('#idStaffCheck').val(),
+          $('#idSteps').val(),
+          $('#imgStaff').val(),
+          $('#weight-select').val(),
+        ),
+      )
+      $(`.imgStep`).find('img').remove()
+      ArrayObj.forEach(element => {
+        $(`#imgStep${element.idStep}`).append(
+          `<img src="/images/avatar/${element.img}" alt="" width="30px" height="30px" style="border-radius: 100%; margin-right:5px" onclick="remove('${element.img}','${element.idStep}')">`,
+        )
+      })
+      $('#newPositionModal').modal('hide')
+    }
+    // XỬ LÝ OBJ
+    function Step(idStaffCheck, idStep, img, weight) {
+      this.img = img
+      this.idStaffCheck = idStaffCheck
+      this.idStep = idStep
+      this.weight = weight
+    }
+
+    function remove(img, idStep) {
+      ArrayObj = ArrayObj.filter(function (item) {
+        return item.img != img || item.idStep != idStep
+      })
+      $(`.imgStep`).find('img').remove()
+      ArrayObj.forEach(element => {
+        $(`#imgStep${element.idStep}`).append(
+          `<img src="/images/avatar/${element.img}" alt="" width="30px" height="30px" style="border-radius: 100%; margin-right:5px" onclick="remove('${element.img}','${element.idStep}')"> `,
+        )
+      })
+    }
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  <script>
+    const defaultAddress = '<%= data.address %>'
+    if (defaultAddress) {
+
+      const host = "https://provinces.open-api.vn/api/";
+      // === ✅ Chuỗi địa chỉ mặc định ===
+
+      // === ✅ Tách dữ liệu mặc định từ chuỗi ===
+      const [defaultCityName, defaultDistrictName, defaultWardName, detailAdress] = defaultAddress.split(',').map(s => s.trim());
+      document.querySelector('#address').value = detailAdress
+      console.log(detailAdress)
+      // === ✅ Hàm render có so sánh theo tên (name) ===
+      const renderData = (array, selectId, defaultName = null) => {
+        let row = '<option disabled value="">Chọn</option>';
+        array.forEach(element => {
+          const selected = (defaultName && element.name.toLowerCase().includes(defaultName.toLowerCase())) ? 'selected' : '';
+          row += `<option data-id="${element.code}" value="${element.name}" ${selected}>${element.name}</option>`;
+        });
+        $("#" + selectId).html(row);
+      };
+      // === ✅ Gọi API tỉnh, quận, phường ===
+      const callAPI = () => {
+        return axios.get(`${host}?depth=1`).then(res => {
+          renderData(res.data, "city", defaultCityName);
+          const selectedCity = res.data.find(c => c.name.toLowerCase().includes(defaultCityName.toLowerCase()));
+          if (selectedCity) {
+            return axios.get(`${host}p/${selectedCity.code}?depth=2`).then(resDistrict => {
+              renderData(resDistrict.data.districts, "district", defaultDistrictName);
+
+              const selectedDistrict = resDistrict.data.districts.find(d => d.name.toLowerCase().includes(defaultDistrictName.toLowerCase()));
+              if (selectedDistrict) {
+                return axios.get(`${host}d/${selectedDistrict.code}?depth=2`).then(resWard => {
+                  renderData(resWard.data.wards, "ward", defaultWardName);
+                  printResult(); // Hiển thị kết quả
+                });
+              }
+            });
+          }
+        });
+      };
+
+      // === ✅ In kết quả địa chỉ đã chọn ===
+      const printResult = () => {
+        const cityText = $("#city option:selected").text();
+        const districtText = $("#district option:selected").text();
+        const wardText = $("#ward option:selected").text();
+
+        const cityCode = $("#city").find(':selected').data('id');
+        const districtCode = $("#district").find(':selected').data('id');
+        const wardCode = $("#ward").find(':selected').data('id');
+
+        if (cityCode && districtCode && wardCode) {
+          $("#result").text(`${cityText} | ${districtText} | ${wardText}`);
+        }
+      };
+
+      // === ✅ Sự kiện thay đổi ===
+      $("#city").on("change", function () {
+        const cityId = $(this).find(':selected').data('id');
+        if (cityId) {
+          axios.get(`${host}p/${cityId}?depth=2`).then(res => {
+            renderData(res.data.districts, "district");
+            $("#ward").html('<option disabled value="">Chọn</option>');
+          });
+        }
+        printResult();
+      });
+
+      $("#district").on("change", function () {
+        const districtId = $(this).find(':selected').data('id');
+        if (districtId) {
+          axios.get(`${host}d/${districtId}?depth=2`).then(res => {
+            renderData(res.data.wards, "ward");
+          });
+        }
+        printResult();
+      });
+
+      $("#ward").on("change", function () {
+        printResult();
+      });
+
+      // === ✅ Gọi khởi tạo ===
+      callAPI();
+    } else {
+      const host = "https://provinces.open-api.vn/api/";
+      var callAPI = (api) => {
+        return axios.get(api)
+          .then((response) => {
+            renderData(response.data, "city");
+          });
+      }
+      callAPI('https://provinces.open-api.vn/api/?depth=1');
+      var callApiDistrict = (api) => {
+        return axios.get(api)
+          .then((response) => {
+            renderData(response.data.districts, "district");
+          });
+      }
+      var callApiWard = (api) => {
+        return axios.get(api)
+          .then((response) => {
+            renderData(response.data.wards, "ward");
+          });
+      }
+      var renderData = (array, select) => {
+        let row = ' <option disable value="">Chọn</option>';
+        array.forEach(element => {
+          row += `<option data-id="${element.code}" value="${element.name}">${element.name}</option>`
+        });
+        document.querySelector("#" + select).innerHTML = row
+      }
+
+      $("#city").change(() => {
+        callApiDistrict(host + "p/" + $("#city").find(':selected').data('id') + "?depth=2");
+        printResult();
+      });
+      $("#district").change(() => {
+        callApiWard(host + "d/" + $("#district").find(':selected').data('id') + "?depth=2");
+        printResult();
+      });
+      $("#ward").change(() => {
+        printResult();
+      })
+
+      var printResult = () => {
+        if ($("#district").find(':selected').data('id') != "" && $("#city").find(':selected').data('id') != "" &&
+          $("#ward").find(':selected').data('id') != "") {
+          let result = $("#city option:selected").text() +
+            " | " + $("#district option:selected").text() + " | " +
+            $("#ward option:selected").text();
+          $("#result").text(result)
+        }
+      }
+    }
+  </script>
+  <script>  function addStaff() {
+      console.log(123);
+
+      const container = document.getElementById('staff-container');
+      const newStaff = document.createElement('div');
+      newStaff.classList.add('d-flex', 'staff-select');
+      newStaff.innerHTML = `
+    <select class="form-select form-select-sm department-select" style="width: fit-content;"
+      aria-label=".form-select-sm example" onchange="filterList2(this)">
+      <% departments.forEach(function(department, key) { %>
+      <option value="<%=department.id %>" >
+        <%=department.name %>
+      </option>
+      <% }) %>
+    </select>
+    <div class="w-100">
+      <input type="text" class="form-control staff-search" placeholder="Nhập tên nhân viên"
+        aria-label="Recipient's username" aria-describedby="button-addon2" oninput="filterList2(this)">
+      <ul style="position: absolute;" class="card item-list">
+        <% staffs.forEach(function(staff) { %>
+        <li class="btn w-100 infor-staff" idDepartment="<%=staff.department.id%>"
+          onclick="selectStaff(this, '<%=staff.full_name%>', '<%=staff.id%>')">
+          <%=staff.full_name%> - <%=staff.number_phone%>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+    <input type="hidden" class="staff-main-id" name="staffMain[]">
+    <button class="btn btn-danger" onclick="removeStaff(this)">Xóa</button>
+  `;
+      container.appendChild(newStaff);
+    }
+    function filterList2(element) {
+      const container = element.closest('.d-flex');
+      const input = container.querySelector('.staff-search').value.toLowerCase();
+      const selectedDepartment = container.querySelector('.department-select').value;
+      const items = container.querySelectorAll('.item-list li');
+      const list = container.querySelector('.item-list');
+      if (input || selectedDepartment) {
+        list.style.display = "block";
+      } else {
+        list.style.display = "none";
+      }
+      items.forEach(item => {
+        const itemText = item.textContent.toLowerCase();
+        const departmentId = item.getAttribute('idDepartment');
+        if (
+          (itemText.includes(input) || !input) &&
+          (departmentId === selectedDepartment || !selectedDepartment)
+        ) {
+          item.style.display = "";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    }
+    function toggleStaffContainer() {
+      const staffContainer = document.getElementById('staff-container');
+      if (staffContainer.style.display === 'none') {
+        staffContainer.style.display = 'block';
+      } else {
+        staffContainer.style.display = 'none';
+      }
+    }
+
+    function selectStaff(element, name, id) {
+      const searchBox = element.closest('.d-flex').querySelector('.staff-search');
+      const hiddenInput = element.closest('.d-flex').querySelector('.staff-main-id');
+      const list = element.closest('.d-flex').querySelector('.item-list');
+      searchBox.value = name;
+      hiddenInput.value = id;
+      list.style.display = "none";
+    }
+    function removeStaff(button) {
+      const container = button.closest('.staff-select');
+      container.remove();
+    }
+  </script>
+  <%- include('../../layout/footer') %>

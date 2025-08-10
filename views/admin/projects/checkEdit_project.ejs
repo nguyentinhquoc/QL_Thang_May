@@ -1,0 +1,491 @@
+<%- include('../../layout/header') %>
+<form action="/project/<%= project.id %>?_method=Patch" method="POST" id="FormAdd">
+  <input type="hidden" name="checkEdit" value="1">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <div class="card-body text-secondary">
+          <div class="d-flex justify-content-between">
+            <div class="form-group col-7">
+              <label for="full_name ">Tên dự án <span style="color: red;">*</span></label>
+              <input type="text" id="full_name" name="full_name" class="form-control" required maxlength="255" value="<%= project.full_name %>">
+            </div>
+            <div class="form-group col-3">
+              <label for="code_project">Mã công trình <span style="color: red;">*</span></label>
+              <input type="text" id="code_project" name="code_project" class="form-control" required maxlength="255" value="<%= project.code_project %>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="number_phone">Số điện thoại <span style="color: red;">*</span></label>
+            <input type="tel" id="number_phone" name="number_phone" class="form-control" required maxlength="15" value="<%= project.number_phone %>">
+          </div>
+          <div class="form-group">
+            <label for="email">Địa chỉ email</label>
+            <input type="email" id="email" name="email" class="form-control" maxlength="255" value="<%= project.email %>">
+          </div>
+          <div class="form-group">
+            <label for="address">Địa chỉ lắp đặt <span style="color: red;">*</span></label>
+            <textarea id="address" name="address" class="form-control"><%= project.address %></textarea>
+          </div>
+          <div class="d-flex" style="justify-content: space-between;">
+            <div class="form-group">
+              <label for="price">Giá trị hợp đồng: <span style="color: red;">*</span></label>
+              <input type="number" value="<%= project.price %>" placeholder="Enter Address price" id="price" name="price" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="tax">Thuế:</label>
+              <input type="text" value="<%= project.tax %>" placeholder="Enter Address tax" id="tax" name="tax" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description">Ghi chú</label>
+            <textarea id="description" name="description" class="form-control" maxlength="225"><%= project.description %></textarea>
+            <p>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Thông tin</th>
+                  <th scope="col">Giá trị</th>
+                </tr>
+              </thead>
+                 <%
+                  let infor_product;
+                  if (project.infor_product) {
+                      infor_product = JSON.parse(project.infor_product);
+                  }
+                  %>
+              <tbody>
+                <tr>
+                  <td><label for="dongCo">Động cơ </label></td>
+                  <td><input type="text" id="dongCo" name="dongCo" value="<%= infor_product.dongCo %>" class="form-control"></td>
+                </tr>
+                <tr>
+                  <td><label for="tuDien">Tủ điện </label></td>
+                  <td><input type="text" id="tuDien" name="tuDien" value="<%= infor_product.tuDien %>" class="form-control"></td>
+                </tr>
+                <tr>
+                  <td><label for="capTai">Cáp Tải </label></td>
+                  <td><input type="text" id="capTai" name="capTai" value="<%= infor_product.capTai %>" class="form-control"></td>
+                </tr>
+                <tr>
+                  <td><label for="congSuat">Công suất </label></td>
+                  <td><input type="text" id="congSuat" name="congSuat" value="<%= infor_product.congSuat %>" class="form-control"></td>
+                </tr>
+                <tr>
+                  <td><label for="hoThang">Hố thang</label></td>
+                  <td><input type="text" id="hoThang" name="hoThang" value="<%= infor_product.hoThang %>" class="form-control"></td>
+                </tr>
+                <tr>
+                  <td><label for="cabin">Cabin </label></td>
+                  <td><input type="text" id="cabin" name="cabin" value="<%= infor_product.cabin %>" class="form-control"></td>
+                </tr>
+                <tr>
+                  <td><label for="cua">Cửa </label></td>
+                  <td><input type="text" id="cua" name="cua" value="<%= infor_product.cua %>" class="form-control"></td>
+                </tr>
+                <tr>
+                  <td><label for="pit">Pít </label></td>
+                  <td><input type="text" id="pit" name="pit" value="<%= infor_product.pit %>" class="form-control"></td>
+                </tr>
+                <tr>
+                  <td><label for="oh">OH </label></td>
+                  <td><input type="text" id="oh" name="oh" value="<%= infor_product.oh %>" class="form-control"></td>
+                </tr>
+                <tr>
+                  <td><label for="phongMay">Phòng máy </label></td>
+                  <td><input type="text" id="phongMay" name="phongMay" value="<%= infor_product.phongMay %>" class="form-control"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="btn btn-primary w-100">Xác nhận sửa</button>
+        </div>
+      </div>
+</form>
+</div>
+<div class="col-lg-6">
+  <div class="card p-3">
+    <div class="card-body text-secondary">
+
+      <div class="d-flex justify-content-between">
+        <div class="form-group col-7">
+          <label for="full_name2">Tên dự án <span style="color: red;">*</span></label>
+          <input readonly type="text" id="full_name2" class="form-control" required maxlength="255" value="<%= projectEdit.full_name %>">
+        </div>
+        <div class="form-group col-3">
+          <label for="code_project">Mã công trình <span style="color: red;">*</span></label>
+          <input readonly type="text" id="code_project2" class="form-control" required maxlength="255" value="<%= projectEdit.code_project %>">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="number_phone2">Số điện thoại <span style="color: red;">*</span></label>
+        <input readonly type="tel" id="number_phone2" class="form-control" required maxlength="15" value="<%= projectEdit.number_phone %>">
+        <input readonly type="hidden" value="<%= projectEdit.number_phone %>">
+      </div>
+      <div class="form-group">
+        <label for="email">Địa chỉ email</label>
+        <input readonly type="email" id="email2" class="form-control" maxlength="255" value="<%= projectEdit.email %>">
+      </div>
+      <div class="form-group">
+        <label for="address">Địa chỉ lắp đặt <span style="color: red;">*</span></label>
+        <textarea id="address2" readonly class="form-control"><%= projectEdit.address %></textarea>
+      </div>
+      <div class="d-flex" style="justify-content: space-between;">
+        <div class="form-group">
+          <label for="price">Giá trị hợp đồng: <span style="color: red;">*</span></label>
+          <input readonly type="number" value="<%= projectEdit.price %>" placeholder="Enter Address price" id="price2" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="tax">Thuế:</label>
+          <input readonly type="text" value="<%= projectEdit.tax %>" placeholder="Enter Address tax" id="tax2" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="description">Ghi chú</label>
+        <textarea readonly id="description2" class="form-control" maxlength="225"><%= projectEdit.description %></textarea>
+        <p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Thông tin</th>
+              <th scope="col">Giá trị</th>
+            </tr>
+          </thead>
+             <%
+let infor_product2;
+if (projectEdit.infor_product) {
+    infor_product2 = JSON.parse(projectEdit.infor_product);
+}
+%>
+          <tbody>
+            <tr>
+              <td><label for="dongCo">Động cơ</label></td>
+              <td><input readonly type="text" id="dongCo2" value="<%= infor_product2.dongCo %>" class="form-control"></td>
+            </tr>
+            <tr>
+              <td><label for="tuDien">Tủ điện</label></td>
+              <td><input readonly type="text" id="tuDien2" value="<%= infor_product2.tuDien %>" class="form-control"></td>
+            </tr>
+            <tr>
+              <td><label for="capTai">Cáp Tải</label></td>
+              <td><input readonly type="text" id="capTai2" value="<%= infor_product2.capTai %>" class="form-control"></td>
+            </tr>
+            <tr>
+              <td><label for="congSuat">Công suất</label></td>
+              <td><input readonly type="text" id="congSuat2" value="<%= infor_product2.congSuat %>" class="form-control"></td>
+            </tr>
+            <tr>
+              <td><label for="hoThang">Hố thang</label></td>
+              <td><input readonly type="text" id="hoThang2" value="<%= infor_product2.hoThang %>" class="form-control"></td>
+            </tr>
+            <tr>
+              <td><label for="cabin">Cabin</label></td>
+              <td><input readonly type="text" id="cabin2" value="<%= infor_product2.cabin %>" class="form-control"></td>
+            </tr>
+            <tr>
+              <td><label for="cua">Cửa</label></td>
+              <td><input readonly type="text" id="cua2" value="<%= infor_product2.cua %>" class="form-control"></td>
+            </tr>
+            <tr>
+              <td><label for="pit">Pít</label></td>
+              <td><input readonly type="text" id="pit2" value="<%= infor_product2.pit %>" class="form-control"></td>
+            </tr>
+            <tr>
+              <td><label for="oh">OH</label></td>
+              <td><input readonly type="text" id="oh2" value="<%= infor_product2.oh %>" class="form-control"></td>
+            </tr>
+            <tr>
+              <td><label for="phongMay">Phòng máy</label></td>
+              <td><input readonly type="text" id="phongMay2" value="<%= infor_product2.phongMay %>" class="form-control"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="btn btn-info w-100" id="confirm_all">Xác nhận toàn bộ thông tin</p>
+      </section>
+    </div>
+  </div>
+  <script>
+    let full_name = document.getElementById('full_name');
+    let number_phone = document.getElementById('number_phone');
+    let email = document.getElementById('email');
+    let address = document.getElementById('address');
+    let description = document.getElementById('description');
+    let dongCo = document.getElementById('dongCo');
+    let tuDien = document.getElementById('tuDien');
+    let capTai = document.getElementById('capTai');
+    let congSuat = document.getElementById('congSuat');
+    let hoThang = document.getElementById('hoThang');
+    let cabin = document.getElementById('cabin');
+    let cua = document.getElementById('cua');
+    let pit = document.getElementById('pit');
+    let oh = document.getElementById('oh');
+    let phongMay = document.getElementById('phongMay');
+    let price = document.getElementById('price');
+    let tax = document.getElementById('tax');
+    let code_project = document.getElementById('code_project');
+
+    let full_name2 = document.getElementById('full_name2');
+    full_name2.style.cursor = 'pointer';
+    let number_phone2 = document.getElementById('number_phone2');
+    number_phone2.style.cursor = 'pointer';
+    let email2 = document.getElementById('email2');
+    email2.style.cursor = 'pointer';
+    let address2 = document.getElementById('address2');
+    address2.style.cursor = 'pointer';
+    let description2 = document.getElementById('description2');
+    description2.style.cursor = 'pointer';
+    let dongCo2 = document.getElementById('dongCo2');
+    dongCo2.style.cursor = 'pointer';
+    let tuDien2 = document.getElementById('tuDien2');
+    tuDien2.style.cursor = 'pointer';
+    let capTai2 = document.getElementById('capTai2');
+    capTai2.style.cursor = 'pointer';
+    let congSuat2 = document.getElementById('congSuat2');
+    congSuat2.style.cursor = 'pointer';
+    let hoThang2 = document.getElementById('hoThang2');
+    hoThang2.style.cursor = 'pointer';
+    let cabin2 = document.getElementById('cabin2');
+    cabin2.style.cursor = 'pointer';
+    let cua2 = document.getElementById('cua2');
+    cua2.style.cursor = 'pointer';
+    let pit2 = document.getElementById('pit2');
+    pit2.style.cursor = 'pointer';
+    let oh2 = document.getElementById('oh2');
+    oh2.style.cursor = 'pointer';
+    let phongMay2 = document.getElementById('phongMay2');
+    phongMay2.style.cursor = 'pointer';
+    let price2 = document.getElementById('price2');
+    price2.style.cursor = 'pointer';
+    let tax2 = document.getElementById('tax2');
+    tax2.style.cursor = 'pointer';
+    let code_project2 = document.getElementById('code_project2');
+    code_project2.style.cursor = 'pointer';
+
+    let confirm_all = document.getElementById('confirm_all');
+    confirm_all.onclick = function() {
+      full_name.value = full_name2.value;
+      number_phone.value = number_phone2.value;
+      email.value = email2.value;
+      address.value = address2.value;
+      description.value = description2.value;
+      dongCo.value = dongCo2.value;
+      tuDien.value = tuDien2.value;
+      capTai.value = capTai2.value;
+      congSuat.value = congSuat2.value;
+      hoThang.value = hoThang2.value;
+      cabin.value = cabin2.value;
+      cua.value = cua2.value;
+      pit.value = pit2.value;
+      oh.value = oh2.value;
+      phongMay.value = phongMay2.value;
+      price.value = price2.value;
+      tax.value = tax2.value;
+      code_project.value = code_project2.value;
+
+      full_name.style.backgroundColor = '';
+      full_name2.style.backgroundColor = '';
+      number_phone.style.backgroundColor = '';
+      number_phone2.style.backgroundColor = '';
+      email.style.backgroundColor = '';
+      email2.style.backgroundColor = '';
+      address.style.backgroundColor = '';
+      address2.style.backgroundColor = '';
+      description.style.backgroundColor = '';
+      description2.style.backgroundColor = '';
+      dongCo.style.backgroundColor = '';
+      dongCo2.style.backgroundColor = '';
+      tuDien.style.backgroundColor = '';
+      tuDien2.style.backgroundColor = '';
+      capTai.style.backgroundColor = '';
+      capTai2.style.backgroundColor = '';
+      congSuat.style.backgroundColor = '';
+      congSuat2.style.backgroundColor = '';
+      hoThang.style.backgroundColor = '';
+      hoThang2.style.backgroundColor = '';
+      cabin.style.backgroundColor = '';
+      cabin2.style.backgroundColor = '';
+      cua.style.backgroundColor = '';
+      cua2.style.backgroundColor = '';
+      pit.style.backgroundColor = '';
+      pit2.style.backgroundColor = '';
+      oh.style.backgroundColor = '';
+      oh2.style.backgroundColor = '';
+      phongMay.style.backgroundColor = '';
+      phongMay2.style.backgroundColor = '';
+      price.style.backgroundColor = '';
+      price2.style.backgroundColor = '';
+      tax.style.backgroundColor = '';
+      tax2.style.backgroundColor = '';
+      code_project.style.backgroundColor = '';
+      code_project2.style.backgroundColor = '';
+
+    };
+
+    full_name2.addEventListener('click', function() {
+      full_name.value = full_name2.value;
+      full_name.style.backgroundColor = '';
+      full_name2.style.backgroundColor = '';
+    });
+    number_phone2.addEventListener('click', function() {
+      number_phone.value = number_phone2.value;
+      number_phone.style.backgroundColor = '';
+      number_phone2.style.backgroundColor = '';
+    });
+    email2.addEventListener('click', function() {
+      email.value = email2.value;
+      email.style.backgroundColor = '';
+      email2.style.backgroundColor = '';
+    });
+    address2.addEventListener('click', function() {
+      address.value = address2.value;
+      address.style.backgroundColor = '';
+      address2.style.backgroundColor = '';
+    });
+    description2.addEventListener('click', function() {
+      description.value = description2.value;
+      description.style.backgroundColor = '';
+      description2.style.backgroundColor = '';
+    });
+    dongCo2.addEventListener('click', function() {
+      dongCo.value = dongCo2.value;
+      dongCo.style.backgroundColor = '';
+      dongCo2.style.backgroundColor = '';
+    });
+    tuDien2.addEventListener('click', function() {
+      tuDien.value = tuDien2.value;
+      tuDien.style.backgroundColor = '';
+      tuDien2.style.backgroundColor = '';
+    });
+    capTai2.addEventListener('click', function() {
+      capTai.value = capTai2.value;
+      capTai.style.backgroundColor = '';
+      capTai2.style.backgroundColor = '';
+    });
+    congSuat2.addEventListener('click', function() {
+      congSuat.value = congSuat2.value;
+      congSuat.style.backgroundColor = '';
+      congSuat2.style.backgroundColor = '';
+    });
+    hoThang2.addEventListener('click', function() {
+      hoThang.value = hoThang2.value;
+      hoThang.style.backgroundColor = '';
+      hoThang2.style.backgroundColor = '';
+    });
+    cabin2.addEventListener('click', function() {
+      cabin.value = cabin2.value;
+      cabin.style.backgroundColor = '';
+      cabin2.style.backgroundColor = '';
+    });
+    cua2.addEventListener('click', function() {
+      cua.value = cua2.value;
+      cua.style.backgroundColor = '';
+      cua2.style.backgroundColor = '';
+    });
+    pit2.addEventListener('click', function() {
+      pit.value = pit2.value;
+      pit.style.backgroundColor = '';
+      pit2.style.backgroundColor = '';
+    });
+    oh2.addEventListener('click', function() {
+      oh.value = oh2.value;
+      oh.style.backgroundColor = '';
+      oh2.style.backgroundColor = '';
+    });
+    phongMay2.addEventListener('click', function() {
+      phongMay.value = phongMay2.value;
+      phongMay.style.backgroundColor = '';
+      phongMay2.style.backgroundColor = '';
+    });
+    price2.addEventListener('click', function() {
+      price.value = price2.value;
+      price.style.backgroundColor = '';
+      price2.style.backgroundColor = '';
+    });
+    tax2.addEventListener('click', function() {
+      tax.value = tax2.value;
+      tax.style.backgroundColor = '';
+      tax2.style.backgroundColor = '';
+    });
+    code_project2.addEventListener('click', function() {
+      code_project.value = code_project2.value;
+      code_project.style.backgroundColor = '';
+      code_project2.style.backgroundColor = '';
+    });
+
+    if (full_name.value !== full_name2.value) {
+      full_name.style.backgroundColor = 'yellow';
+      full_name2.style.backgroundColor = 'yellow';
+    }
+    if (number_phone.value !== number_phone2.value) {
+      number_phone.style.backgroundColor = 'yellow';
+      number_phone2.style.backgroundColor = 'yellow';
+    }
+    if (email.value !== email2.value) {
+      email.style.backgroundColor = 'yellow';
+      email2.style.backgroundColor = 'yellow';
+    }
+    if (address.value !== address2.value) {
+      address.style.backgroundColor = 'yellow';
+      address2.style.backgroundColor = 'yellow';
+    }
+    if (description.value !== description2.value) {
+      description.style.backgroundColor = 'yellow';
+      description2.style.backgroundColor = 'yellow';
+    }
+    if (dongCo.value !== dongCo2.value) {
+      dongCo.style.backgroundColor = 'yellow';
+      dongCo2.style.backgroundColor = 'yellow';
+    }
+    if (tuDien.value !== tuDien2.value) {
+      tuDien.style.backgroundColor = 'yellow';
+      tuDien2.style.backgroundColor = 'yellow';
+    }
+    if (capTai.value !== capTai2.value) {
+      capTai.style.backgroundColor = 'yellow';
+      capTai2.style.backgroundColor = 'yellow';
+    }
+    if (congSuat.value !== congSuat2.value) {
+      congSuat.style.backgroundColor = 'yellow';
+      congSuat2.style.backgroundColor = 'yellow';
+    }
+    if (hoThang.value !== hoThang2.value) {
+      hoThang.style.backgroundColor = 'yellow';
+      hoThang2.style.backgroundColor = 'yellow';
+    }
+    if (cabin.value !== cabin2.value) {
+      cabin.style.backgroundColor = 'yellow';
+      cabin2.style.backgroundColor = 'yellow';
+    }
+    if (cua.value !== cua2.value) {
+      cua.style.backgroundColor = 'yellow';
+      cua2.style.backgroundColor = 'yellow';
+    }
+    if (pit.value !== pit2.value) {
+      pit.style.backgroundColor = 'yellow';
+      pit2.style.backgroundColor = 'yellow';
+    }
+    if (oh.value !== oh2.value) {
+      oh.style.backgroundColor = 'yellow';
+      oh2.style.backgroundColor = 'yellow';
+    }
+    if (phongMay.value !== phongMay2.value) {
+      phongMay.style.backgroundColor = 'yellow';
+      phongMay2.style.backgroundColor = 'yellow';
+    }
+    if (price.value !== price2.value) {
+      price.style.backgroundColor = 'yellow';
+      price2.style.backgroundColor = 'yellow';
+    }
+    if (tax.value !== tax2.value) {
+      tax.style.backgroundColor = 'yellow';
+      tax2.style.backgroundColor = 'yellow';
+    }
+    if (code_project.value !== code_project2.value) {
+      code_project.style.backgroundColor = 'yellow';
+      code_project2.style.backgroundColor = 'yellow';
+    }
+  </script>
+  <%- include('../../layout/footer') %>

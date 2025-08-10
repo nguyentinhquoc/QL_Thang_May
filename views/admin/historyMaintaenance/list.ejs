@@ -1,0 +1,160 @@
+<%- include('../../layout/header') %>
+  <div class="card p-4">
+    <h4>Lịch sử gia hạn bảo trì</h4>
+    <div class="tab-pane preview-tab-pane active" role="tabpanel"
+      aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5" id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
+      <div id="tableExample3"
+        data-list='{"valueNames":["timeStart","timeEnd","countMaintenance","countMaintenance1","countMaintenance2","free","price" ],"page":10,"pagination":true}'>
+        <div class="m-b-30">
+          <button type="button" class="btn btn-primary me-1 mb-1 mt-2" id="extension-maintenance">
+            <i class="fas fa-plus-square"></i>&nbsp; Gia hạn
+          </button>
+        </div>
+        <div class="row justify-content-end g-0">
+          <div class="col-auto col-sm-5 mb-3">
+            <form>
+              <div class="input-group">
+                <input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..."
+                  aria-label="search" />
+                <div class="input-group-text bg-transparent"><span class="fa fa-search fs-10 text-600"></span></div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="table-responsive scrollbar">
+          <table class="table table-bordered table-hover table-striped fs-10 mb-0">
+            <thead class="bg-200">
+              <tr>
+                <th class="text-900 sort" data-sort="timeStart">Thời gian bắt đầu</th>
+                <th class="text-900 sort" data-sort="timeEnd">Thời gian kết thúc</th>
+                <th class="text-900 sort" data-sort="countMaintenance">Số lần bảo trì</th>
+                <th class="text-900 sort" data-sort="countMaintenance1">Số lịch bảo trì đã đặt</th>
+                <th class="text-900 sort" data-sort="countMaintenance2">Số lịch cần đặt còn lại</th>
+                <th class="text-900 sort" data-sort="free">Loại phí</th>
+                <th class="text-900 sort" data-sort="price">Phí bảo trì</th>
+              </tr>
+            </thead>
+            <tbody class="list">
+              <% listHistory.forEach(function(value, key) { %>
+                <tr class="tr-shadow border-bottom">
+                  <td class="timeStart">
+                    <%=value.timeStart%>
+                  </td>
+                  <td class="timeEnd">
+                    <%=value.timeEnd%>
+                  </td>
+                  <td class="countMaintenance">
+                    <%=value.countMaintenance%>
+                  </td>
+                  <td class="countMaintenance1">
+                    <%= value.maintenance.length %>
+                  </td>
+
+                  <td class="countMaintenance2">
+                    <%=value.countMaintenance - value.maintenance.length%>
+                  </td>
+                  <td class="free">
+                    <%=!value.free ? 'Mất phí' : 'Miễn phí' %>
+                  </td>
+                  <td class="price">
+                    <span class="d-none">
+                      <%= value.price %>
+                    </span>
+                    <%=new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND' }).format(value.price)%>
+                  </td>
+                </tr>
+                <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+          <button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev">
+            <span class="fas fa-chevron-left"></span>
+          </button>
+          <ul class="pagination mb-0"></ul>
+          <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next">
+            <span class="fas fa-chevron-right"> </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      $('#extension-maintenance').click(function () {
+        $('#newPositionModal').remove()
+        var id = $(this).attr('idValue')
+        var form =
+
+          '<form action="/history-maintenance" method="POST" class="modal fade" id="newPositionModal" tabindex="-1" aria-labelledby="newPositionModalLabel" aria-hidden="true">' +
+          '<div class="modal-dialog">' +
+          '<div class="modal-content">' +
+          '<div class="modal-header">' +
+          '<input type="hidden" name="project" value= "<%= project.id %>">' +
+          '<div class="d-flex justify-content-between w-100" >' +
+          `<h5 class="modal-title" id="newPositionModalLabel">Gia hạn bảo trì</h5>` +
+          '<button class="btn btn-primary clickXN" disable onclick="clickXN()" >Xác nhận</button>' +
+          '</div>' +
+          '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+          '</div>' +
+          '<div class="modal-body">' +
+          '<div >' +
+          `<div class="form-group mb-3" id="fee-group">
+            <label for="feeSelect" class="form-label">Loại phí:</label>
+            <select name="free" id="feeSelect" class="form-select">
+              <option selected value="false">Mất phí</option>
+              <% if (project.type === 'LAPDAT') { %>
+<option value="true">Miễn phí</option>
+<% } %>
+            </select>
+          </div>` +
+          `<div class="form-group mb-3" id="price-group">
+            <label  class="form-label">Phí bảo trì:</label>
+            <input type="text" class="form-control" value="0" onkeyup="formatCurrency(this)" >
+            <input type="hidden" class="form-control" id="price_value" name="price" value="0">
+          </div>` +
+          '<div class="form-group">' +
+          '<label for="date-time">Thời gian bắt đầu:</label>' +
+          '<input type="date" class="form-control" id="date-time" name="timeStart" >' +
+          '</div>' +
+          '<div class="form-group">' +
+          '<label for="date-time">Thời gian kết thúc:</label>' +
+          '<input type="date" class="form-control" id="date-time" name="timeEnd" >' +
+          '</div>' +
+          '<div class="form-group">' +
+          '<label for="date-time">Số lần bảo trì:</label>' +
+          '<input type="number" class="form-control" name="countMaintenance" >' +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '</form>' +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '</div>'
+        $('body').append(form)
+        $('#newPositionModal').modal('show')
+        $('#date-time').val('')
+        $('#staff-search').val('')
+        $('#feeSelect').on('change', function () {
+          if ($(this).val() === 'true') {
+            $('#price-group').hide();
+          } else {
+            $('#price-group').show();
+          }
+        });
+        if ($('#feeSelect').val() === 'true') {
+          $('#price-group').hide();
+        } else {
+          $('#price-group').show();
+        }
+      })
+    })
+
+    function formatCurrency(input) {
+      let value = input.value.replace(/\D/g, '');
+      input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      document.getElementById('price_value').value = value;
+    }
+  </script>
+  <%- include('../../layout/footer') %>

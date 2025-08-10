@@ -1,0 +1,133 @@
+<%- include('../../layout/header') %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="card p-4">
+  <h4 class="mb-4">Chi tiết nhân viên kinh doanh</h4>
+  <h5>Chỉ tiêu</h5>
+  <% const currentYear = new Date().getFullYear(); %>
+  <% if (dealineBusines.some(item => item.year === currentYear)) { %>
+  <table class="table">
+    <tr>
+      <th>Năm</th>
+      <td id="year">
+        <select id="dealineCheck" class="form-control" onchange="changeValue(this)">
+          <%
+          dealineBusines.forEach(function(dealineBusine) {
+          %>
+          <option value="<%= dealineBusine.target %>" <%=dealineBusine.year ===
+            currentYear ? 'selected' : '' %>>
+            <%= dealineBusine.year %>
+          </option>
+          <% }) %>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th>Doanh số</th>
+      <td id="target">---</td>
+    </tr>
+  </table>
+  <script>
+    function changeValue(element) {
+  const targetValue = element.value;
+  document.getElementById('target').textContent = targetValue + ' Thang';
+
+  const selectedText = element.options[element.selectedIndex].text.trim();
+
+  // Lặp qua tất cả các hàng
+  document.querySelectorAll('tbody.list tr').forEach(row => {
+    const yearCell = row.querySelector('td.year');
+    if (yearCell) {
+      const yearText = yearCell.textContent.trim();
+      if (yearText === selectedText) {
+        row.style.display = ''; // Hiện
+      } else {
+        row.style.display = 'none'; // Ẩn
+      }
+    }
+  });
+}
+
+    window.onload = function() {
+      const selectElement = document.getElementById('dealineCheck');
+      changeValue(selectElement);
+    };
+  </script>
+  <% }else{ %>
+  <form action="/target-busines" method="post">
+    <input type="hidden" name="staff" value="<%= staffId %>">
+    <input type="hidden" name="year" value="<%= currentYear %>">
+    <input class="form-control" name="target" type="number" aria-required="true" aria-invalid="false" value required placeholder="Nhập chỉ tiêu cho năm nay">
+    <button class="mt-2 btn btn-primary">Thêm chỉ tiêu</button>
+  </form>
+  <% } %>
+</div>
+
+<div class="card mt-3 p-3">
+  <h5>Thống kê số lượng dự án theo tháng</h5>
+  <div class="tab-pane preview-tab-pane active" role="tabpanel" aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5" id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
+    <div id="tableExample3" data-list='{"valueNames":["month","year","tongcv","hoanthanh"],"page":24,"pagination":true}'>
+      <div class="row justify-content-end g-0">
+        <div class="col-auto col-sm-5 mb-3">
+          <form>
+            <div class="input-group">
+              <input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
+              <div class="input-group-text bg-transparent">
+                <span class="fa fa-search fs-10 text-600"></span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="table-responsive scrollbar">
+        <table class="table table-bordered table-hover table-striped fs-10 mb-0">
+          <thead class="bg-200">
+            <tr>
+              <th class="text-900 sort" data-sort="month">Tháng</th>
+              <th class="text-900 sort" data-sort="year">Năm</th>
+              <th class="text-900 sort" data-sort="tongcv">Tổng số lượng thang</th>
+              <th class="text-900 sort" data-sort="hoanthanh">Tên công trình</th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <% staffsBusines.forEach(function(staff, key) { %>
+            <tr>
+              <td class="month"><%= staff.month %></td>
+              <td class="year"><%= staff.year %></td>
+              <td class="tongcv"><%= staff.count %></td>
+              <td class="hoanthanh">
+                <%
+                if (staff.projects && staff.projects.length > 0) {
+                staff.projects.forEach((project, index) => {
+                %>
+                <a class=" <%= project.projectStatus ? 'text-success' : 'text-warning' %>" href="/client/task/<%= project.projectId %>"> <%= project.projectName
+                  %> ( Mã: <%= project.projectCode %> ) </a>
+                <br>
+                <%
+                });
+                } else {
+                %>
+                <span class="text-danger">Không có dự án</span>
+                <%
+                }
+                %>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center mt-3">
+        <button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev">
+          <span class="fas fa-chevron-left"></span>
+        </button>
+        <ul class="pagination mb-0"></ul>
+        <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next">
+          <span class="fas fa-chevron-right"> </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<%- include('../../layout/footer') %>

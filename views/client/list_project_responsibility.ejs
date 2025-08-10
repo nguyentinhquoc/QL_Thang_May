@@ -1,0 +1,84 @@
+<%- include('../layout/header') %>
+<div class="card p-4">
+  <div class="tab-pane preview-tab-pane active" role="tabpanel" aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5" id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
+    <div id="tableExample3" data-list='{"valueNames":["chucvu","mota","action"],"page":20,"pagination":true}'>
+      <h4>Danh sách công trình phụ trách</h4>
+      <div class="m-b-30">
+      </div>
+      <div class="row justify-content-end g-0">
+        <div class="col-auto col-sm-5 mb-3">
+          <form>
+            <div class="input-group">
+              <input class="form-control form-control-sm shadow-none search" type="search" placeholder="Search..." aria-label="search" />
+              <div class="input-group-text bg-transparent">
+                <span class="fa fa-search fs-10 text-600"></span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="table-responsive scrollbar">
+        <table class="table table-bordered table-hover table-striped fs-10 mb-0">
+          <thead class="bg-200">
+            <tr>
+              <th class="text-900 sort" data-sort="chucvu">STT</th>
+              <th class="text-900 sort" data-sort="chucvu">Công trình</th>
+              <th class="text-900 sort" data-sort="chucvu">Mã công trình</th>
+              <th class="text-900 sort" data-sort="chucvu">Tiến độ</th>
+              <th class="text-900 sort" data-sort="mota">Trạng thái</th>
+              <th class="text-900 sort" data-sort="mota">Tương tác</th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <% let stt=1 %>
+            <% projectStaffs.forEach(function(item, index) { %>
+            <tr>
+              <td><%= stt++ %></td>
+              <td>
+                <a href="/client/task/<%= item.project.id %>"> <%=
+              item.project.full_name %>
+                </a>
+              </td>
+              <td><%= item.project.code_project %></td>
+              <td class="phantramhoanthien align-middle status fs-9 pe-4">
+                <%
+                    let totalSteps = item.project.projectSteps.length - item.project.projectSteps.filter(step => step.staff == null).length;
+                    let stepsWithStatus = item.project.projectSteps.filter(step => step.status != null).length;
+                   let percentageComplete = totalSteps > 0 ? (stepsWithStatus / totalSteps) * 100 : 0;
+                %>
+                <div style="--falcon-circle-progress-bar:<%= percentageComplete.toFixed(0) %>;">
+                  <svg class="circle-progress-svg" width="26" height="26" viewBox="0 0 120 120">
+                    <circle class="progress-bar-rail" cx="60" cy="60" r="54" fill="none" stroke-linecap="round" stroke-width="12"></circle>
+                    <circle class="progress-bar-top" cx="60" cy="60" r="54" fill="none" stroke-linecap="round" stroke-width="12" stroke="blue" stroke-dasharray="<%= (2 * Math.PI * 54) * (percentageComplete / 100).toFixed(2) %> 339.29"></circle>
+                  </svg>
+                  <span><%= percentageComplete.toFixed(2) %>%</span>
+                </div>
+              </td>
+              <td>
+                <% if (item.project.status == 0) { %>
+                <span class="badge badge-subtle-warning rounded-pill">Chưa hoàn thành</span>
+                <% } else { %>
+                <span class="badge badge-subtle-success rounded-pill">Đã hoàn thành</span>
+                <% } %>
+                </a>
+              </td>
+              <td><a href="/client/task/<%= item.project.id %>" title="chi tiết"><span><i class="fas fa-info-circle"></i></span></a></td>
+            </tr>
+            <tr class="spacer"></tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center mt-3">
+        <button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" data-list-pagination="prev">
+          <span class="fas fa-chevron-left"></span>
+        </button>
+        <ul class="pagination mb-0"></ul>
+        <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" data-list-pagination="next">
+          <span class="fas fa-chevron-right"> </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../layout/footer') %>

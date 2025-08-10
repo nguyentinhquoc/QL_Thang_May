@@ -1,0 +1,200 @@
+<%- include('../../layout/header') %>
+<form action="/customer" method="POST" id="FormAdd">
+  <div class="row m-t-15 m-b-15">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body text-secondary">
+          <h2 class="m-b-30">Tạo mới công trình dự kiến</h2>
+            <div class="row d-flex align-items-center">
+              <div class="col-auto">
+                Nhân viên phụ trách:</div>
+              <% if(manager && busines) { %>
+                <a class="btn btn-primary mb-2" style="width: fit-content;" onclick="addStaff()">+</a>
+                <% } %>
+            </div>
+            <div id="staff-container" class="mt-3 mb-3"></div>
+
+          <div>
+            <div class="form-group">
+              <label for="full_name">Tên công trình <span style="color: red">*</span></label>
+              <input type="text" placeholder="Enter Name" id="full_name" name="full_name" class="form-control" required maxlength="255" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="number_phone">Số điện thoại <span style="color: red">*</span></label>
+            <input type="tel" placeholder="Enter Number Phone" id="number_phone" name="number_phone" class="form-control" required maxlength="15" />
+          </div>
+          <div class="form-group">
+            <label for="email">Địa chỉ email</label>
+            <input type="email" placeholder="Enter Address Email" id="email" name="email" class="form-control" maxlength="255" />
+          </div>
+
+          <div class="form-group col-12">
+            <label for="city">Tỉnh/Thành phố:  <span style="color: red">*</span></label>
+            <select required id="city" name="city" class="form-control">
+              <option value="" selected disabled>Chọn tỉnh thành</option>
+            </select>
+          </div>
+
+          <div class="form-group col-12">
+            <label for="district">Quận/Huyện:  <span style="color: red">*</span></label>
+            <select required id="district" name="district" class="form-control">
+              <option value="" selected disabled>Chọn quận huyện</option>
+            </select>
+          </div>
+
+          <div class="form-group col-12">
+            <label for="ward">Phường/Xã:  <span style="color: red">*</span></label>
+            <select required id="ward" name="ward" class="form-control">
+              <option value="" selected disabled>Chọn phường xã</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Địa chỉ lắp đặt</label>
+            <textarea id="address" placeholder="Enter Address" name="address" class="form-control"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="description">Ghi chú</label>
+            <textarea id="description" placeholder="Enter Description" name="description" class="form-control" maxlength="225"></textarea>
+          </div>
+          <button class="btn btn-primary btn-lg btn-block mt-3 w-100">
+            Tạo mới công trình
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+  const host = "https://provinces.open-api.vn/api/";
+  var callAPI = (api) => {
+    return axios.get(api)
+      .then((response) => {
+        renderData(response.data, "city");
+      });
+  }
+  callAPI('https://provinces.open-api.vn/api/?depth=1');
+  var callApiDistrict = (api) => {
+    return axios.get(api)
+      .then((response) => {
+        renderData(response.data.districts, "district");
+      });
+  }
+  var callApiWard = (api) => {
+    return axios.get(api)
+      .then((response) => {
+        renderData(response.data.wards, "ward");
+      });
+  }
+  var renderData = (array, select) => {
+    let row = ' <option disable value="">Chọn</option>';
+    array.forEach(element => {
+      row += `<option data-id="${element.code}" value="${element.name}">${element.name}</option>`
+    });
+    document.querySelector("#" + select).innerHTML = row
+  }
+
+  $("#city").change(() => {
+    callApiDistrict(host + "p/" + $("#city").find(':selected').data('id') + "?depth=2");
+    printResult();
+  });
+  $("#district").change(() => {
+    callApiWard(host + "d/" + $("#district").find(':selected').data('id') + "?depth=2");
+    printResult();
+  });
+  $("#ward").change(() => {
+    printResult();
+  })
+
+  var printResult = () => {
+    if ($("#district").find(':selected').data('id') != "" && $("#city").find(':selected').data('id') != "" &&
+      $("#ward").find(':selected').data('id') != "") {
+      let result = $("#city option:selected").text() +
+        " | " + $("#district option:selected").text() + " | " +
+        $("#ward option:selected").text();
+      $("#result").text(result)
+    }
+  }
+</script>
+
+  <script>  function addStaff() {
+      console.log(123);
+
+      const container = document.getElementById('staff-container');
+      const newStaff = document.createElement('div');
+      newStaff.classList.add('d-flex', 'staff-select');
+      newStaff.innerHTML = `
+    <select class="form-select form-select-sm department-select" style="width: fit-content;"
+      aria-label=".form-select-sm example" onchange="filterList2(this)">
+      <% departments.forEach(function(department, key) { %>
+      <option value="<%=department.id %>" >
+        <%=department.name %>
+      </option>
+      <% }) %>
+    </select>
+    <div class="w-100">
+      <input type="text" class="form-control staff-search" placeholder="Nhập tên nhân viên"
+        aria-label="Recipient's username" aria-describedby="button-addon2" oninput="filterList2(this)">
+      <ul style="position: absolute;" class="card item-list">
+        <% staffs.forEach(function(staff) { %>
+        <li class="btn w-100 infor-staff" idDepartment="<%=staff.department.id%>"
+          onclick="selectStaff(this, '<%=staff.full_name%>', '<%=staff.id%>')">
+          <%=staff.full_name%> - <%=staff.number_phone%>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+    <input type="hidden" class="staff-main-id" name="staffMain[]">
+    <button class="btn btn-danger" onclick="removeStaff(this)">Xóa</button>
+  `;
+      container.appendChild(newStaff);
+    }
+    function filterList2(element) {
+      const container = element.closest('.d-flex');
+      const input = container.querySelector('.staff-search').value.toLowerCase();
+      const selectedDepartment = container.querySelector('.department-select').value;
+      const items = container.querySelectorAll('.item-list li');
+      const list = container.querySelector('.item-list');
+      if (input || selectedDepartment) {
+        list.style.display = "block";
+      } else {
+        list.style.display = "none";
+      }
+      items.forEach(item => {
+        const itemText = item.textContent.toLowerCase();
+        const departmentId = item.getAttribute('idDepartment');
+        if (
+          (itemText.includes(input) || !input) &&
+          (departmentId === selectedDepartment || !selectedDepartment)
+        ) {
+          item.style.display = "";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    }
+    function toggleStaffContainer() {
+      const staffContainer = document.getElementById('staff-container');
+      if (staffContainer.style.display === 'none') {
+        staffContainer.style.display = 'block';
+      } else {
+        staffContainer.style.display = 'none';
+      }
+    }
+
+    function selectStaff(element, name, id) {
+      const searchBox = element.closest('.d-flex').querySelector('.staff-search');
+      const hiddenInput = element.closest('.d-flex').querySelector('.staff-main-id');
+      const list = element.closest('.d-flex').querySelector('.item-list');
+      searchBox.value = name;
+      hiddenInput.value = id;
+      list.style.display = "none";
+    }
+    function removeStaff(button) {
+      const container = button.closest('.staff-select');
+      container.remove();
+    }
+  </script>
+<%- include('../../layout/footer') %>

@@ -1,0 +1,247 @@
+<%- include('../../layout/header') %>
+  <form action="?_method=Patch" method="POST" id="FormAdd">
+    <div class="row m-t-15 m-b-15">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body text-secondary">
+            <h2 class="m-b-30">Chi tiết công trình dự kiến</h2>
+            <div class="row d-flex align-items-center">
+              <div class="col-auto row">
+                Nhân viên phụ trách:
+                <% if (customer.staff) { %>
+                  <div class="col-auto">
+                    <div class="avatar avatar-2xl imgMainStaff" <% if(manager && busines) { %>
+                      onclick="removeMainStaff('<%= customer.id %>', this)" <% } %>
+                          data-bs-toggle="tooltip" data-bs-placement="top"
+                          data-bs-original-title="<%= customer.staff.full_name %>">
+                            <img class="rounded-circle" src="/images/avatar/<%= customer.staff.avatar %>" alt>
+                    </div>
+                  </div>
+                  <% } %>
+              </div>
+              <% if(manager && busines) { %>
+                <a class="btn btn-primary mb-2" style="width: fit-content;" onclick="addStaff()">+</a>
+                <% } %>
+            </div>
+            <div id="staff-container" class="mt-3 mb-3"></div>
+
+            <div>
+              <div class="form-group">
+                <label for="full_name">Tên công trình <span style="color: red">*</span></label>
+                <input type="text" placeholder="Enter Name" id="full_name" value="<%= customer.full_name %>"
+                  name="full_name" class="form-control" required maxlength="255" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="number_phone">Số điện thoại <span style="color: red">*</span></label>
+              <input type="tel" placeholder="Enter Number Phone" id="number_phone" value="<%= customer.number_phone %>"
+                name="number_phone" class="form-control" required maxlength="15" />
+            </div>
+            <div class="form-group">
+              <label for="email">Địa chỉ email</label>
+              <input type="email" placeholder="Enter Address Email" id="email" value="<%= customer.email %>"
+                name="email" class="form-control" maxlength="255" />
+            </div>
+            <div class="form-group col-12">
+              <label for="city">Tỉnh/Thành phố: <span style="color: red">*</span></label>
+              <select required id="city" name="city" class="form-control">
+                <option value="" selected disabled>Chọn tỉnh thành</option>
+              </select>
+            </div>
+
+            <div class="form-group col-12">
+              <label for="district">Quận/Huyện: <span style="color: red">*</span></label>
+              <select required id="district" name="district" class="form-control">
+                <option value="" selected disabled>Chọn quận huyện</option>
+              </select>
+            </div>
+
+            <div class="form-group col-12">
+              <label for="ward">Phường/Xã: <span style="color: red">*</span></label>
+              <select required id="ward" name="ward" class="form-control">
+                <option value="" selected disabled>Chọn phường xã</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="address">Địa chỉ lắp đặt</label>
+              <textarea id="address" placeholder="Enter Address" name="address" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="description">Ghi chú</label>
+              <textarea id="description" placeholder="Enter Description" name="description" class="form-control"
+                maxlength="225"><%= customer.description %></textarea>
+            </div>
+            <button class="btn btn-primary btn-lg btn-block mt-3 w-100">
+              Sửa thông tin công trình
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  //cdn jquery
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+    const host = "https://provinces.open-api.vn/api/";
+    // === ✅ Chuỗi địa chỉ mặc định ===
+    const defaultAddress = '<%= customer.address %>'
+    // === ✅ Tách dữ liệu mặc định từ chuỗi ===
+    const [defaultCityName, defaultDistrictName, defaultWardName, detailAdress] = defaultAddress.split(',').map(s => s.trim());
+    console.log("🚀 ~ defaultDistrictName:", defaultDistrictName)
+    document.querySelector('#address').value = detailAdress
+    // === ✅ Hàm render có so sánh theo tên (name) ===
+    const renderData = (array, selectId, defaultName = null) => {
+      let row = '<option disabled value="">Chọn</option>';
+      array.forEach(element => {
+        const selected = (defaultName && element.name.toLowerCase().includes(defaultName.toLowerCase())) ? 'selected' : '';
+        row += `<option data-id="${element.code}" value="${element.name}" ${selected}>${element.name}</option>`;
+      });
+      $("#" + selectId).html(row);
+    };
+    // === ✅ Gọi API tỉnh, quận, phường ===
+    const callAPI = () => {
+      return axios.get(`${host}?depth=1`).then(res => {
+        renderData(res.data, "city", defaultCityName);
+        const selectedCity = res.data.find(c => c.name.toLowerCase().includes(defaultCityName.toLowerCase()));
+        console.log('==============',`${host}p/${selectedCity.code}?depth=2`);
+        if (selectedCity) {
+          return axios.get(`${host}p/${selectedCity.code}?depth=2`).then(resDistrict => {
+            renderData(resDistrict.data.districts, "district", defaultDistrictName);
+            const selectedDistrict = resDistrict.data.districts.find(d => d.name.toLowerCase().includes(defaultDistrictName.toLowerCase()));
+            if (selectedDistrict) {
+              return axios.get(`${host}d/${selectedDistrict.code}?depth=2`).then(resWard => {
+                renderData(resWard.data.wards, "ward", defaultWardName);
+                printResult(); // Hiển thị kết quả
+              });
+            }
+          });
+        }
+      });
+    };
+
+    // === ✅ In kết quả địa chỉ đã chọn ===
+    const printResult = () => {
+      const cityText = $("#city option:selected").text();
+      const districtText = $("#district option:selected").text();
+      const wardText = $("#ward option:selected").text();
+
+      const cityCode = $("#city").find(':selected').data('id');
+      const districtCode = $("#district").find(':selected').data('id');
+      const wardCode = $("#ward").find(':selected').data('id');
+
+      if (cityCode && districtCode && wardCode) {
+        $("#result").text(`${cityText} | ${districtText} | ${wardText}`);
+      }
+    };
+
+    // === ✅ Sự kiện thay đổi ===
+    $("#city").on("change", function () {
+      const cityId = $(this).find(':selected').data('id');
+      if (cityId) {
+        axios.get(`${host}p/${cityId}?depth=2`).then(res => {
+          renderData(res.data.districts, "district");
+          $("#ward").html('<option disabled value="">Chọn</option>');
+        });
+      }
+      printResult();
+    });
+
+    $("#district").on("change", function () {
+      const districtId = $(this).find(':selected').data('id');
+      if (districtId) {
+        axios.get(`${host}d/${districtId}?depth=2`).then(res => {
+          renderData(res.data.wards, "ward");
+        });
+      }
+      printResult();
+    });
+
+    $("#ward").on("change", function () {
+      printResult();
+    });
+
+    // === ✅ Gọi khởi tạo ===
+    callAPI();
+  </script>
+  <script>  function addStaff() {
+      console.log(123);
+
+      const container = document.getElementById('staff-container');
+      const newStaff = document.createElement('div');
+      newStaff.classList.add('d-flex', 'staff-select');
+      newStaff.innerHTML = `
+    <select class="form-select form-select-sm department-select" style="width: fit-content;"
+      aria-label=".form-select-sm example" onchange="filterList2(this)">
+      <% departments.forEach(function(department, key) { %>
+      <option value="<%=department.id %>" >
+        <%=department.name %>
+      </option>
+      <% }) %>
+    </select>
+    <div class="w-100">
+      <input type="text" class="form-control staff-search" placeholder="Nhập tên nhân viên"
+        aria-label="Recipient's username" aria-describedby="button-addon2" oninput="filterList2(this)">
+      <ul style="position: absolute;" class="card item-list">
+        <% staffs.forEach(function(staff) { %>
+        <li class="btn w-100 infor-staff" idDepartment="<%=staff.department.id%>"
+          onclick="selectStaff(this, '<%=staff.full_name%>', '<%=staff.id%>')">
+          <%=staff.full_name%> - <%=staff.number_phone%>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+    <input type="hidden" class="staff-main-id" name="staffMain[]">
+    <button class="btn btn-danger" onclick="removeStaff(this)">Xóa</button>
+  `;
+      container.appendChild(newStaff);
+    }
+    function filterList2(element) {
+      const container = element.closest('.d-flex');
+      const input = container.querySelector('.staff-search').value.toLowerCase();
+      const selectedDepartment = container.querySelector('.department-select').value;
+      const items = container.querySelectorAll('.item-list li');
+      const list = container.querySelector('.item-list');
+      if (input || selectedDepartment) {
+        list.style.display = "block";
+      } else {
+        list.style.display = "none";
+      }
+      items.forEach(item => {
+        const itemText = item.textContent.toLowerCase();
+        const departmentId = item.getAttribute('idDepartment');
+        if (
+          (itemText.includes(input) || !input) &&
+          (departmentId === selectedDepartment || !selectedDepartment)
+        ) {
+          item.style.display = "";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    }
+    function toggleStaffContainer() {
+      const staffContainer = document.getElementById('staff-container');
+      if (staffContainer.style.display === 'none') {
+        staffContainer.style.display = 'block';
+      } else {
+        staffContainer.style.display = 'none';
+      }
+    }
+
+    function selectStaff(element, name, id) {
+      const searchBox = element.closest('.d-flex').querySelector('.staff-search');
+      const hiddenInput = element.closest('.d-flex').querySelector('.staff-main-id');
+      const list = element.closest('.d-flex').querySelector('.item-list');
+      searchBox.value = name;
+      hiddenInput.value = id;
+      list.style.display = "none";
+    }
+    function removeStaff(button) {
+      const container = button.closest('.staff-select');
+      container.remove();
+    }
+  </script>
+  <%- include('../../layout/footer') %>
