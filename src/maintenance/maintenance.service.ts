@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common'
 import {CreateMaintenanceDto} from './dto/create-maintenance.dto'
 import {InjectRepository} from '@nestjs/typeorm'
 import {Maintenance} from './entities/maintenance.entity'
-import {Between, Like, Repository} from 'typeorm'
+import {Between, LessThan, Like, MoreThan, Repository} from 'typeorm'
 import {CreateMaintenanceActionDto} from 'src/maintenance_actions/dto/create-maintenance_action.dto'
 import {MaintenanceAction} from 'src/maintenance_actions/entities/maintenance_action.entity'
 @Injectable()
@@ -14,14 +14,7 @@ export class MaintenanceService {
     private readonly maintenanceActionRepository: Repository<MaintenanceAction>,
   ) {}
 
-  async findAllByLocaltion(localtionName: string) {
-    return this.maintenanceRepository.find({
-      relations: ['project'],
-      where: {
-        project: {address: Like(`%${localtionName}%`)},
-      },
-    })
-  }
+
 
   async findByNotifycation() {
     const currentDate = new Date()

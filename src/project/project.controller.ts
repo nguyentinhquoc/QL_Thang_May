@@ -39,10 +39,9 @@ export class ProjectController {
   @Get('/maintenance/:localtionName')
   @Render('admin/maintenance/maintenance_localtion')
   async filterMaintenanceByLocaltion(@Param('localtionName') localtionName: string, @Req() req: Request) {
-
-    return{ localtionName}
-    }
-
+    const maintenances = await this.projectService.findAllByLocaltion(localtionName)
+    return { localtionName, maintenances }
+  }
 
   @Get('statistical/export')
   async exportExcel(@Res() res: Response) {
@@ -77,9 +76,12 @@ export class ProjectController {
       rowIndex++
     }
     // === DỮ LIỆU GIẢ ĐỊNH ===
-    const statisticalWarranty = { tong: 3, haNoi: 1, quangNinh: 2, khac: 0 }
-    const statisticalMaintenanceFree = { tong: 2, haNoi: 1, quangNinh: 1, khac: 0 }
-    const statisticalMaintenance = { tong: 2, haNoi: 1, quangNinh: 1, khac: 0 }
+    const statisticalWarranty = await this.projectService.statisticalWarranty()
+    // Danh sách công trình bảo trì miễn phí
+    const statisticalMaintenanceFree = await this.projectService.statisticalMaintenanceFree()
+    // Danh sách công trình bảo trì mất phí
+    const statisticalMaintenance = await this.projectService.statisticalMaintenance()
+
     // ============== Xuất bảng giống ảnh =====================
     // Nhóm 1: Bảo hành
     addGroupRow('1', 'Tổng số lượng thang máy trong thời gian bảo hành', statisticalWarranty.tong)
@@ -104,7 +106,6 @@ export class ProjectController {
     // Gửi file
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     res.setHeader('Content-Disposition', 'attachment; filename=thongke.xlsx')
-
     await workbook.xlsx.write(res)
     res.end()
   }
@@ -177,7 +178,7 @@ export class ProjectController {
     return res.redirect('/project/maintenance')
   }
   @Post()
-  async create(@Body() createProjectDto: CreateProjectDto, @Res() res: Response , @Req() req: Request) {
+  async create(@Body() createProjectDto: CreateProjectDto, @Res() res: Response, @Req() req: Request) {
 
     if (createProjectDto.address) {
       createProjectDto.address = `${createProjectDto.city}, ${createProjectDto.district},${createProjectDto.ward}, ${createProjectDto.address}`
@@ -211,7 +212,7 @@ export class ProjectController {
       oh: createProjectDto.oh,
       phongMay: createProjectDto.phongMay,
     }
-    console.log('infor_product',infor_product);
+    console.log('infor_product', infor_product);
     const newProject = {
       ...createProjectDto,
       infor_product: JSON.stringify(infor_product),
@@ -220,7 +221,7 @@ export class ProjectController {
 
 
 
-     const token = req.cookies['token']
+    const token = req.cookies['token']
     const payload = await this.staffsService.payload(token)
     const inforAccount = await this.staffsService.findOne(payload.id)
     const arr = createProjectDto.staffMain

@@ -21,7 +21,31 @@
 <div class="card p-4">
   <div class>
     <div class="m-b-30">
-      <h4>Danh sách lịch bảo trì tất cả công trình</h4>
+      <h4 id="maintenance-title">Danh sách lịch bảo trì theo tháng 12/2025</h4>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <select id="filterMonth" class="form-select">
+            <%
+              const now = new Date();
+              const currentMonth = now.getMonth() + 1;
+              for (let m = 1; m <= 12; m++) {
+              %>
+              <option value="<%= m %>" <%= m === currentMonth ? 'selected' : '' %>>Tháng <%= m %></option>
+             <% } %>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <select id="filterYear" class="form-select">
+            <%
+              const currentYear = 2025;
+              for (let y = 2024; y <= 2025; y++) {
+              %>
+              <option value="<%= y %>" <%= y === currentYear ? 'selected' : '' %>>Năm <%= y %></option>
+             <% } %>
+          </select>
+        </div>
+      </div>
+
       <div class="modal fade" id="error-modal" tabindex="-1" role="dialog"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document"
@@ -32,6 +56,11 @@
                 class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
                 data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
+
+
+
+
             <div class="modal-body p-0">
               <div class="rounded-top-3 py-3 ps-4 pe-6 bg-body-tertiary">
                 <h4 class="mb-1" id="modalExampleDemoLabel">
@@ -251,6 +280,10 @@
     const maintenanceWProjects = JSON.parse(
       '<%- JSON.stringify(maintenanceWProjects).replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t") %>',
     )
+
+    // Lưu dữ liệu gốc để lọc
+    window.maintenanceData = maintenanceWProjects
+
     maintenanceWProjects.forEach(function(item, index) {
       const itemDate = new Date(item.time)
       const element = document.getElementById(`maintenance-${index}`)
@@ -258,7 +291,46 @@
         element.classList.add('alert-warning')
       }
     })
+
+    // Gọi hàm lọc ban đầu
+    filterByMonthYear()
   })
+
+  // Hàm lọc dữ liệu theo tháng và năm
+  function filterByMonthYear() {
+    const selectedMonth = parseInt(document.getElementById('filterMonth').value)
+    const selectedYear = parseInt(document.getElementById('filterYear').value)
+
+    // Cập nhật tiêu đề
+    document.getElementById('maintenance-title').textContent =
+      `Danh sách lịch bảo trì theo tháng ${selectedMonth}/${selectedYear}`
+
+    // Lấy tất cả các dòng trong bảng
+    const tableRows = document.querySelectorAll('tbody.list tr')
+
+    tableRows.forEach(function(row, index) {
+      const item = window.maintenanceData[index]
+      if (!item) {
+        row.style.display = 'none'
+        return
+      }
+
+      const itemDate = new Date(item.time)
+      const itemMonth = itemDate.getMonth() + 1 // getMonth() trả về 0-11, cần +1
+      const itemYear = itemDate.getFullYear()
+
+      // Kiểm tra nếu tháng và năm khớp với lựa chọn
+      if (itemMonth === selectedMonth && itemYear === selectedYear) {
+        row.style.display = ''
+      } else {
+        row.style.display = 'none'
+      }
+    })
+  }
+
+  // Thêm event listener cho các select box
+  document.getElementById('filterMonth').addEventListener('change', filterByMonthYear)
+  document.getElementById('filterYear').addEventListener('change', filterByMonthYear)
   $(document).ready(function() {
     $('.add-staff').click(function() {
       $('#newPositionModal').remove()

@@ -1,25 +1,78 @@
-import {Injectable} from '@nestjs/common'
-import {CreateProjectDto, CreateProjectMaintenanceDto} from './dto/create-project.dto'
-import {UpdateProjectDto} from './dto/update-project.dto'
-import {InjectRepository} from '@nestjs/typeorm'
-import {Project} from './entities/project.entity'
-import {LessThan, MoreThan, Not, Repository} from 'typeorm'
-import {relative} from 'path'
-import {HistoryMaintenance} from 'src/history-maintenance/entities/history-maintenance.entity'
+import { Injectable } from '@nestjs/common'
+import { CreateProjectDto, CreateProjectMaintenanceDto } from './dto/create-project.dto'
+import { UpdateProjectDto } from './dto/update-project.dto'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Project } from './entities/project.entity'
+import { LessThan, Like, MoreThan, Not, Repository } from 'typeorm'
+import { relative } from 'path'
+import { HistoryMaintenance } from 'src/history-maintenance/entities/history-maintenance.entity'
 @Injectable()
 export class ProjectService {
-  constructor (
+  constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
     @InjectRepository(HistoryMaintenance)
     private readonly historyMaintenanceRepository: Repository<HistoryMaintenance>,
-  ) {}
+  ) { }
 
 
 
+  async findAllByLocaltion(localtionName: string) {
+    let histories = []
+    const toDay = new Date()
+    if (localtionName == 'Tỉnh thành khác') {
+      histories = await this.historyMaintenanceRepository.find({
+        relations: ['project', 'maintenance', 'maintenance.maintenanceActions'],
+        where: {
+          timeStart: LessThan(toDay),
+          timeEnd: MoreThan(toDay),
+          project: {
+            address: Like(`%${localtionName}%`),
+          },
+        },
+      })
+    } else if (localtionName == 'Hà Nội' || localtionName == 'Quảng Ninh') {
+      // Lấy tất cả historyMaintenance theo location và thời gian
+      histories = await this.historyMaintenanceRepository.find({
+        relations: ['project', 'maintenance', 'maintenance.maintenanceActions'],
+        where: {
+          timeStart: LessThan(toDay),
+          timeEnd: MoreThan(toDay),
+          project: {
+            address: Like(`%${localtionName}%`),
+          },
+        },
+      })
+    }
+    if (histories.length === 0) return []
+    console.log(histories, '=========================================')
+    // Đếm số maintenance mà tất cả maintenanceActions.status != null
+    const result = histories.map((history) => {
+      // Đếm số maintenance thỏa mãn điều kiện
+      let countMaintenanceAllActionsStatusNotNull = 0
+      if (history.maintenance && Array.isArray(history.maintenance)) {
+        history.maintenance.forEach((maint) => {
+          if (
+            maint.maintenanceActions &&
+            Array.isArray(maint.maintenanceActions) &&
+            maint.maintenanceActions.length > 0 &&
+            maint.maintenanceActions.every((action) => action.status !== null && action.status !== undefined)
+          ) {
+            countMaintenanceAllActionsStatusNotNull += 1
+          }
+        })
+      }
+      // Gắn thêm trường mới vào object trả về
+      return {
+        ...history,
+        countMaintenanceAllActionsStatusNotNull,
+      }
+    })
 
+    return result
+  }
 
-  async statisticalMaintenance () {
+  async statisticalMaintenance() {
     const toDay = new Date()
     // lấy ra project dạng bảo trì mất phí
     // const projects = await this.projectRepository
@@ -30,43 +83,15 @@ export class ProjectService {
     //   .andWhere('history.timeEnd > :toDay', {toDay})
     //   .andWhere('history.free = :free', {free: false})
     //   .getMany()
-    const projects = await this.historyMaintenanceRepository.find({
+    const projects = await this.projectRepository.find({
       where: {
-        timeStart: LessThan(toDay),
-        timeEnd: MoreThan(toDay),
-        free: false,
+        historyMaintenance: {
+          timeStart: LessThan(toDay),
+          timeEnd: MoreThan(toDay),
+          free: false,
+        },
       },
-      relations: ['project'],
-    })
-     const objData = {
-       quangNinh: 0,
-       haNoi: 0,
-       khac: 0,
-       tong: 0,
-     }
-     projects.forEach((element) => {
-       if (element.project.address.toUpperCase().includes('QUẢNG NINH')) {
-         objData.quangNinh += 1
-         objData.tong += 1
-       } else if (element.project.address.toUpperCase().includes('HÀ NỘI')) {
-         objData.haNoi += 1
-         objData.tong += 1
-       } else {
-         objData.khac += 1
-         objData.tong += 1
-       }
-     })
-     return objData
-  }
-  async statisticalMaintenanceFree () {
-    const toDay = new Date()
-    const project = await this.historyMaintenanceRepository.find({
-      where: {
-        timeStart: LessThan(toDay),
-        timeEnd: MoreThan(toDay),
-        free: true,
-      },
-      relations: ['project'],
+      relations: ['historyMaintenance'],
     })
     const objData = {
       quangNinh: 0,
@@ -74,11 +99,11 @@ export class ProjectService {
       khac: 0,
       tong: 0,
     }
-    project.forEach((element) => {
-      if (element.project.address.toUpperCase().includes('QUẢNG NINH')) {
+    projects.forEach((element) => {
+      if (element.address.toUpperCase().includes('QUẢNG NINH')) {
         objData.quangNinh += 1
         objData.tong += 1
-      } else if (element.project.address.toUpperCase().includes('HÀ NỘI')) {
+      } else if (element.address.toUpperCase().includes('HÀ NỘI')) {
         objData.haNoi += 1
         objData.tong += 1
       } else {
@@ -88,7 +113,40 @@ export class ProjectService {
     })
     return objData
   }
-  async statisticalWarranty () {
+  async statisticalMaintenanceFree() {
+    const toDay = new Date()
+    const project = await this.projectRepository.find({
+      where: {
+        historyMaintenance: {
+          timeStart: LessThan(toDay),
+          timeEnd: MoreThan(toDay),
+          free: true,
+        },
+      },
+      relations: ['historyMaintenance'],
+    })
+    const objData = {
+      quangNinh: 0,
+      haNoi: 0,
+      khac: 0,
+      tong: 0,
+    }
+    project.forEach((element) => {
+      if (element.address.toUpperCase().includes('QUẢNG NINH')) {
+        objData.quangNinh += 1
+        objData.tong += 1
+      } else if (element.address.toUpperCase().includes('HÀ NỘI')) {
+        objData.haNoi += 1
+        objData.tong += 1
+      } else {
+        objData.khac += 1
+        objData.tong += 1
+      }
+    })
+
+    return objData
+  }
+  async statisticalWarranty() {
     const toDay = new Date()
     const project = await this.projectRepository.find({
       where: {
@@ -117,14 +175,14 @@ export class ProjectService {
     return objData
   }
 
-  async findAllProject () {
+  async findAllProject() {
     const project = await this.projectRepository.find({
       relations: ['historyMaintenance'],
     })
     return project
   }
 
-  async countProjectByMonth () {
+  async countProjectByMonth() {
     const projects = await this.projectRepository.find()
     // Đếm số lượng dự án và tính tổng giá trị (price - tax) theo tháng
     const monthlyCount = {}
@@ -164,7 +222,7 @@ export class ProjectService {
     })
     return result
   }
-  async countProjectByMonthByBusines (idStaff: number) {
+  async countProjectByMonthByBusines(idStaff: number) {
     const projects = await this.projectRepository.find({
       where: {
         projectStaff: {
@@ -214,7 +272,7 @@ export class ProjectService {
     return result
   }
 
-  create (createProjectDto: CreateProjectDto) {
+  create(createProjectDto: CreateProjectDto) {
     try {
       return this.projectRepository.save({
         code_project: createProjectDto.code_project,
@@ -230,7 +288,7 @@ export class ProjectService {
       console.log('🔴 ~ file: project.service.ts ~ line 116 ~ ProjectService ~ create ~ error', error)
     }
   }
-  createProjectMaintenance (createProjectMaintenanceDto: CreateProjectMaintenanceDto) {
+  createProjectMaintenance(createProjectMaintenanceDto: CreateProjectMaintenanceDto) {
     try {
       return this.projectRepository.save({
         code_project: createProjectMaintenanceDto.code_project,
@@ -247,12 +305,12 @@ export class ProjectService {
       console.log('🔴 ~ file: project.service.ts ~ line 116 ~ ProjectService ~ create ~ error', error)
     }
   }
-  findAll () {
+  findAll() {
     return this.projectRepository.find({
       relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
     })
   }
-  findAllByBusines (idStaff: number) {
+  findAllByBusines(idStaff: number) {
     return this.projectRepository.find({
       where: {
         projectStaff: {
@@ -265,28 +323,28 @@ export class ProjectService {
     })
   }
 
-  findAllStatus (status: number) {
+  findAllStatus(status: number) {
     if (status == 2) {
       return this.projectRepository.find({
-        where: {type: 'LAPDAT'},
+        where: { type: 'LAPDAT' },
         relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
       })
     } else {
       return this.projectRepository.find({
-        where: {status, type: 'LAPDAT'},
+        where: { status, type: 'LAPDAT' },
         relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
       })
     }
   }
 
-  findAllProjectsMaintennce () {
+  findAllProjectsMaintennce() {
     return this.projectRepository.find({
-      where: {type: 'BAOTRI'},
+      where: { type: 'BAOTRI' },
       relations: ['projectStaff', 'projectStaff.staff', 'projectSteps', 'projectSteps.staff'],
     })
   }
 
-  findByStaffId (staffId: number, status: number) {
+  findByStaffId(staffId: number, status: number) {
     if (status == 2) {
       return this.projectRepository.find({
         where: {
@@ -314,7 +372,7 @@ export class ProjectService {
       })
     }
   }
-  findProjectsMaintennceByStaffId (staffId: number) {
+  findProjectsMaintennceByStaffId(staffId: number) {
     return this.projectRepository.find({
       where: {
         type: 'BAOTRI',
@@ -328,31 +386,31 @@ export class ProjectService {
     })
   }
 
-  findAllAction () {
+  findAllAction() {
     return this.projectRepository.find({
-      where: {status: 0},
+      where: { status: 0 },
       relations: ['projectStaff', 'projectStaff.staff', 'projectSteps'],
     })
   }
-  findAlSuccess () {
+  findAlSuccess() {
     return this.projectRepository.find({
-      where: {status: 1},
+      where: { status: 1 },
       relations: ['projectStaff', 'projectStaff.staff', 'projectSteps'],
     })
   }
-  findOne (id: number) {
+  findOne(id: number) {
     return this.projectRepository.findOne({
-      where: {id},
+      where: { id },
       relations: ['projectStaff', 'projectStaff.staff'],
     })
   }
-  update (id: number, updateProjectDto: UpdateProjectDto) {
+  update(id: number, updateProjectDto: UpdateProjectDto) {
     return this.projectRepository.update(id, updateProjectDto)
   }
-  async updateStatusProject (id: number) {
-    return await this.projectRepository.update(id, {status: 1})
+  async updateStatusProject(id: number) {
+    return await this.projectRepository.update(id, { status: 1 })
   }
-  remove (id: number) {
+  remove(id: number) {
     return `This action removes a #${id} project`
   }
 }
