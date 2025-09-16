@@ -1,0 +1,82 @@
+<%- include('../../layout/header') %>
+<style>
+  .infor-staff:hover {
+    opacity: 0.7;
+    background-color: rgb(45, 145, 227);
+    color: white;
+  }
+
+  .infor-staff {
+    border-bottom: 0.5px solid rgb(77, 211, 229);
+  }
+
+  #itemList {
+    display: none;
+  }
+
+  .itemList {
+    display: none;
+  }
+</style>
+<div class="card p-4">
+  <div class>
+    <div class="m-b-30">
+      <h4>Danh sách lịch bảo trì tất cả công trình tại <strong><%= localtionName %></strong></h4>
+      <div class="tab-pane preview-tab-pane active" role="tabpanel"
+        aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5"
+        id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
+        <div id="tableExample3"
+          data-list='{"valueNames":["duan","noidung","thoigian","nhanvien","trangthai","loai"],"page":20,"pagination":true}'>
+          <div class="row justify-content-end g-0">
+            <div class="col-auto col-sm-5 mb-3">
+              <form>
+                <div class="input-group">
+                  <input class="form-control form-control-sm shadow-none search"
+                    type="search" placeholder="Search..." aria-label="search" />
+                  <div class="input-group-text bg-transparent">
+                    <span class="fa fa-search fs-10 text-600"></span>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="table-responsive scrollbar">
+            <table class="table table-bordered table-hover table-striped fs-10 mb-0">
+              <thead class="bg-200">
+                <tr>
+                  <th class="text-900 sort" data-sort="duan">Công trình</th>
+                  <th class="text-900 sort" data-sort="noidung">
+                    Nội dung bảo trì
+                  </th>
+                  <th class="text-900 sort" data-sort="thoigian">Thời gian</th>
+                  <th class="text-900 sort" data-sort="nhanvien">
+                    Nhân viên thực hiện
+                  </th>
+                  <th class="text-900 sort" data-sort="trangthai">
+                    Trạng thái
+                  </th>
+                  <th class="text-900 sort" data-sort="loai">
+                    Loại
+                  </th>
+                </tr>
+              </thead>
+
+            </table>
+          </div>
+          <div class="d-flex justify-content-center mt-3">
+            <button class="btn btn-sm btn-falcon-default me-1" type="button"
+              title="Previous" data-list-pagination="prev">
+              <span class="fas fa-chevron-left"></span>
+            </button>
+            <ul class="pagination mb-0"></ul>
+            <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next"
+              data-list-pagination="next">
+              <span class="fas fa-chevron-right"> </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../../layout/footer') %>

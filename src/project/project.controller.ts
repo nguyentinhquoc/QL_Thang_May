@@ -36,6 +36,13 @@ export class ProjectController {
     private readonly departmensService: DepartmensService,
     private readonly projectStaffService: ProjectStaffService,
   ) { }
+  @Get('/maintenance/:localtionName')
+  @Render('admin/maintenance/maintenance_localtion')
+  async filterMaintenanceByLocaltion(@Param('localtionName') localtionName: string, @Req() req: Request) {
+
+    return{ localtionName}
+    }
+
 
   @Get('statistical/export')
   async exportExcel(@Res() res: Response) {
@@ -637,7 +644,7 @@ export class ProjectController {
   @Get('/checkEdit/:projectEdit')
   @Render('admin/projects/checkEdit_project')
   async checkEdit(@Param('projectEdit') projectEditId: number) {
-    
+
     const projectEdit = await this.projectEditService.findOne(+projectEditId)
     console.log("🚀 ~ ProjectController ~ checkEdit ~ projectEdit:", projectEdit)
     const project = await this.projectService.findOne(+projectEdit.project.id)

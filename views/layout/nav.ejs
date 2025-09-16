@@ -445,10 +445,19 @@
                       <a class="nav-link" href="/project/statistical" role="button">
                         <div class="d-flex align-items-center">
                           <span class="nav-link-icon"><i class="fas fa-chart-bar
-"></i></span><span class="nav-link-text ps-1">Thống kê</span>
+"></i></span><span class="nav-link-text ps-1">Thống kê công trình</span>
                         </div>
                       </a>
                     </li>
+                     <li class="nav-item">
+                      <a class="nav-link" href="/project/statistical" role="button">
+                        <div class="d-flex align-items-center">
+                          <span class="nav-link-icon"><i class="fas fa-chart-bar
+"></i></span><span class="nav-link-text ps-1">Thống kê bảo trì theo tháng</span>
+                        </div>
+                      </a>
+                    </li>
+
 
                     <% } if (element==2 || element==3 ) { %>
                       <li class="nav-item">
@@ -474,11 +483,7 @@
                                     class="fa-solid fa-user-gear"></i></span><span class="nav-link-text ps-1">Nhân
                                   viên</span></div>
                             </a>
-                            <a class="nav-link" href="/staffs/payroll" role="button">
-                              <div class="d-flex align-items-center"><span class="nav-link-icon"><i
-                                    class="fas fa-clipboard-list"></i></span><span class="nav-link-text ps-1">Bảng
-                                  công</span></div>
-                            </a>
+
                             <% } %>
                       </li>
                       <% } if (element==4 ) { %>
@@ -513,11 +518,17 @@
                                 </div>
                               </a>
                               <% } if (element==5 ) { %>
+
                                 <a class="nav-link" href="/staffs/busines" role="button">
                                   <div class="d-flex align-items-center">
                                     <span class="nav-link-icon"><i class="fa-solid fa-clipboard-list"></i></span>
                                     <span class="nav-link-text ps-1">Quản lý nhân viên kinh doanh</span>
                                   </div>
+                                </a>
+                                <a class="nav-link" href="/staffs/payroll" role="button">
+                                  <div class="d-flex align-items-center"><span class="nav-link-icon"><i
+                                        class="fas fa-clipboard-list"></i></span><span class="nav-link-text ps-1">Bảng
+                                      công</span></div>
                                 </a>
                                 <% }%>
                           </li>
@@ -557,21 +568,20 @@
                                 <a class="nav-link" href="/project/maintenance" role="button">
                                   <div class="d-flex align-items-center"><span class="nav-link-icon"><i
                                         class="fa-solid fa-screwdriver-wrench"></i></span><span
-                                      class="nav-link-text ps-1">Danh sách công trình bảo trì</span>
+                                      class="nav-link-text ps-1">Tổng hợp danh sách bảo trì có thu phí</span>
                                   </div>
                                 </a>
                                 <a class="nav-link" href="/maintenance/classify" role="button">
                                   <div class="d-flex align-items-center"><span class="nav-link-icon"><i
-                                        class="fa-regular fa-chart-bar"></i></span><span class="nav-link-text ps-1">Phân
-                                      loại bảo trì</span>
+                                        class="fa-regular fa-chart-bar"></i></span><span class="nav-link-text ps-1">Tổng hợp danh sách bảo trì</span>
                                   </div>
                                 </a>
-                                <a class="nav-link" href="/maintenance" role="button">
+                                <!-- <a class="nav-link" href="/maintenance" role="button">
                                   <div class="d-flex align-items-center"><span class="nav-link-icon"><i
                                         class="fa-regular fa-rectangle-list"></i></span><span
                                       class="nav-link-text ps-1">Lịch bảo trì</span>
                                   </div>
-                                </a>
+                                </a> -->
                               </li>
                               <% } %>
                                 <% }) %>
