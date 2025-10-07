@@ -5,11 +5,11 @@ import { WorkflowStep } from 'src/workflow_steps/entities/workflow_step.entity'
 
 import { W } from 'typeorm'
 export class CreateProjectStepDto {
-  @IsInt()
-  @IsNotEmpty()
+  @IsInt({message: 'Bước quy trình phải là số nguyên'})
+  @IsNotEmpty({message: 'Bước quy trình không được để trống'})
   workflowStep: WorkflowStep
-  @IsInt()
-  @IsNotEmpty()
+  @IsInt({message: 'Dự án phải là số nguyên'})
+  @IsNotEmpty({message: 'Dự án không được để trống'})
   project: Project
   staff?: Staff
   weight?: number

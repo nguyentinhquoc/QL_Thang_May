@@ -45,7 +45,11 @@ export class AuthGuard2 implements CanActivate {
       }
     } catch (error) {
       // Nếu có lỗi khi giải mã token (ví dụ: token hết hạn)
+    console.log(error)
+
       return this.redirectToLogin(response, 'Phiên đăng nhập hết hạn, vui lòng đăng nhập lại')
+    console.log(token)
+
     }
     // Trả về false nếu không hợp lệ
     return this.redirectToLogin(response, 'Đã xảy ra lỗi, vui lòng đăng nhập lại')

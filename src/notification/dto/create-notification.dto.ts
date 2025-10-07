@@ -3,14 +3,14 @@ import { Project } from 'src/project/entities/project.entity'
 import { Staff } from 'src/staffs/entities/staff.entity'
 
 export class CreateNotificationDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsString({message: 'Tiêu đề phải là chuỗi'})
+  @IsNotEmpty({message: 'Tiêu đề không được để trống'})
   title: string
-  @IsString()
-  @IsNotEmpty()
+  @IsString({message: 'Nội dung phải là chuỗi'})
+  @IsNotEmpty({message: 'Nội dung không được để trống'})
   message: string
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'Nhân viên không được để trống'})
   staff: Staff
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'Dự án không được để trống'})
   project: Project
 }

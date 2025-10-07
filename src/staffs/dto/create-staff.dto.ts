@@ -10,33 +10,33 @@ import {
 import { Department } from 'src/departmens/entities/departmen.entity'
 import { Position } from 'src/positions/entities/position.entity'
 export class CreateStaffDto {
-  @IsString()
+  @IsString({message: 'Họ và tên phải là chuỗi'})
   full_name?: string
 
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'Phòng ban không được để trống'})
   department: Department
 
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'Chức vụ không được để trống'})
   position: Position
 
-  @IsPhoneNumber('VN')
-  @IsNotEmpty()
+  @IsPhoneNumber('VN', {message: 'Số điện thoại không hợp lệ'})
+  @IsNotEmpty({message: 'Số điện thoại không được để trống'})
   number_phone: string
 
-  @IsEmail()
-  @IsNotEmpty()
+  @IsEmail({}, {message: 'Email không hợp lệ'})
+  @IsNotEmpty({message: 'Email không được để trống'})
   email: string
 
   @IsOptional()
-  @IsString()
+  @IsString({message: 'Địa chỉ phải là chuỗi'})
   address?: string
 
   @IsOptional()
-  @IsString()
+  @IsString({message: 'Ảnh đại diện phải là chuỗi'})
   avatar: string
 
   @IsOptional()
-  @IsString()
+  @IsString({message: 'Mô tả phải là chuỗi'})
   description?: string
   password?: string
 }

@@ -3,28 +3,28 @@ import {IsBoolean, IsNotEmpty, IsDateString, IsNumber} from 'class-validator'
 import {Project} from 'src/project/entities/project.entity'
 
 export class CreateHistoryMaintenanceDto {
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'Dự án không được để trống'})
   project: Project
 
-  @IsNotEmpty()
-  @IsDateString()
+  @IsNotEmpty({message: 'Thời gian bắt đầu không được để trống'})
+  @IsDateString({}, {message: 'Thời gian bắt đầu phải là ngày hợp lệ'})
   timeStart: Date
 
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'Giá không được để trống'})
   @Transform(({value}) => Number(value))
-  @IsNumber()
+  @IsNumber({}, {message: 'Giá phải là số'})
   price: number
 
-  @IsNotEmpty()
-  @IsDateString()
+  @IsNotEmpty({message: 'Thời gian kết thúc không được để trống'})
+  @IsDateString({},{message: 'Thời gian kết thúc phải là ngày hợp lệ'})
   timeEnd: Date
 
-  @IsNotEmpty()
-  @IsNumber()
+  @IsNotEmpty({message: 'Số lần bảo trì không được để trống'})
+  @IsNumber({}, {message: 'Số lần bảo trì phải là số'})
   @Transform(({value}) => Number(value))
   countMaintenance: number
 
   @Transform(({value}) => value === 'true' || value === true)
-  @IsBoolean()
+  @IsBoolean({message: 'Miễn phí phải là kiểu boolean'})
   free: boolean
 }

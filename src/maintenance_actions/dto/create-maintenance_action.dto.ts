@@ -3,11 +3,11 @@ import { Maintenance } from 'src/maintenance/entities/maintenance.entity'
 import { Staff } from 'src/staffs/entities/staff.entity'
 
 export class CreateMaintenanceActionDto {
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'Nhân viên không được để trống'})
   staff: Staff
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'Trọng số không được để trống'})
   weight?: number
-  @IsNotEmpty()
+  @IsNotEmpty({message: 'Bảo trì không được để trống'})
   maintenance: Maintenance
   status?: Date
   feedback?: string

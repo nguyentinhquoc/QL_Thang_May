@@ -17,10 +17,14 @@ export class ProjectService {
 
 
 
-  async findAllByLocaltion(localtionName: string) {
+
+async findAllByLocaltion(localtionName: string) {
+  try {
     let histories = []
     const toDay = new Date()
-    if (localtionName == 'Tỉnh thành khác') {
+
+    // ✅ Query theo địa điểm
+    if (localtionName === 'Tỉnh thành khác') {
       histories = await this.historyMaintenanceRepository.find({
         relations: ['project', 'maintenance', 'maintenance.maintenanceActions'],
         where: {
@@ -31,8 +35,7 @@ export class ProjectService {
           },
         },
       })
-    } else if (localtionName == 'Hà Nội' || localtionName == 'Quảng Ninh') {
-      // Lấy tất cả historyMaintenance theo location và thời gian
+    } else if (localtionName === 'Hà Nội' || localtionName === 'Quảng Ninh') {
       histories = await this.historyMaintenanceRepository.find({
         relations: ['project', 'maintenance', 'maintenance.maintenanceActions'],
         where: {
@@ -44,25 +47,44 @@ export class ProjectService {
         },
       })
     }
-    if (histories.length === 0) return []
-    console.log(histories, '=========================================')
-    // Đếm số maintenance mà tất cả maintenanceActions.status != null
+
+    if (!histories || histories.length === 0) return []
+
+    // ✅ Xử lý kết quả
     const result = histories.map((history) => {
-      // Đếm số maintenance thỏa mãn điều kiện
       let countMaintenanceAllActionsStatusNotNull = 0
-      if (history.maintenance && Array.isArray(history.maintenance)) {
+
+      // Trường hợp maintenance là 1 object
+      if (history.maintenance && !Array.isArray(history.maintenance)) {
+        const maint = history.maintenance
+        if (
+          maint.maintenanceActions &&
+          Array.isArray(maint.maintenanceActions) &&
+          maint.maintenanceActions.length > 0 &&
+          maint.maintenanceActions.every(
+            (action) => action.status !== null && action.status !== undefined,
+          )
+        ) {
+          countMaintenanceAllActionsStatusNotNull = 1
+        }
+      }
+
+      // Trường hợp maintenance là mảng
+      if (Array.isArray(history.maintenance)) {
         history.maintenance.forEach((maint) => {
           if (
             maint.maintenanceActions &&
             Array.isArray(maint.maintenanceActions) &&
             maint.maintenanceActions.length > 0 &&
-            maint.maintenanceActions.every((action) => action.status !== null && action.status !== undefined)
+            maint.maintenanceActions.every(
+              (action) => action.status !== null && action.status !== undefined,
+            )
           ) {
             countMaintenanceAllActionsStatusNotNull += 1
           }
         })
       }
-      // Gắn thêm trường mới vào object trả về
+
       return {
         ...history,
         countMaintenanceAllActionsStatusNotNull,
@@ -70,7 +92,10 @@ export class ProjectService {
     })
 
     return result
+  } catch (error) {
+    console.error('❌ Lỗi tại findAllByLocaltion:', error)
   }
+}
 
   async statisticalMaintenance() {
     const toDay = new Date()

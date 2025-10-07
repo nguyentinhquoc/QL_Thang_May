@@ -11,21 +11,21 @@ import { Staff } from 'src/staffs/entities/staff.entity'
 export class CreateProjectEditDto {
   @IsOptional()
   workflow: number
-  @IsNotEmpty()
-  @MaxLength(255)
+  @IsNotEmpty({message: 'Tên đầy đủ không được để trống'})
+  @MaxLength(255, {message: 'Tên đầy đủ không được vượt quá 255 ký tự'})
   full_name: string
-  @IsNotEmpty()
-  @IsPhoneNumber('VN')
+  @IsNotEmpty({message: 'Số điện thoại không được để trống'})
+  @IsPhoneNumber('VN', {message: 'Số điện thoại không hợp lệ'})
   number_phone: string
   @IsOptional()
   // @IsEmail()
-  @MaxLength(255)
+  @MaxLength(255, {message: 'Email không được vượt quá 255 ký tự'})
   email?: string
   @IsOptional()
-  @IsString()
+  @IsString({message: 'Địa chỉ phải là chuỗi'})
   address?: string
   @IsOptional()
-  @IsString()
+  @IsString({message: 'Thông tin sản phẩm phải là chuỗi'})
   infor_product: string
   staff: Staff
   project: Project
@@ -33,9 +33,9 @@ export class CreateProjectEditDto {
   price?: number
   @IsOptional()
   tax?: string
-  @IsString()
+  @IsString({message: 'Mã dự án phải là chuỗi'})
   code_project: string
-  @MaxLength(225)
+  @MaxLength(225, {message: 'Mô tả không được vượt quá 225 ký tự'})
   description?: string
   @IsOptional()
   steps?: string
