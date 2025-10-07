@@ -18,9 +18,10 @@ export class PositionsController {
     const positions = await this.positionsService.findAll()
     return {
       positions,
-      activeMenu: 'staff',
+      activeMenu:"positions"
     }
   }
+  @SetMetadata('permision', '2')
   @Patch()
   async update (@Body('id') id: string, @Body() updatePositionDto: UpdatePositionDto, @Res() res: Response) {
     await this.positionsService.update(+id, updatePositionDto)

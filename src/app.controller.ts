@@ -81,7 +81,6 @@ export class AppController {
     }
     return {
       projectEdits,
-      activeMenu: 'home',
       maintenanceComing,
       maintenanceYc,
       maintenanceYcHt,

@@ -42,7 +42,7 @@ export class ProjectController {
     const maintenances = await this.projectService.findAllByLocaltion(localtionName)
     return { localtionName, maintenances }
   }
-
+  @SetMetadata('permision', '10')
   @Get('statistical/export')
   async exportExcel(@Res() res: Response) {
     const workbook = new ExcelJS.Workbook()
@@ -109,7 +109,7 @@ export class ProjectController {
     await workbook.xlsx.write(res)
     res.end()
   }
-
+  @SetMetadata('permision', '10')
   @Get('statistical')
   @Render('admin/statistical')
   async getStatistical() {
@@ -491,6 +491,7 @@ export class ProjectController {
     }
     return res.redirect('back')
   }
+  @SetMetadata('permision', '7')
   @Get('/add')
   @Render('admin/projects/add_project')
   async renderAdd(
@@ -527,7 +528,6 @@ export class ProjectController {
         address,
         description,
       },
-      activeMenu: 'project',
     }
   }
   @SetMetadata('permision', '7')
@@ -551,7 +551,6 @@ export class ProjectController {
     }
     return {
       projects,
-      activeMenu: 'project',
     }
   }
   @Get('/maintenance')
@@ -568,7 +567,6 @@ export class ProjectController {
     }
     return {
       projects,
-      activeMenu: 'project',
     }
   }
   @Get('/maintenance/:id')
@@ -590,7 +588,6 @@ export class ProjectController {
       departments,
       project,
       staffs,
-      activeMenu: 'project',
     }
   }
   @Get('/:id')
@@ -619,7 +616,6 @@ export class ProjectController {
       workflows,
       steps,
       staffs,
-      activeMenu: 'project',
     }
   }
   @Post('/addWarranty/:id')
@@ -650,6 +646,6 @@ export class ProjectController {
     console.log("🚀 ~ ProjectController ~ checkEdit ~ projectEdit:", projectEdit)
     const project = await this.projectService.findOne(+projectEdit.project.id)
     console.log("🚀 ~ ProjectController ~ checkEdit ~ project:", project)
-    return { projectEdit, project, activeMenu: 'project' }
+    return { projectEdit, project}
   }
 }

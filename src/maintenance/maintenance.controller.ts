@@ -148,21 +148,16 @@ export class MaintenanceController {
       projects = await this.projectService.findAllByBusines(inforAccount.id)
     }
     const staffs = await this.staffsService.findAll()
-    return {maintenanceWProjects, activeMenu: 'maintenance', staffs, projects}
+    return {maintenanceWProjects, staffs, projects}
   }
   @Get('project/:idProject')
   @Render('admin/maintenance/maintenance_w_project')
   async findAllWProject (@Param('idProject') idProject: string) {
     const maintenanceWProjects = await this.maintenanceService.findAllWProject(+idProject)
-
-    console.log('🔱  WaveBear  -----------------------------------------------------------------------------------------------------------🔱  WaveBear ')
-    console.log('🔱  WaveBear  ~ MaintenanceController ~ findAllWProject ~ maintenanceWProjects⚡ ⚡ ⚡  :', maintenanceWProjects)
-    console.log('🔱  WaveBear  -----------------------------------------------------------------------------------------------------------🔱  WaveBear ')
-
     const staffs = await this.staffsService.findAll()
     const project = await this.projectService.findOne(+idProject)
     const historyMaintenance = await this.historyMaintenanceService.findByProjectNow(+idProject)
-    return {historyMaintenance, staffs, project, maintenanceWProjects, activeMenu: 'maintenance'}
+    return {historyMaintenance, staffs, project, maintenanceWProjects, }
   }
   @Post('project/:idProject')
   @Render('admin/maintenance/maintenance_w_project')

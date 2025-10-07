@@ -53,7 +53,6 @@ export class ClientController {
       const projectStaffs = await this.projectStaffService.findWStaff(idStaff);
       const projects = await this.projectService.findAll();
       return {
-        activeMenu: "NOACTIVE",
         projects,
         projectStaffs,
       };
@@ -75,7 +74,6 @@ export class ClientController {
       const projectStaffs = await this.projectStaffService.findWStaff(idStaff);
       const projects = await this.projectService.findAll();
       return {
-        activeMenu: "NOACTIVE",
         projectSteps,
         maintenance,
         projects,
@@ -109,7 +107,6 @@ export class ClientController {
         projectStaff,
         projectSteps,
         project,
-        activeMenu: "NOACTIVE",
         idStaff,
         maintenanceActions,
       };

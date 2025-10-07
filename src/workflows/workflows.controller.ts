@@ -28,9 +28,9 @@ export class WorkflowsController {
     const workflows = await this.workflowsService.findAll()
     return {
       workflows,
-      activeMenu: 'workflows',
     }
   }
+  @SetMetadata('permision', '4')
   @Get(':id')
   @Render('admin/workflows/edit_workflows')
   async findOne (@Param('id') id: number) {
@@ -62,15 +62,18 @@ export class WorkflowsController {
       steps,
       PickerIn,
       NonePickerIn,
-      activeMenu: 'workflows',
       canEdit,
     }
   }
+  @SetMetadata('permision', '4')
+
   @Patch()
   async update (@Body('id') id: string, @Body() updateWorkflowDto: UpdateWorkflowDto, @Res() res: Response) {
     await this.workflowsService.update(+id, updateWorkflowDto)
     return res.redirect('/workflows')
   }
+  @SetMetadata('permision', '4')
+
   @Patch(':id')
   async updateQt (@Param('id') id: string, @Body() updateWorkflowDto: UpdateWorkflowDto, @Res() res: Response) {
     const checkEdit = await this.projectStepsService.findOneWWorkflows(+id)

@@ -432,32 +432,34 @@
                 <% } %>
                   <% if (element===1 ) { %>
                     <!-- === Thống kê ===== -->
-
                     <!-- ======== -->
                     <li class="nav-item">
-                      <a class="nav-link" href="/" role="button">
+                      <a class="nav-link <%= activeMenu == 1 ? "active" : "" %>" href="/" role="button">
                         <div class="d-flex align-items-center"><span class="nav-link-icon"><i
                               class="fas fa-home"></i></span><span class="nav-link-text ps-1">Trang
                             chủ</span></div>
                       </a>
                     </li>
+                    <% if (element==10 ) { %>
                     <li class="nav-item">
-                      <a class="nav-link" href="/project/statistical" role="button">
+                      <a class="nav-link <%= activeMenu == 10 ? "active" : "" %>" href="/project/statistical" role="button">
                         <div class="d-flex align-items-center">
                           <span class="nav-link-icon"><i class="fas fa-chart-bar
 "></i></span><span class="nav-link-text ps-1">Thống kê công trình</span>
                         </div>
                       </a>
                     </li>
+                    <% } %>
+                    <% if (element==8 ) { %>
                      <li class="nav-item">
-                      <a class="nav-link" href="/maintenance" role="button">
+                      <a class="nav-link <%= activeMenu == 8 ? "active" : activeMenu %>" href="/maintenance" role="button">
                         <div class="d-flex align-items-center">
-                          <span class="nav-link-icon"><i class="fas fa-chart-bar
-"></i></span><span class="nav-link-text ps-1">Thống kê bảo trì theo tháng</span>
+                          <span class="nav-link-icon"><i class="fas fa-tools"></i></span>
+                          <span class="nav-link-text ps-1">Bảo trì theo tháng</span>
                         </div>
                       </a>
                     </li>
-
+                    <% } %>
 
                     <% } if (element==2 || element==3 ) { %>
                       <li class="nav-item">
@@ -468,22 +470,21 @@
                             <div class="col ps-0">
                               <hr class="mb-0 navbar-vertical-divider" />
                             </div>
-                          </div><!-- parent pages--><a class="nav-link" href="/departmens" role="button">
+                          </div><!-- parent pages--><a class="nav-link <%= activeMenu == 2 ? "active" : "" %>"  href="/departmens" role="button">
                             <div class="d-flex align-items-center"><span class="nav-link-icon"><i
-                                  class="fa-regular fa-building"></i></span><span class="nav-link-text ps-1">Phòng
+                                  class="fa-regular fa-building"></i></span><span class="nav-link-text ps-1">Phòng 
                                 ban</span></div>
-                          </a><!-- parent pages--><a class="nav-link" href="/positions" role="button">
+                          </a><!-- parent pages--><a class="nav-link <%= activeMenu == 'positions' ? "active" : "" %>" href="/positions" role="button">
                             <div class="d-flex align-items-center"><span class="nav-link-icon"><i
                                   class="fa-solid fa-ranking-star"></i></span><span class="nav-link-text ps-1">Chức
                                 vụ</span></div>
                           </a>
                           <% } if (element==3 ) { %>
-                            <a class="nav-link" href="/staffs" role="button">
+                            <a class="nav-link <%= activeMenu == '3' ? "active" : "" %>" href="/staffs" role="button">
                               <div class="d-flex align-items-center"><span class="nav-link-icon"><i
                                     class="fa-solid fa-user-gear"></i></span><span class="nav-link-text ps-1">Nhân
                                   viên</span></div>
                             </a>
-
                             <% } %>
                       </li>
                       <% } if (element==4 ) { %>
@@ -494,7 +495,7 @@
                             <div class="col ps-0">
                               <hr class="mb-0 navbar-vertical-divider" />
                             </div>
-                          </div><!-- parent pages--><a class="nav-link" href="/workflows" role="button">
+                          </div><!-- parent pages--><a class="nav-link <%= activeMenu == '4' ? "active" : "" %>" href="/workflows" role="button">
                             <div class="d-flex align-items-center"><span class="nav-link-icon"><i
                                   class="fa-regular fa-object-ungroup"></i></span><span class="nav-link-text ps-1">Quy
                                 trình</span>
@@ -511,21 +512,20 @@
                               </div>
                             </div>
                             <% if (element==6 ) { %>
-                              <a class="nav-link" href="/customer/infor" role="button">
+                              <a class="nav-link <%= activeMenu == '6' ? "active" : "" %>" href="/customer/infor" role="button">
                                 <div class="d-flex align-items-center">
                                   <span class="nav-link-icon"><i class="fa-solid fa-bars-progress"></i></span>
                                   <span class="nav-link-text ps-1">Danh sách công trình dự kiến</span>
                                 </div>
                               </a>
                               <% } if (element==5 ) { %>
-
-                                <a class="nav-link" href="/staffs/busines" role="button">
+                                <a class="nav-link <%= activeMenu == '5' ? "active" : "" %>" href="/staffs/busines" role="button">
                                   <div class="d-flex align-items-center">
                                     <span class="nav-link-icon"><i class="fa-solid fa-clipboard-list"></i></span>
                                     <span class="nav-link-text ps-1">Quản lý nhân viên kinh doanh</span>
                                   </div>
                                 </a>
-                                <a class="nav-link" href="/staffs/payroll" role="button">
+                                <a class="nav-link <%= activeMenu == 'staffs/payroll' ? "active" : "" %>" href="/staffs/payroll" role="button">
                                   <div class="d-flex align-items-center"><span class="nav-link-icon"><i
                                         class="fas fa-clipboard-list"></i></span><span class="nav-link-text ps-1">Bảng
                                       công</span></div>
@@ -541,20 +541,12 @@
                                   <hr class="mb-0 navbar-vertical-divider" />
                                 </div>
                               </div><!-- parent pages-->
-                              <a class="nav-link" href="/project/trang-thai/tat-ca" role="button">
+                              <a class="nav-link <%= activeMenu == '7' ? "active" : "" %>" href="/project/trang-thai/tat-ca" role="button">
                                 <div class="d-flex align-items-center"><span class="nav-link-icon"><i
                                       class="fa-solid fa-diagram-project"></i></span><span
                                     class="nav-link-text ps-1">Danh sách công
                                     trình </span></div>
                               </a>
-                              <!-- <a class="nav-link" href="/project/trang-thai/dang-thuc-hien" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-solid fa-wrench"></i></span><span class="nav-link-text ps-1">Công trình đang lắp
-                đặt</span></div>
-          </a>
-          <a class="nav-link" href="/project/trang-thai/da-hoan-thanh" role="button">
-            <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fa-regular fa-circle-check"></i></span><span class="nav-link-text ps-1">Công trình đã hoàn
-                thành</span></div>
-          </a> -->
                             </li>
                             <% } if (element==8 ) { %>
                               <li class="nav-item">

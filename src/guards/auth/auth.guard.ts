@@ -17,9 +17,15 @@ export class AuthGuard2 implements CanActivate {
       return true
     }
     const role_admin = this.reflector.get<boolean>('role_admin', context.getHandler())
-    const permision = this.reflector.get<boolean>('permision', context.getHandler())
+    const permision = this.reflector.get<string>('permision', context.getHandler())
+    console.log("======",permision,"=====")
+    // Gán biến activeMenu để view có thể lấy ra bằng <%= activeMenu %>
+   
     const request = context.switchToHttp().getRequest()
     const response: Response = context.switchToHttp().getResponse()
+    if (permision) {
+      response.locals.activeMenu = permision
+    }
     const token = request.cookies['token']
     // Nếu endpoint là public, cho phép truy cập
     // Kiểm tra quyền truy cập với token

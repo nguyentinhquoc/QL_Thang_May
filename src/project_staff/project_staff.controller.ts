@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Patch, Param, Delete, Render } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, Render, SetMetadata } from '@nestjs/common';
 import { ProjectStaffService } from './project_staff.service'
 import { UpdateProjectStaffDto } from './dto/update-project_staff.dto'
 import { TargetBusinesService } from 'src/target_busines/target_busines.service'
@@ -8,6 +8,7 @@ export class ProjectStaffController {
     private readonly projectStaffService: ProjectStaffService,
     private readonly targetBusinesService: TargetBusinesService,
   ) {}
+  @SetMetadata('permision', '5')
   @Get('busines/:idStaff')
   @Render('admin/staff/busines_detail')
   async findBusinesDeatil(@Param('idStaff') id: string) {

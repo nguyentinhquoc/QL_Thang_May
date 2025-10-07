@@ -17,7 +17,7 @@ import { Response } from 'express'
 @Controller('departmens')
 export class DepartmensController {
   constructor(private readonly departmensService: DepartmensService) {}
-  @SetMetadata('permision', '3')
+  @SetMetadata('permision', '2')
   @Post()
   async create(@Body() createDepartmenDto: CreateDepartmenDto, @Res() res: Response) {
     const createDepartmens = await this.departmensService.create(createDepartmenDto)
@@ -44,14 +44,15 @@ export class DepartmensController {
     const departmens = await this.departmensService.findAll()
     return {
       departmens,
-      activeMenu: 'staff',
     }
   }
+  @SetMetadata('permision', '2')
   @Patch()
   async update(@Body('id') id: string, @Body() updateDepartmenDto: UpdateDepartmenDto, @Res() res: Response) {
     await this.departmensService.update(+id, updateDepartmenDto)
     return res.redirect('/departmens')
   }
+  @SetMetadata('permision', '2')
   @Delete()
   remove(@Body('id') id: string) {
     return this.departmensService.remove(+id)
