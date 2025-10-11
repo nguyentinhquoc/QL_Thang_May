@@ -36,25 +36,33 @@
             </tr>
           </thead>
           <tbody class="list">
-            <% departmens.forEach(function(departmen, key) { %>
-            <tr class="tr-shadow border-bottom"
-              data-id="<%= departmen.id %>"
-              data-name="<%= departmen.name %>"
-              data-description="<%= departmen.description %>">
-              <td class="name"><%= departmen.name %></td>
-              <td class="description" style="white-space: pre-line;"><%= departmen.description %></td>
-              <td class="action" style="width: 1px;">
-                <div class="table-data-feature d-flex">
-                  <a class="item edit-btn btn-primary m-1 " data-toggle="tooltip"
-                    data-placement="top" title="Sửa">
-                    <i class="fas fa-edit "></i>
-                  </a>
-                </div>
-              </td>
-            </tr>
-            <tr class="spacer"></tr>
-            <% }); %>
-
+            <% if (departmens && departmens.length > 0) { %>
+              <% departmens.forEach(function(departmen, key) { %>
+              <tr data-id="<%= departmen.id %>"
+                data-name="<%= departmen.name %>"
+                data-description="<%= departmen.description %>">
+                <td class="name"><%= departmen.name %></td>
+                <td class="description" style="white-space: pre-line;"><%= departmen.description %></td>
+                <td class="action" style="width: 1px;">
+                  <div class="table-data-feature d-flex">
+                    <a class="item edit-btn btn-primary m-1 " data-toggle="tooltip"
+                      data-placement="top" title="Sửa">
+                      <i class="fas fa-edit "></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="3" class="text-center py-4">
+                  <div class="text-muted">
+                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                    <p class="mb-0">Chưa có dữ liệu</p>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
           </tbody>
         </table>
 

@@ -35,35 +35,46 @@
               </tr>
             </thead>
             <tbody class="list">
-              <% listHistory.forEach(function(value, key) { %>
-                <tr class="tr-shadow border-bottom">
-                  <td class="timeStart">
-                    <%=value.timeStart%>
-                  </td>
-                  <td class="timeEnd">
-                    <%=value.timeEnd%>
-                  </td>
-                  <td class="countMaintenance">
-                    <%=value.countMaintenance%>
-                  </td>
-                  <td class="countMaintenance1">
-                    <%= value.maintenance.length %>
-                  </td>
+              <% if (listHistory && listHistory.length > 0) { %>
+                <% listHistory.forEach(function(value, key) { %>
+                  <tr>
+                    <td class="timeStart">
+                      <%=value.timeStart%>
+                    </td>
+                    <td class="timeEnd">
+                      <%=value.timeEnd%>
+                    </td>
+                    <td class="countMaintenance">
+                      <%=value.countMaintenance%>
+                    </td>
+                    <td class="countMaintenance1">
+                      <%= value.maintenance.length %>
+                    </td>
 
-                  <td class="countMaintenance2">
-                    <%=value.countMaintenance - value.maintenance.length%>
-                  </td>
-                  <td class="free">
-                    <%=!value.free ? 'Mất phí' : 'Miễn phí' %>
-                  </td>
-                  <td class="price">
-                    <span class="d-none">
-                      <%= value.price %>
-                    </span>
-                    <%=new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND' }).format(value.price)%>
+                    <td class="countMaintenance2">
+                      <%=value.countMaintenance - value.maintenance.length%>
+                    </td>
+                    <td class="free">
+                      <%=!value.free ? 'Mất phí' : 'Miễn phí' %>
+                    </td>
+                    <td class="price">
+                      <span class="d-none">
+                        <%= value.price %>
+                      </span>
+                      <%=new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND' }).format(value.price)%>
+                    </td>
+                  </tr>
+                  <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="7" class="text-center py-4">
+                    <div class="text-muted">
+                      <i class="fas fa-inbox fa-2x mb-2"></i>
+                      <p class="mb-0">Chưa có dữ liệu</p>
+                    </div>
                   </td>
                 </tr>
-                <% }); %>
+              <% } %>
             </tbody>
           </table>
         </div>

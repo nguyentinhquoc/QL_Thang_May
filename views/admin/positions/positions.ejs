@@ -31,20 +31,30 @@
             </tr>
           </thead>
           <tbody class="list">
-            <% positions.forEach(function(position, key) { %>
-            <tr data-id="<%= position.id %>" data-name="<%= position.name %>" data-description="<%= position.description %>">
-              <td class="chucvu"><%= position.name %></td>
-              <td class="mota" style="white-space: pre-line;"><%= position.description %></td>
-              <td class="action">
-                <div class="table-data-feature d-flex">
-                  <a class="item edit-btn btn-primary m-1" data-toggle="tooltip" data-placement="top" title="Edit">
-                    <i class="fas fa-edit"></i>
-                  </a>
-                </div>
-              </td>
-            </tr>
-            <tr class="spacer"></tr>
-            <% }); %>
+            <% if (positions && positions.length > 0) { %>
+              <% positions.forEach(function(position, key) { %>
+              <tr data-id="<%= position.id %>" data-name="<%= position.name %>" data-description="<%= position.description %>">
+                <td class="chucvu"><%= position.name %></td>
+                <td class="mota" style="white-space: pre-line;"><%= position.description %></td>
+                <td class="action">
+                  <div class="table-data-feature d-flex">
+                    <a class="item edit-btn btn-primary m-1" data-toggle="tooltip" data-placement="top" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="3" class="text-center py-4">
+                  <div class="text-muted">
+                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                    <p class="mb-0">Chưa có dữ liệu</p>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>

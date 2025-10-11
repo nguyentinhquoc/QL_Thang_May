@@ -48,95 +48,105 @@
             </tr>
           </thead>
           <tbody class="list">
-            <% stt = 0; %> <% projects.forEach(function(project, key) { let totalSteps = project.projectSteps.length -
-            project.projectSteps.filter(step => step.staff == null).length; let stepsWithStatus =
-            project.projectSteps.filter(step => step.status != null).length; let percentageComplete = totalSteps > 0 ?
-            (stepsWithStatus / totalSteps) * 100 : 0; %>
-            <tr
-              data-id="<%= project.id %>"
-              data-name="<%= project.name %>"
-              data-description="<%= project.description %>"
-            >
-              <td class="stt"><%= stt += 1 %></td>
-              <td class="code"><%= project.code_project %></td>
-              <td class="duan"><%= project.full_name %></td>
-              <td class="phone"><%= project.number_phone %></td>
-              <td class="address"><%= project.address %></td>
-              <td class="nvphutrach">
-                <% project.projectStaff.forEach(function(item, index) { %>
-                <span>
-                  <a href="/project-staff/busines/<%= item.staff.id %>"> <%= item.staff.full_name %> </a>
-                  <% if (index < project.projectStaff.length - 1) { %>, <% } %>
-                </span>
-                <% }) %>
-              </td>
-              <td class="phantramhoanthien align-middle status fs-9 pe-4">
-                <div style="--falcon-circle-progress-bar:<%= percentageComplete.toFixed(0) %>;">
-                  <svg class="circle-progress-svg" width="26" height="26" viewBox="0 0 120 120">
-                    <circle
-                      class="progress-bar-rail"
-                      cx="60"
-                      cy="60"
-                      r="54"
-                      fill="none"
-                      stroke-linecap="round"
-                      stroke-width="12"
-                    ></circle>
-                    <circle
-                      class="progress-bar-top"
-                      cx="60"
-                      cy="60"
-                      r="54"
-                      fill="none"
-                      stroke-linecap="round"
-                      stroke-width="12"
-                      stroke="blue"
-                      stroke-dasharray="<%= (2 * Math.PI * 54) * (percentageComplete / 100).toFixed(2) %> 339.29"
-                    ></circle>
-                  </svg>
-                  <span><%= percentageComplete.toFixed(2) %>%</span>
-                </div>
-              </td>
-              <td class="trangthai align-middle status fs-9 pe-4">
-                <span class="badge rounded badge-subtle-<%= project.status == 1 ? 'success' : 'danger' %> false">
-                  <%= project.status == 1 ? 'Đã xong' : 'Đang lắp đăt' %>
-                </span>
-              </td>
-              <td class="action">
-                <div class="table-data-feature">
-                  <a
-                    href="/project/<%= project.id %>"
-                    class="item edit-btn btn-primary m-1"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Chỉnh sửa"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </a>
-                  <a
-                    href="/client/task/<%= project.id %>"
-                    class="item"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Chi tiết"
-                    data-original-title="Chi tiết"
-                  >
-                    <i class="fas fa-info-circle"></i>
-                  </a>
-                  <a
-                    href="/maintenance/project/<%= project.id %>"
-                    class="item delete-btn btn-danger m-1"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Bảo trì"
-                  >
-                    <i class="fas fa-wrench"></i>
-                  </a>
-                </div>
-              </td>
-            </tr>
-            <tr class="spacer"></tr>
-            <% }); %>
+            <% if (projects && projects.length > 0) { %>
+              <% stt = 0; %> <% projects.forEach(function(project, key) { let totalSteps = project.projectSteps.length -
+              project.projectSteps.filter(step => step.staff == null).length; let stepsWithStatus =
+              project.projectSteps.filter(step => step.status != null).length; let percentageComplete = totalSteps > 0 ?
+              (stepsWithStatus / totalSteps) * 100 : 0; %>
+              <tr
+                data-id="<%= project.id %>"
+                data-name="<%= project.name %>"
+                data-description="<%= project.description %>"
+              >
+                <td class="stt"><%= stt += 1 %></td>
+                <td class="code"><%= project.code_project %></td>
+                <td class="duan"><%= project.full_name %></td>
+                <td class="phone"><%= project.number_phone %></td>
+                <td class="address"><%= project.address %></td>
+                <td class="nvphutrach">
+                  <% project.projectStaff.forEach(function(item, index) { %>
+                  <span>
+                    <a href="/project-staff/busines/<%= item.staff.id %>"> <%= item.staff.full_name %> </a>
+                    <% if (index < project.projectStaff.length - 1) { %>, <% } %>
+                  </span>
+                  <% }) %>
+                </td>
+                <td class="phantramhoanthien align-middle status fs-9 pe-4">
+                  <div style="--falcon-circle-progress-bar:<%= percentageComplete.toFixed(0) %>;">
+                    <svg class="circle-progress-svg" width="26" height="26" viewBox="0 0 120 120">
+                      <circle
+                        class="progress-bar-rail"
+                        cx="60"
+                        cy="60"
+                        r="54"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-width="12"
+                      ></circle>
+                      <circle
+                        class="progress-bar-top"
+                        cx="60"
+                        cy="60"
+                        r="54"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-width="12"
+                        stroke="blue"
+                        stroke-dasharray="<%= (2 * Math.PI * 54) * (percentageComplete / 100).toFixed(2) %> 339.29"
+                      ></circle>
+                    </svg>
+                    <span><%= percentageComplete.toFixed(2) %>%</span>
+                  </div>
+                </td>
+                <td class="trangthai align-middle status fs-9 pe-4">
+                  <span class="badge rounded badge-subtle-<%= project.status == 1 ? 'success' : 'danger' %> false">
+                    <%= project.status == 1 ? 'Đã xong' : 'Đang lắp đăt' %>
+                  </span>
+                </td>
+                <td class="action">
+                  <div class="table-data-feature">
+                    <a
+                      href="/project/<%= project.id %>"
+                      class="item edit-btn btn-primary m-1"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Chỉnh sửa"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <a
+                      href="/client/task/<%= project.id %>"
+                      class="item"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Chi tiết"
+                      data-original-title="Chi tiết"
+                    >
+                      <i class="fas fa-info-circle"></i>
+                    </a>
+                    <a
+                      href="/maintenance/project/<%= project.id %>"
+                      class="item delete-btn btn-danger m-1"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Bảo trì"
+                    >
+                      <i class="fas fa-wrench"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="9" class="text-center py-4">
+                  <div class="text-muted">
+                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                    <p class="mb-0">Chưa có dữ liệu</p>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>

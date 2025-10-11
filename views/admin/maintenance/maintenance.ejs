@@ -159,61 +159,72 @@
                 </tr>
               </thead>
               <tbody class="list">
-                <% maintenanceWProjects.forEach(function(item,index) { %>
-                <tr>
-                  <td class="duan">
-                    <%= item.project && item.project.full_name ?
-                    item.project.full_name :item.projectName %>
-                  </td>
-                  <td class="noidung"><%=item.reason%></td>
-                  <td class="thoigian"><%=item.time%></td>
-                  <td class="nhanvien">
-                    <% item.maintenanceActions.forEach(function(action) { %>
-                    <img src="/images/avatar/<%=  action.staff.avatar %>" alt
-                      height="30px" width="30px" style="border-radius: 50%" />
-                    <%= action.staff.full_name %>
-                    <br />
-                    <br />
-                    <% }) %>
-                    <p class="btn btn-primary add-staff"
-                      idProject="<%=  item.project && item.project.id ?  item.project.id :'0'  %>"
-                      idValue="<%=item.id%>">
-                      +
-                    </p>
-                  </td>
-                  <td class="trangthai" style="width: fit-content">
-                    <p style="width: fit-content" id="maintenance-<%= index %>" class>
-                      <span class="font__weight-semibold">
-                        <% if (item.maintenanceActions.length === 0) { %>
-                        <span class="badge rounded badge-subtle-warning false">
-                          Chưa bảo trì
+                <% if (maintenanceWProjects && maintenanceWProjects.length > 0) { %>
+                  <% maintenanceWProjects.forEach(function(item,index) { %>
+                  <tr>
+                    <td class="duan">
+                      <%= item.project && item.project.full_name ?
+                      item.project.full_name :item.projectName %>
+                    </td>
+                    <td class="noidung"><%=item.reason%></td>
+                    <td class="thoigian"><%=item.time%></td>
+                    <td class="nhanvien">
+                      <% item.maintenanceActions.forEach(function(action) { %>
+                      <img src="/images/avatar/<%=  action.staff.avatar %>" alt
+                        height="30px" width="30px" style="border-radius: 50%" />
+                      <%= action.staff.full_name %>
+                      <br />
+                      <br />
+                      <% }) %>
+                      <p class="btn btn-primary add-staff"
+                        idProject="<%=  item.project && item.project.id ?  item.project.id :'0'  %>"
+                        idValue="<%=item.id%>">
+                        +
+                      </p>
+                    </td>
+                    <td class="trangthai" style="width: fit-content">
+                      <p style="width: fit-content" id="maintenance-<%= index %>">
+                        <span class="font__weight-semibold">
+                          <% if (item.maintenanceActions.length === 0) { %>
+                          <span class="badge rounded badge-subtle-warning false">
+                            Chưa bảo trì
+                          </span>
+                          <% } else { let allCompleted = true
+                          item.maintenanceActions.forEach(element => {
+                          if(element.status == null) allCompleted = false
+                          });
+                          %>
+                          <% if(allCompleted) { %>
+                          <span class="badge rounded badge-subtle-success false">
+                            Đã hoàn thành
+                          </span>
+                          <% } else { %>
+                          <span class="badge rounded badge-subtle-danger false">
+                            Chưa hoàn thành
+                          </span>
+                          <% } %> <% } %>
                         </span>
-                        <% } else { let allCompleted = true
-                        item.maintenanceActions.forEach(element => {
-                        if(element.status == null) allCompleted = false
-                        });
-                        %>
-                        <% if(allCompleted) { %>
-                        <span class="badge rounded badge-subtle-success false">
-                          Đã hoàn thành
-                        </span>
-                        <% } else { %>
-                        <span class="badge rounded badge-subtle-danger false">
-                          Chưa hoàn thành
-                        </span>
-                        <% } %> <% } %>
-                      </span>
-                    </p>
-                  </td>
-                  <td class="loai">
-                    <% if(item.fee) { %>
-                    <span class="badge rounded badge-subtle-warning">Mất phí</span>
-                    <% } else { %>
-                    <span class="badge rounded badge-subtle-success">Miễn phí</span>
-                    <% } %>
-                  </td>
-                </tr>
-                <% }); %>
+                      </p>
+                    </td>
+                    <td class="loai">
+                      <% if(item.fee) { %>
+                      <span class="badge rounded badge-subtle-warning">Mất phí</span>
+                      <% } else { %>
+                      <span class="badge rounded badge-subtle-success">Miễn phí</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="6" class="text-center py-4">
+                      <div class="text-muted">
+                        <i class="fas fa-inbox fa-2x mb-2"></i>
+                        <p class="mb-0">Chưa có dữ liệu</p>
+                      </div>
+                    </td>
+                  </tr>
+                <% } %>
               </tbody>
             </table>
           </div>

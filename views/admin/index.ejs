@@ -26,21 +26,30 @@
             </div>
           </a>
           <div class="card card-body mhOver" style="height: 450px;">
-            <% projectEdits.forEach(function(projectEdit, index) { %>
-              <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4"
-                href="/project/checkEdit/<%= projectEdit.id %>">
-                <div class=" mb-1 mb-md-0">
-                  <h5 class="mb-1 d-flex flex-column flex-sm-row justify-content-between">Công trình: <%=
-                      projectEdit.project.full_name %> <i onclick="remove1('<%= projectEdit.id %>')"
-                        class="col-3 fas fa-trash"></i></h5>
+            <% if (projectEdits && projectEdits.length > 0) { %>
+              <% projectEdits.forEach(function(projectEdit, index) { %>
+                <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4"
+                  href="/project/checkEdit/<%= projectEdit.id %>">
+                  <div class=" mb-1 mb-md-0">
+                    <h5 class="mb-1 d-flex flex-column flex-sm-row justify-content-between">Công trình: <%=
+                        projectEdit.project.full_name %> <i onclick="remove1('<%= projectEdit.id %>')"
+                          class="col-3 fas fa-trash"></i></h5>
+                  </div>
+                  <p class="mb-1">Người đề xuất: <%= projectEdit.staff.full_name %>
+                  </p>
+                  <small class="text-500 dark__text-500">
+                    <%= formatDate(projectEdit.createdAt) %>
+                  </small>
+                </a>
+                <% }); %>
+            <% } else { %>
+              <div class="text-center py-4">
+                <div class="text-muted">
+                  <i class="fas fa-inbox fa-2x mb-2"></i>
+                  <p class="mb-0">Chưa có dữ liệu</p>
                 </div>
-                <p class="mb-1">Người đề xuất: <%= projectEdit.staff.full_name %>
-                </p>
-                <small class="text-500 dark__text-500">
-                  <%= formatDate(projectEdit.createdAt) %>
-                </small>
-              </a>
-              <% }); %>
+              </div>
+            <% } %>
                 <script>
                   function remove1(id) {
                     event.preventDefault();
@@ -78,19 +87,28 @@
             </div>
           </a>
           <div class="card card-body mhOver" style="height: 450px;">
-            <% maintenanceComing.forEach(function(item, index) { %>
-              <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4"
-                href="/maintenance/project/<%= item.project && item.project.id ? item.project.id : '' %>">
-                <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
-                  <h5 class="mb-1"> Công trình: <%= item.project && item.project.full_name ? item.project.full_name :
-                      item.projectName %>
-                  </h5>
+            <% if (maintenanceComing && maintenanceComing.length > 0) { %>
+              <% maintenanceComing.forEach(function(item, index) { %>
+                <a class="list-group-item list-group-item-action flex-column align-items-start p-3 p-sm-4"
+                  href="/maintenance/project/<%= item.project && item.project.id ? item.project.id : '' %>">
+                  <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
+                    <h5 class="mb-1"> Công trình: <%= item.project && item.project.full_name ? item.project.full_name :
+                        item.projectName %>
+                    </h5>
+                  </div>
+                  <p class="mb-1">Thời gian bảo trì: <%= formatDate(item.time) %>
+                  </p>
+                  <small class="mb-1">Nội dung: <%= item.reason %></small>
+                </a>
+                <% }); %>
+            <% } else { %>
+              <div class="text-center py-4">
+                <div class="text-muted">
+                  <i class="fas fa-inbox fa-2x mb-2"></i>
+                  <p class="mb-0">Chưa có dữ liệu</p>
                 </div>
-                <p class="mb-1">Thời gian bảo trì: <%= formatDate(item.time) %>
-                </p>
-                <small class="mb-1">Nội dung: <%= item.reason %></small>
-              </a>
-              <% }); %>
+              </div>
+            <% } %>
           </div>
         </div>
       </div>

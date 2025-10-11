@@ -54,43 +54,54 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
     </div>
     <div class="card-body fs-10">
       <div class="row">
-        <% projectSteps.forEach(function(item, index) { %>
-        <div class="col-md-6 h-100"
-          onclick="window.location.href = '/client/task/<%= item.project.id %>'"
-          style="cursor: pointer;">
-          <div class="d-flex btn-reveal-trigger">
-            <div class="calendar"><span class="calendar-month">T
-                <%=returnMonth(item.createdAt)%></span><span
-                class="calendar-day"><%=returnDay(item.createdAt)%></span></div>
-            <div class="flex-1 position-relative ps-3">
-              <h6 class="fs-9 mb-0">
-                <p class="text-primary m-0"><%=
-                  item.workflowStep.step.name %>
-                  <%
-                  const currentDate = new Date();
-                  const itemDate = new Date(item.time);
-                  %>
-                  <% if (item.status == null) { %>
-                  <span class="badge badge-subtle-warning rounded-pill">Cần làm</span>
-                  <% } else{ %>
-                  <span class="badge badge-subtle-success rounded-pill">Đã hoàn
-                    thành</span>
-                  <% } %>
-                </a>
-              </h6>
-              <p class="mb-1"><%=
-                item.workflowStep.step.description %> tại công trình <a href="#!"
-                  class="text-700"><%=
-                  item.project.full_name %></a></p>
-              <p class="text-1000 mb-0">Ngày giao: <%= formatDate(
-                item.createdAt) %></p>
-              <p>Địa chỉ:<%=
-                item.project.address %></p>
-              <div class="border-bottom border-dashed my-3"></div>
+        <% if (projectSteps && projectSteps.length > 0) { %>
+          <% projectSteps.forEach(function(item, index) { %>
+          <div class="col-md-6 h-100"
+            onclick="window.location.href = '/client/task/<%= item.project.id %>'"
+            style="cursor: pointer;">
+            <div class="d-flex btn-reveal-trigger">
+              <div class="calendar"><span class="calendar-month">T
+                  <%=returnMonth(item.createdAt)%></span><span
+                  class="calendar-day"><%=returnDay(item.createdAt)%></span></div>
+              <div class="flex-1 position-relative ps-3">
+                <h6 class="fs-9 mb-0">
+                  <p class="text-primary m-0"><%=
+                    item.workflowStep.step.name %>
+                    <%
+                    const currentDate = new Date();
+                    const itemDate = new Date(item.time);
+                    %>
+                    <% if (item.status == null) { %>
+                    <span class="badge badge-subtle-warning rounded-pill">Cần làm</span>
+                    <% } else{ %>
+                    <span class="badge badge-subtle-success rounded-pill">Đã hoàn
+                      thành</span>
+                    <% } %>
+                  </a>
+                </h6>
+                <p class="mb-1"><%=
+                  item.workflowStep.step.description %> tại công trình <a href="#!"
+                    class="text-700"><%=
+                    item.project.full_name %></a></p>
+                <p class="text-1000 mb-0">Ngày giao: <%= formatDate(
+                  item.createdAt) %></p>
+                <p>Địa chỉ:<%=
+                  item.project.address %></p>
+                <div class="border-bottom border-dashed my-3"></div>
+              </div>
             </div>
           </div>
-        </div>
-        <% }) %>
+          <% }) %>
+        <% } else { %>
+          <div class="col-12">
+            <div class="text-center py-4">
+              <div class="text-muted">
+                <i class="fas fa-inbox fa-2x mb-2"></i>
+                <p class="mb-0">Chưa có dữ liệu</p>
+              </div>
+            </div>
+          </div>
+        <% } %>
       </div>
     </div>
   </div>
@@ -229,87 +240,98 @@ const day=String(date.getDate()).padStart(2, '0'); return day;
             </div>
           </div>
         </div>
-        <% maintenance.forEach(function(item, index) {
-        if(item.maintenance && item.maintenance.project){
-        %>
-        <div class="col-md-6 h-100" style="cursor: pointer;">
-          <div class="d-flex btn-reveal-trigger">
-            <div class="calendar"><span class="calendar-month">T
-                <%= returnMonth(item.maintenance.time) %></span><span
-                class="calendar-day"><%=returnDay(item.maintenance.time)%></span></div>
-            <div class="flex-1 position-relative ps-3">
-              <h6 class="fs-9 mb-0"><a href="/client/task/<%=
-                  item.maintenance.project.id %>"><%=
-                  item.maintenance.reason %>
-                  <%
-                  const currentDate = new Date();
-                  const itemDate = new Date(item.time);
-                  %>
-                  <% if (item.status == null) { %>
-                  <% if (currentDate > itemDate) { %>
-                  <span class="badge badge-subtle-danger rounded-pill">Đã bỏ lỡ</span>
-                  <% } else { %>
-                  <span id="openFormBtnBt" maintenanceActionId="<%= item.id %>"
-                    class="badge badge-subtle-warning rounded-pill">Cần làm</span>
-                  <% } %>
-                  <% } else if (item.status != null) { %>
-                  <span class="badge badge-subtle-success rounded-pill">Đã hoàn
-                    thành</span>
-                  <% } %>
-                </a></h6>
-              <p class="mb-1">Tại công trình<a class="text-700">
-                  <%=
-                  item.maintenance.project.full_name %>
-                </a></p>
-              <p class="text-1000 mb-0">Ngày bảo trì: <%= formatDate(
-                item.maintenance.time) %></p>
-              Địa chỉ: <%= item.maintenance.project.address %>
-              <div class="border-bottom border-dashed my-3"></div>
+        <% if (maintenance && maintenance.length > 0) { %>
+          <% maintenance.forEach(function(item, index) {
+          if(item.maintenance && item.maintenance.project){
+          %>
+          <div class="col-md-6 h-100" style="cursor: pointer;">
+            <div class="d-flex btn-reveal-trigger">
+              <div class="calendar"><span class="calendar-month">T
+                  <%= returnMonth(item.maintenance.time) %></span><span
+                  class="calendar-day"><%=returnDay(item.maintenance.time)%></span></div>
+              <div class="flex-1 position-relative ps-3">
+                <h6 class="fs-9 mb-0"><a href="/client/task/<%=
+                    item.maintenance.project.id %>"><%=
+                    item.maintenance.reason %>
+                    <%
+                    const currentDate = new Date();
+                    const itemDate = new Date(item.time);
+                    %>
+                    <% if (item.status == null) { %>
+                    <% if (currentDate > itemDate) { %>
+                    <span class="badge badge-subtle-danger rounded-pill">Đã bỏ lỡ</span>
+                    <% } else { %>
+                    <span id="openFormBtnBt" maintenanceActionId="<%= item.id %>"
+                      class="badge badge-subtle-warning rounded-pill">Cần làm</span>
+                    <% } %>
+                    <% } else if (item.status != null) { %>
+                    <span class="badge badge-subtle-success rounded-pill">Đã hoàn
+                      thành</span>
+                    <% } %>
+                  </a></h6>
+                <p class="mb-1">Tại công trình<a class="text-700">
+                    <%=
+                    item.maintenance.project.full_name %>
+                  </a></p>
+                <p class="text-1000 mb-0">Ngày bảo trì: <%= formatDate(
+                  item.maintenance.time) %></p>
+                Địa chỉ: <%= item.maintenance.project.address %>
+                <div class="border-bottom border-dashed my-3"></div>
+              </div>
             </div>
           </div>
-        </div>
-        <% }
-        else {
-        %>
-        <div class="col-md-6 h-100" style="cursor: pointer;">
-          <div class="d-flex btn-reveal-trigger">
-            <div class="calendar"><span class="calendar-month">T
-                <%=returnMonth(item.time)%></span><span
-                class="calendar-day"><%=returnDay(item.time)%></span></div>
-            <div class="flex-1 position-relative ps-3">
-              <h6 class="fs-9 mb-0 text-warning"><a><%=item.maintenance.projectName %>
-                  <%
-                  const currentDate = new Date();
-                  const itemDate = new Date(item.time);
-                  %>
-                  <% if (item.status == null) { %>
-                  <% if (currentDate > itemDate) { %>
-                  <span class="badge badge-subtle-danger rounded-pill">Đã bỏ lỡ</span>
-                  <% } else { %>
+          <% }
+          else {
+          %>
+          <div class="col-md-6 h-100" style="cursor: pointer;">
+            <div class="d-flex btn-reveal-trigger">
+              <div class="calendar"><span class="calendar-month">T
+                  <%=returnMonth(item.time)%></span><span
+                  class="calendar-day"><%=returnDay(item.time)%></span></div>
+              <div class="flex-1 position-relative ps-3">
+                <h6 class="fs-9 mb-0 text-warning"><a><%=item.maintenance.projectName %>
+                    <%
+                    const currentDate = new Date();
+                    const itemDate = new Date(item.time);
+                    %>
+                    <% if (item.status == null) { %>
+                    <% if (currentDate > itemDate) { %>
+                    <span class="badge badge-subtle-danger rounded-pill">Đã bỏ lỡ</span>
+                    <% } else { %>
 
-                  <span id="openFormBtnBt" maintenanceActionId="<%= item.id %>"
-                    class="badge badge-subtle-warning rounded-pill">Cần làm</span>
-                  <% } %>
-                  <% } else if (item.status != null) { %>
-                  <span class="badge badge-subtle-success rounded-pill">Đã hoàn
-                    thành</span>
-                  <% } %>
-                </a></h6>
-              <p class="mb-1">Thông tin:<a class="text-700">
-                  <%=
-                  item.maintenance.reason %>
-                </a></p>
-              <p class="text-1000 mb-0">Ngày giao: <%= formatDate(
-                item.createdAt) %></p>
-              <p class="text-1000 mb-0">Hết hạn: <%= formatDate(
-                item.time) %>
-              </p>
-              <div class="border-bottom border-dashed my-3"></div>
+                    <span id="openFormBtnBt" maintenanceActionId="<%= item.id %>"
+                      class="badge badge-subtle-warning rounded-pill">Cần làm</span>
+                    <% } %>
+                    <% } else if (item.status != null) { %>
+                    <span class="badge badge-subtle-success rounded-pill">Đã hoàn
+                      thành</span>
+                    <% } %>
+                  </a></h6>
+                <p class="mb-1">Thông tin:<a class="text-700">
+                    <%=
+                    item.maintenance.reason %>
+                  </a></p>
+                <p class="text-1000 mb-0">Ngày giao: <%= formatDate(
+                  item.createdAt) %></p>
+                <p class="text-1000 mb-0">Hết hạn: <%= formatDate(
+                  item.time) %>
+                </p>
+                <div class="border-bottom border-dashed my-3"></div>
+              </div>
             </div>
           </div>
-        </div>
+          <% } %>
+          <% }) %>
+        <% } else { %>
+          <div class="col-12">
+            <div class="text-center py-4">
+              <div class="text-muted">
+                <i class="fas fa-inbox fa-2x mb-2"></i>
+                <p class="mb-0">Chưa có dữ liệu</p>
+              </div>
+            </div>
+          </div>
         <% } %>
-        <% }) %>
       </div>
     </div>
   </div>

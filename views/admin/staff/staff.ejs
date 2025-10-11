@@ -33,29 +33,39 @@
             </tr>
           </thead>
           <tbody class="list">
-            <% staffs.forEach(function(staff, key) { %>
-            <tr data-id="<%= staff.id %>" data-name="<%= staff.name %>" data-description="<%= staff.description %>">
-              <td class="ten"><%= staff.full_name %></td>
-              <td class="phongban">
-                <%= staff.role_admin ? 'Tổng giám đốc' : staff.department.name
-                %>
-              </td>
-              <td class="chucvu">
-                <%= staff.role_admin ? 'Tổng giám đốc' : staff.position.name %>
-              </td>
-              <td class="sdt"><%= staff.number_phone %></td>
-              <td class="email"><%= staff.email %></td>
-              <td class="action">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" id="flexSwitchCheckChecked" type="checkbox" <%=staff.status == 1 ? 'checked' : '' %> onchange="changStatus('<%= staff.id %>')"><label class="form-check-label" for="flexSwitchCheckChecked"></label>
-                </div>
-              </td>
-                 <td class="chitiet">
-                <a href="/staffs/payroll/<%=staff.id%>">Chi tiết</a>
-              </td>
-            </tr>
-            <tr class="spacer"></tr>
-            <% }); %>
+            <% if (staffs && staffs.length > 0) { %>
+              <% staffs.forEach(function(staff, key) { %>
+              <tr data-id="<%= staff.id %>" data-name="<%= staff.name %>" data-description="<%= staff.description %>">
+                <td class="ten"><%= staff.full_name %></td>
+                <td class="phongban">
+                  <%= staff.role_admin ? 'Tổng giám đốc' : staff.department.name
+                  %>
+                </td>
+                <td class="chucvu">
+                  <%= staff.role_admin ? 'Tổng giám đốc' : staff.position.name %>
+                </td>
+                <td class="sdt"><%= staff.number_phone %></td>
+                <td class="email"><%= staff.email %></td>
+                <td class="action">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" id="flexSwitchCheckChecked" type="checkbox" <%=staff.status == 1 ? 'checked' : '' %> onchange="changStatus('<%= staff.id %>')"><label class="form-check-label" for="flexSwitchCheckChecked"></label>
+                  </div>
+                </td>
+                   <td class="chitiet">
+                  <a href="/staffs/payroll/<%=staff.id%>">Chi tiết</a>
+                </td>
+              </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="7" class="text-center py-4">
+                  <div class="text-muted">
+                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                    <p class="mb-0">Chưa có dữ liệu</p>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>

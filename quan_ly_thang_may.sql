@@ -1,31 +1,9 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: localhost:3307
--- Generation Time: Sep 30, 2025 at 02:44 PM
--- Server version: 8.0.30
--- PHP Version: 8.2.20
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `quan_ly_thang_may`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `customer`
---
 
 CREATE TABLE `customer` (
   `id` int NOT NULL,
@@ -42,18 +20,6 @@ CREATE TABLE `customer` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
---
--- Dumping data for table `customer`
---
-
-INSERT INTO `customer` (`id`, `email`, `createdAt`, `updatedAt`, `deletedAt`, `number_phone`, `address`, `description`, `full_name`, `status`, `staffId`) VALUES
-(1, '', '2025-06-27 18:05:18.719663', '2025-06-27 18:06:36.000000', NULL, '0862201004', 'Tỉnh Thái Nguyên, Huyện Định Hóa,Xã Điềm Mặc, ', '', 'Nguyễn Quốc Tình ', NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `department`
---
 
 CREATE TABLE `department` (
   `id` int NOT NULL,
@@ -64,36 +30,11 @@ CREATE TABLE `department` (
   `deletedAt` datetime(6) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Dumping data for table `department`
---
-
-INSERT INTO `department` (`id`, `name`, `description`, `createdAt`, `updatedAt`, `deletedAt`) VALUES
-(1, 'Kinh Doanh', 'Kinh Doanh', '2024-12-31 10:32:15.641468', '2025-01-13 20:10:11.287673', NULL),
-(2, 'Kỹ Thuật', 'Kỹ Thuật ', '2024-12-31 10:31:51.212185', '2025-01-07 08:18:32.000000', NULL),
-(3, 'Hành Chính', 'Hành Chính', '2024-12-31 10:32:05.493161', '2024-12-31 10:32:05.493161', NULL),
-(19, 'Giám sát', 'mô tả công việc của phòng giám sát', '2025-02-21 15:18:54.935686', '2025-02-21 15:19:08.000000', NULL),
-(20, 'Kế toán', 'mô tả công việc của phòng kế toán', '2025-02-21 15:20:07.955353', '2025-02-21 15:20:07.955353', NULL),
-(21, 'Chăm sóc khách hàng', 'chăm soc\r\n\r\n', '2025-02-21 16:37:41.083970', '2025-02-21 16:37:41.083970', NULL),
-(23, 'Phòng ban ', '', '2025-06-25 13:54:20.828638', '2025-06-25 13:56:36.000000', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `departments_step`
---
-
 CREATE TABLE `departments_step` (
   `id` int NOT NULL,
   `departmentId` int DEFAULT NULL,
   `stepId` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `history_maintenance`
---
 
 CREATE TABLE `history_maintenance` (
   `id` int NOT NULL,
@@ -108,11 +49,6 @@ CREATE TABLE `history_maintenance` (
 --
 -- Dumping data for table `history_maintenance`
 --
-
-INSERT INTO `history_maintenance` (`id`, `timeStart`, `timeEnd`, `projectId`, `countMaintenance`, `free`, `price`) VALUES
-(32, '2025-06-17', '2025-07-11', 124, 2, 0, 1222222),
-(33, '2025-06-22', '2025-07-02', 124, 2, 0, 0),
-(34, '2025-07-03', '2026-03-02', 124, 12, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -136,11 +72,6 @@ CREATE TABLE `maintenance` (
 --
 -- Dumping data for table `maintenance`
 --
-
-INSERT INTO `maintenance` (`id`, `time`, `reason`, `projectName`, `createdAt`, `updatedAt`, `deletedAt`, `projectId`, `fee`, `historyMaintenanceId`) VALUES
-(188, '2025-06-18', 'Bảo trì định kì', NULL, '2025-06-30 18:13:26.630886', '2025-06-30 18:15:09.508726', NULL, 124, 1, 32),
-(189, '2025-06-18', 'Bảo trì định kì', NULL, '2025-06-30 18:13:40.531628', '2025-06-30 18:15:11.667774', NULL, 124, 1, 32);
-
 -- --------------------------------------------------------
 
 --
@@ -195,17 +126,6 @@ CREATE TABLE `permision` (
 -- Dumping data for table `permision`
 --
 
-INSERT INTO `permision` (`id`, `name`, `code`, `description`, `codeParent`) VALUES
-(1, 'Xem trang tổng quan', '1', 'Cho phép truy cập và xem trang tổng quan thống kê. (Đề xuất: Admin, Trưởng phòng kinh doanh)', ''),
-(2, 'Xem danh sách phòng ban', '2', 'Cho phép quản lý phòng ban và chức vụ.(Đề xuất: Admin)', ''),
-(3, 'Quản lý nhân viên và bảng công', '3', 'Cho phép quản lý nhân viên và bảng công. (Đề xuất: Admin, Trưởng phòng)', ''),
-(4, 'Quản lý quy trình làm việc', '4', 'Cho phép quản lý các quy trình làm việc. (Đề xuất: Admin)', ''),
-(5, 'Quản lý nhân viên kinh doanh', '5', 'Cho phép quản nhân viên kinh doanh.(Đề xuất: Admin, Trưởng phòng kinh doanh)', ''),
-(6, 'Quản lí danh sách dự án dự kiến', '6', 'Cho phép quản lý danh sách dự án dự kiến.(Đề xuất: Admin, Trưởng phòng kinh doanh)', ''),
-(7, 'Quản lý công trình', '7', 'Cho phép quản lý công trình. (Đề xuất: Admin, Nhân viên kinh doanh)', ''),
-(8, 'Quản lý bảo trì, bảo hành', '8', 'Cho phép quản lý phần bảo trì và bảo hành. (Đề xuất: Admin, Nhân viên kinh doanh)', ''),
-(9, 'Danh sách công trình phụ trách', '9', 'Hiển thị danh sách các công trình mà nhân viên kinh doanh đang phụ trách (Đề xuất: Nhân viên kinh doanh)', '');
-
 -- --------------------------------------------------------
 
 --
@@ -224,12 +144,6 @@ CREATE TABLE `position` (
 --
 -- Dumping data for table `position`
 --
-
-INSERT INTO `position` (`id`, `name`, `description`, `createdAt`, `updatedAt`, `deletedAt`) VALUES
-(1, 'Trưởng phòng 12', 'Giám Đốc', '2024-12-31 10:09:24.000000', '2025-06-25 13:56:44.000000', NULL),
-(2, 'Nhân viên', 'Nhân viên', '2024-12-31 10:33:19.360438', '2025-02-21 11:55:13.715249', NULL),
-(14, 'add ', '', '2025-06-25 13:56:49.407382', '2025-06-25 13:56:49.407382', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -259,12 +173,6 @@ CREATE TABLE `project` (
 --
 -- Dumping data for table `project`
 --
-
-INSERT INTO `project` (`id`, `full_name`, `number_phone`, `email`, `address`, `infor_product`, `description`, `status`, `createdAt`, `updatedAt`, `deletedAt`, `price`, `code_project`, `tax`, `type`, `warrantyStart`, `warrantyEnd`) VALUES
-(122, 'Nguyễn Quốc Tình ', '0862201004', NULL, 'Tỉnh Quảng Ninh, Huyện Cô Tô,Xã Đồng Tiến, Số nhà 11', '\"{}\"', NULL, 0, '2024-06-01 00:00:02.941405', '2025-06-30 18:59:19.686116', NULL, 19, '123', 'Không', 'LAPDAT', NULL, NULL),
-(123, 'Nguyễn Quốc Tình ', '0862201009', NULL, 'Tỉnh Thái Nguyên, Thành phố Phổ Yên,Phường Tân Phú, số 123', '\"{}\"', NULL, 1, '2024-06-01 00:00:02.941405', '2025-06-30 19:03:44.000000', NULL, 19, '32131', 'Có', 'LAPDAT', '2025-06-16', '2025-11-29'),
-(124, 'công tình bảo trì 213', '0876554444', NULL, 'Tỉnh Quảng Ninh, Huyện Cô Tô,Thị trấn Cô Tô, số nhà 123', '\"{}\"', NULL, 0, '2024-06-01 00:00:02.941405', '2025-06-30 18:59:34.101063', NULL, 18600, '2123', 'Không', 'BAOTRI', '2024-06-11', '2025-08-21'),
-(125, 'Nguyễn Quốc Tình', '0862201004', NULL, 'Tỉnh Quảng Ninh, Huyện Cô Tô,Thị trấn Cô Tô, Yên mô ninh bình', '\"{}\"', NULL, 0, '2024-06-01 00:00:02.941405', '2025-06-30 18:59:12.692726', NULL, 18600, '1223', 'Có', 'BAOTRI', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -330,13 +238,6 @@ CREATE TABLE `project_steps` (
 -- Dumping data for table `project_steps`
 --
 
-INSERT INTO `project_steps` (`id`, `weight`, `status`, `image`, `createdAt`, `updatedAt`, `deletedAt`, `workflowStepId`, `projectId`, `staffId`, `feedback`) VALUES
-(242, NULL, NULL, NULL, '2025-06-27 12:43:33.295254', '2025-06-27 12:43:33.295254', NULL, 105, 122, NULL, NULL),
-(244, NULL, NULL, NULL, '2025-06-27 12:47:15.462968', '2025-06-27 12:47:15.462968', NULL, 107, 123, NULL, NULL),
-(245, NULL, NULL, NULL, '2025-06-27 12:47:15.469214', '2025-06-27 12:47:15.469214', NULL, 108, 123, NULL, NULL),
-(246, NULL, NULL, NULL, '2025-06-27 12:47:15.474929', '2025-06-27 12:47:15.474929', NULL, 109, 123, NULL, NULL),
-(247, NULL, NULL, NULL, '2025-06-27 12:58:25.629931', '2025-06-27 12:58:36.000000', NULL, 106, 123, NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -365,10 +266,6 @@ CREATE TABLE `staff` (
 -- Dumping data for table `staff`
 --
 
-INSERT INTO `staff` (`id`, `full_name`, `number_phone`, `email`, `address`, `avatar`, `description`, `status`, `password`, `role_admin`, `createdAt`, `updatedAt`, `deletedAt`, `departmentId`, `positionId`) VALUES
-(3, 'Đỗ Quang Trung', '0862201006', 'admin@gmail.com', 'Hải dương', 'admin.jpg', 'Thái', 1, '$2b$10$7QUzk5EJVmQFU5vX3iCtI.BPQqPuTFUSLY8qWgL.bsyYIg41bMiQS', 1, '2024-12-31 10:09:43.000000', '2025-02-21 16:43:01.000000', NULL, 1, 1),
-(23, 'Nguyễn Quốc Tình ', '0862201004', 'nguyentinh140321@gmail.com', 'Yên Mô Ninh Bình', 'file-1750832792483.jpg', '', 1, '$2b$10$An0NVrBzgKpULnlItzvzoudHXLYhHyPJ/FC9JpC6133ofe4e.1IMq', 0, '2025-06-25 13:26:32.557571', '2025-06-28 23:47:46.000000', NULL, 1, 2);
-
 -- --------------------------------------------------------
 
 --
@@ -383,20 +280,7 @@ CREATE TABLE `staff_permisions_permision` (
 --
 -- Dumping data for table `staff_permisions_permision`
 --
-
-INSERT INTO `staff_permisions_permision` (`staffId`, `permisionId`) VALUES
-(3, 1),
-(3, 2),
-(3, 3),
-(3, 4),
-(3, 5),
-(3, 6),
-(3, 7),
-(3, 8),
-(23, 3),
-(23, 9);
-
--- --------------------------------------------------------
+--------------------------------------------
 
 --
 -- Table structure for table `step`
@@ -414,12 +298,6 @@ CREATE TABLE `step` (
 --
 -- Dumping data for table `step`
 --
-
-INSERT INTO `step` (`id`, `name`, `description`, `createdAt`, `updatedAt`, `deletedAt`) VALUES
-(31, 'Bước 4', 'Mô tả bước 4', '2025-06-27 12:53:15.776986', '2025-06-27 12:53:15.776986', NULL),
-(64, 'Bước 2', 'Mô tả bước 2', '2025-06-27 12:52:07.240862', '2025-06-27 12:52:07.240862', NULL),
-(66, 'Bước 3 ', 'Mô tả bước 3', '2025-06-27 12:52:16.921374', '2025-06-27 12:52:16.921374', NULL),
-(68, 'Bước 1 21', 'mô tả bước 1 3412', '2025-06-27 12:51:05.172131', '2025-06-27 12:54:53.000000', NULL);
 
 -- --------------------------------------------------------
 
@@ -456,10 +334,6 @@ CREATE TABLE `workflow` (
 -- Dumping data for table `workflow`
 --
 
-INSERT INTO `workflow` (`id`, `name`, `description`, `createdAt`, `updatedAt`, `deletedAt`) VALUES
-(19, 'Quy trình làm việc', 'mô tả quy trình làm việc 1\r\n', '2025-06-27 12:50:53.308394', '2025-06-27 12:50:53.308394', NULL),
-(20, 'Quy trình làm việc 2 21', 'mô tả quy trình 2', '2025-06-27 12:52:59.528780', '2025-06-27 12:53:46.000000', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -478,16 +352,6 @@ CREATE TABLE `workflow_steps` (
 --
 -- Dumping data for table `workflow_steps`
 --
-
-INSERT INTO `workflow_steps` (`id`, `createdAt`, `updatedAt`, `deletedAt`, `stepId`, `workflowId`) VALUES
-(102, '2025-06-27 14:39:06.384474', '2025-06-27 14:39:06.384474', NULL, 64, 20),
-(103, '2025-06-27 14:39:06.391738', '2025-06-27 14:39:06.391738', NULL, 31, 20),
-(104, '2025-06-27 14:39:06.398061', '2025-06-27 14:39:06.398061', NULL, 68, 20),
-(105, '2025-06-27 14:39:06.407569', '2025-06-27 14:39:06.407569', NULL, 66, 20),
-(106, '2025-06-27 14:39:18.319685', '2025-06-27 14:39:18.319685', NULL, 31, 19),
-(107, '2025-06-27 14:39:18.330995', '2025-06-27 14:39:18.330995', NULL, 66, 19),
-(108, '2025-06-27 14:39:18.336099', '2025-06-27 14:39:18.336099', NULL, 64, 19),
-(109, '2025-06-27 14:39:18.340391', '2025-06-27 14:39:18.340391', NULL, 68, 19);
 
 --
 -- Indexes for dumped tables

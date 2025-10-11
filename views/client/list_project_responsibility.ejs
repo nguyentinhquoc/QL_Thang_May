@@ -1,7 +1,7 @@
 <%- include('../layout/header') %>
 <div class="card p-4">
   <div class="tab-pane preview-tab-pane active" role="tabpanel" aria-labelledby="tab-dom-da4be276-f13c-47d6-be82-655bc6452fd5" id="dom-da4be276-f13c-47d6-be82-655bc6452fd5">
-    <div id="tableExample3" data-list='{"valueNames":["chucvu","mota","action"],"page":20,"pagination":true}'>
+    <div id="tableExample3" data-list='{"valueNames":["stt","congtrinh","macongtrinh","tiendo","trangthai","tuongtac"],"page":20,"pagination":true}'>
       <h4>Danh sách công trình phụ trách</h4>
       <div class="m-b-30">
       </div>
@@ -21,51 +21,60 @@
         <table class="table table-bordered table-hover table-striped fs-10 mb-0">
           <thead class="bg-200">
             <tr>
-              <th class="text-900 sort" data-sort="chucvu">STT</th>
-              <th class="text-900 sort" data-sort="chucvu">Công trình</th>
-              <th class="text-900 sort" data-sort="chucvu">Mã công trình</th>
-              <th class="text-900 sort" data-sort="chucvu">Tiến độ</th>
-              <th class="text-900 sort" data-sort="mota">Trạng thái</th>
-              <th class="text-900 sort" data-sort="mota">Tương tác</th>
+              <th class="text-900 sort" data-sort="stt">STT</th>
+              <th class="text-900 sort" data-sort="congtrinh">Công trình</th>
+              <th class="text-900 sort" data-sort="macongtrinh">Mã công trình</th>
+              <th class="text-900 sort" data-sort="tiendo">Tiến độ</th>
+              <th class="text-900 sort" data-sort="trangthai">Trạng thái</th>
+              <th class="text-900 sort" data-sort="tuongtac">Tương tác</th>
             </tr>
           </thead>
           <tbody class="list">
-            <% let stt=1 %>
-            <% projectStaffs.forEach(function(item, index) { %>
-            <tr>
-              <td><%= stt++ %></td>
-              <td>
-                <a href="/client/task/<%= item.project.id %>"> <%=
-              item.project.full_name %>
-                </a>
-              </td>
-              <td><%= item.project.code_project %></td>
-              <td class="phantramhoanthien align-middle status fs-9 pe-4">
-                <%
-                    let totalSteps = item.project.projectSteps.length - item.project.projectSteps.filter(step => step.staff == null).length;
-                    let stepsWithStatus = item.project.projectSteps.filter(step => step.status != null).length;
-                   let percentageComplete = totalSteps > 0 ? (stepsWithStatus / totalSteps) * 100 : 0;
-                %>
-                <div style="--falcon-circle-progress-bar:<%= percentageComplete.toFixed(0) %>;">
-                  <svg class="circle-progress-svg" width="26" height="26" viewBox="0 0 120 120">
-                    <circle class="progress-bar-rail" cx="60" cy="60" r="54" fill="none" stroke-linecap="round" stroke-width="12"></circle>
-                    <circle class="progress-bar-top" cx="60" cy="60" r="54" fill="none" stroke-linecap="round" stroke-width="12" stroke="blue" stroke-dasharray="<%= (2 * Math.PI * 54) * (percentageComplete / 100).toFixed(2) %> 339.29"></circle>
-                  </svg>
-                  <span><%= percentageComplete.toFixed(2) %>%</span>
-                </div>
-              </td>
-              <td>
-                <% if (item.project.status == 0) { %>
-                <span class="badge badge-subtle-warning rounded-pill">Chưa hoàn thành</span>
-                <% } else { %>
-                <span class="badge badge-subtle-success rounded-pill">Đã hoàn thành</span>
-                <% } %>
-                </a>
-              </td>
-              <td><a href="/client/task/<%= item.project.id %>" title="chi tiết"><span><i class="fas fa-info-circle"></i></span></a></td>
-            </tr>
-            <tr class="spacer"></tr>
-            <% }); %>
+            <% if (projectStaffs && projectStaffs.length > 0) { %>
+              <% let stt=1 %>
+              <% projectStaffs.forEach(function(item, index) { %>
+              <tr>
+                <td class="stt"><%= stt++ %></td>
+                <td class="congtrinh">
+                  <a href="/client/task/<%= item.project.id %>"> <%=
+                item.project.full_name %>
+                  </a>
+                </td>
+                <td class="macongtrinh"><%= item.project.code_project %></td>
+                <td class="tiendo phantramhoanthien align-middle status fs-9 pe-4">
+                  <%
+                      let totalSteps = item.project.projectSteps.length - item.project.projectSteps.filter(step => step.staff == null).length;
+                      let stepsWithStatus = item.project.projectSteps.filter(step => step.status != null).length;
+                     let percentageComplete = totalSteps > 0 ? (stepsWithStatus / totalSteps) * 100 : 0;
+                  %>
+                  <div style="--falcon-circle-progress-bar:<%= percentageComplete.toFixed(0) %>;">
+                    <svg class="circle-progress-svg" width="26" height="26" viewBox="0 0 120 120">
+                      <circle class="progress-bar-rail" cx="60" cy="60" r="54" fill="none" stroke-linecap="round" stroke-width="12"></circle>
+                      <circle class="progress-bar-top" cx="60" cy="60" r="54" fill="none" stroke-linecap="round" stroke-width="12" stroke="blue" stroke-dasharray="<%= (2 * Math.PI * 54) * (percentageComplete / 100).toFixed(2) %> 339.29"></circle>
+                    </svg>
+                    <span><%= percentageComplete.toFixed(2) %>%</span>
+                  </div>
+                </td>
+                <td class="trangthai">
+                  <% if (item.project.status == 0) { %>
+                  <span class="badge badge-subtle-warning rounded-pill">Chưa hoàn thành</span>
+                  <% } else { %>
+                  <span class="badge badge-subtle-success rounded-pill">Đã hoàn thành</span>
+                  <% } %>
+                </td>
+                <td class="tuongtac"><a href="/client/task/<%= item.project.id %>" title="chi tiết"><span><i class="fas fa-info-circle"></i></span></a></td>
+              </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="6" class="text-center py-4">
+                  <div class="text-muted">
+                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                    <p class="mb-0">Chưa có công việc phụ trách</p>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>

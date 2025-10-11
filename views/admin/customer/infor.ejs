@@ -43,23 +43,34 @@ return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
             </tr>
           </thead>
           <tbody class="list">
-            <% customers.forEach(function(customer, index) { %>
-            <tr>
-              <td class="stt"><%= index + 1 %></td>
-              <td class="name"><%= customer.full_name %></td>
-              <td class="phone"><%= customer.number_phone %></td>
-              <td class="email"><%= customer.email %></td>
-              <td class="address"><%= customer.address %></td>
-              <td class="staff"> <a href="/staffs/payroll/<%= customer?.staff?.id %>"><%= customer?.staff?.full_name %></a> </td>
-              <td class="description"><%= customer.description %></td>
-              <td class="createdAt"><%= formatDate(customer.createdAt) %></td>
-                <td class="action">
-                <a href="/customer/<%= customer.id %>" title="Sửa"><i class="fas fa-edit"></i></a>
-                <a onclick="deleteCustomer('<%= customer.id %>')" href="javascript:void(0)" title="Xóa"><i class="fas fa-trash-alt"></i></a>
-                <a href="/project/add?full_name=<%= encodeURIComponent(customer.full_name) %>&number_phone=<%= encodeURIComponent(customer.number_phone) %>&email=<%= encodeURIComponent(customer.email) %>&address=<%= encodeURIComponent(customer.address) %>&description=<%= encodeURIComponent(customer.description) %>" title="Xác nhận ký kết"><i class="fas fa-check"></i></a>
+            <% if (customers && customers.length > 0) { %>
+              <% customers.forEach(function(customer, index) { %>
+              <tr>
+                <td class="stt"><%= index + 1 %></td>
+                <td class="name"><%= customer.full_name %></td>
+                <td class="phone"><%= customer.number_phone %></td>
+                <td class="email"><%= customer.email %></td>
+                <td class="address"><%= customer.address %></td>
+                <td class="staff"> <a href="/staffs/payroll/<%= customer?.staff?.id %>"><%= customer?.staff?.full_name %></a> </td>
+                <td class="description"><%= customer.description %></td>
+                <td class="createdAt"><%= formatDate(customer.createdAt) %></td>
+                  <td class="action">
+                  <a href="/customer/<%= customer.id %>" title="Sửa"><i class="fas fa-edit"></i></a>
+                  <a onclick="deleteCustomer('<%= customer.id %>')" href="javascript:void(0)" title="Xóa"><i class="fas fa-trash-alt"></i></a>
+                  <a href="/project/add?full_name=<%= encodeURIComponent(customer.full_name) %>&number_phone=<%= encodeURIComponent(customer.number_phone) %>&email=<%= encodeURIComponent(customer.email) %>&address=<%= encodeURIComponent(customer.address) %>&description=<%= encodeURIComponent(customer.description) %>" title="Xác nhận ký kết"><i class="fas fa-check"></i></a>
+                  </td>
+              </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="9" class="text-center py-4">
+                  <div class="text-muted">
+                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                    <p class="mb-0">Chưa có dữ liệu</p>
+                  </div>
                 </td>
-            </tr>
-            <% }) %>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>
