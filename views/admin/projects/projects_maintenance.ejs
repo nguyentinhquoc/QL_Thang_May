@@ -35,7 +35,8 @@
               </tr>
             </thead>
             <tbody class="list">
-              <% stt=0; %>
+              <% if (projects && projects.length > 0) { %>
+                <% stt=0; %>
                 <% projects.forEach(function(project, key) { let totalSteps=project.projectSteps.length -
                   project.projectSteps.filter(step=> step.staff == null).length; let
                   stepsWithStatus =
@@ -73,8 +74,17 @@
                       </div>
                     </td>
                   </tr>
-                  <tr class="spacer"></tr>
                   <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="7" class="text-center py-4">
+                    <div class="text-muted">
+                      <i class="fas fa-inbox fa-2x mb-2"></i>
+                      <p class="mb-0">Chưa có dữ liệu</p>
+                    </div>
+                  </td>
+                </tr>
+              <% } %>
             </tbody>
           </table>
         </div>

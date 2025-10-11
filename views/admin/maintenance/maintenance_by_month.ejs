@@ -56,38 +56,49 @@
                 </tr>
               </thead>
               <tbody class="list">
-                <%
-                  let totalCountMaintenance = 0;
-                  let totalCountScheduled = 0;
-                  let totalCountPerformed = 0;
-                  let totalCountNotScheduled = 0;
-                  let totalCountAllActionsStatusNotNull = 0;
-                  maintenances.forEach(function(value, key) {
-                    totalCountMaintenance += value.countMaintenance || 0;
-                    totalCountScheduled += value.maintenance.length || 0;
-                    totalCountAllActionsStatusNotNull += value.countMaintenanceAllActionsStatusNotNull || 0;
-                    totalCountNotScheduled += (value.countMaintenance - value.maintenance.length) || 0;
-                %>
-                  <tr>
-                    <td class="stt"><%= key + 1 %></td>
-                    <td class="tencongtrinh"><%= value.project.full_name %></td>
-                    <td class="diachi"><%= value.project.address %></td>
-                    <td class="loaibaotri"><%= value.free ? 'Miễn phí' : 'Mất phí' %></td>
-                    <td class="thoigian" style="white-space: nowrap;"><%= value.timeStart %> - <%= value.timeEnd %></td>
-                    <td class="tongsolanbaotri"><%= value.countMaintenance %></td>
-                    <td class="tongsolanbaotridadat"><%= value.maintenance.length %></td>
-                    <td class="tongsolanbaotridathuchien"><%= value.countMaintenanceAllActionsStatusNotNull %></td>
-                    <td class="tongsolanbaotricandat"><%= value.countMaintenance - value.maintenance.length %></td>
+                <% if (maintenances && maintenances.length > 0) { %>
+                  <%
+                    let totalCountMaintenance = 0;
+                    let totalCountScheduled = 0;
+                    let totalCountPerformed = 0;
+                    let totalCountNotScheduled = 0;
+                    let totalCountAllActionsStatusNotNull = 0;
+                    maintenances.forEach(function(value, key) {
+                      totalCountMaintenance += value.countMaintenance || 0;
+                      totalCountScheduled += value.maintenance.length || 0;
+                      totalCountAllActionsStatusNotNull += value.countMaintenanceAllActionsStatusNotNull || 0;
+                      totalCountNotScheduled += (value.countMaintenance - value.maintenance.length) || 0;
+                  %>
+                    <tr>
+                      <td class="stt"><%= key + 1 %></td>
+                      <td class="tencongtrinh"><%= value.project.full_name %></td>
+                      <td class="diachi"><%= value.project.address %></td>
+                      <td class="loaibaotri"><%= value.free ? 'Miễn phí' : 'Mất phí' %></td>
+                      <td class="thoigian" style="white-space: nowrap;"><%= value.timeStart %> - <%= value.timeEnd %></td>
+                      <td class="tongsolanbaotri"><%= value.countMaintenance %></td>
+                      <td class="tongsolanbaotridadat"><%= value.maintenance.length %></td>
+                      <td class="tongsolanbaotridathuchien"><%= value.countMaintenanceAllActionsStatusNotNull %></td>
+                      <td class="tongsolanbaotricandat"><%= value.countMaintenance - value.maintenance.length %></td>
+                    </tr>
+                  <% }); %>
+                  <!-- Row tổng -->
+                  <tr style="font-weight:bold; background-color: #77a2b5; color: white;">
+                    <td class="stt" colspan="5" style="text-align:right;">Tổng</td>
+                    <td class="tongsolanbaotri"><%= totalCountMaintenance %></td>
+                    <td class="tongsolanbaotridadat"><%= totalCountScheduled %></td>
+                    <td class="tongsolanbaotridathuchien"><%= totalCountAllActionsStatusNotNull %></td>
+                    <td class="tongsolanbaotricandat"><%= totalCountNotScheduled %></td>
                   </tr>
-                <% }); %>
-                <!-- Row tổng -->
-                <tr style="font-weight:bold; background-color: #77a2b5; color: white;">
-                  <td class="stt" colspan="5" style="text-align:right;">Tổng</td>
-                  <td class="tongsolanbaotri"><%= totalCountMaintenance %></td>
-                  <td class="tongsolanbaotridadat"><%= totalCountScheduled %></td>
-                  <td class="tongsolanbaotridathuchien"><%= totalCountAllActionsStatusNotNull %></td>
-                  <td class="tongsolanbaotricandat"><%= totalCountNotScheduled %></td>
-                </tr>
+                <% } else { %>
+                  <tr>
+                    <td colspan="9" class="text-center py-4">
+                      <div class="text-muted">
+                        <i class="fas fa-inbox fa-2x mb-2"></i>
+                        <p class="mb-0">Chưa có dữ liệu</p>
+                      </div>
+                    </td>
+                  </tr>
+                <% } %>
               </tbody>
             </table>
           </div>

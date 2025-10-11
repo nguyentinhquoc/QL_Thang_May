@@ -46,52 +46,63 @@ return parts[2] + '-' + parts[1] + '-' + parts[0];
             </tr>
           </thead>
           <tbody class="list">
-            <% for( let index = 0; index < project.length; index++ ) {
-            const item = project[index];
-            %>
-            <tr>
-              <td class="stt"><%=index+1%></td>
-              <td class="code"><%= item.code_project %></td>
-              <td class="project"> <a href="/maintenance/project/<%= item.id %>"> <%=
-                  item.full_name %> </a></td>
-              <td class="phone"><%= item.number_phone %></td>
-              <td class="project-type"><%= item.type === "BAOTRI" ? "Bảo trì" : "Lắp đặt"
-                %></td>
-              <td class="warranty">
-                <%= item.warrantyStart && item.warrantyEnd ?
-                formatDate(item.warrantyStart) + ' đến ' + formatDate(item.warrantyEnd) :
-                "Chưa cài đặt" %></td>
-              <td class="maintenance">
-                <%
-                let found = false;
-                let type = 2; // Giá trị mặc định
-                for (let i = 0; i < item.historyMaintenance.length; i++) {
-                const element = item.historyMaintenance[i];
-                if (element.timeStart && element.timeEnd) {
-                found = true;
-                %>
-                <%= element.timeStart + ' đến ' + element.timeEnd %>
-                <% type = element.free %>
-                <%
-                break;
-                }
-                }
-                if (!found) {
-                %>
-                Chưa gia hạn bảo trì
-                <%
-                }
-                %>
-              </td>
-              <td class="maintenance-type">
-                <%if (!found) {
-                %>
-                Chưa gia hạn bảo trì
-                <%
-                }else{ %>
-                <%= type == '0' ? 'Mất phí' :'Miễn phí'%>
-                <% }%></td>
-            </tr>
+            <% if (project && project.length > 0) { %>
+              <% for( let index = 0; index < project.length; index++ ) {
+              const item = project[index];
+              %>
+              <tr>
+                <td class="stt"><%=index+1%></td>
+                <td class="code"><%= item.code_project %></td>
+                <td class="project"> <a href="/maintenance/project/<%= item.id %>"> <%=
+                    item.full_name %> </a></td>
+                <td class="phone"><%= item.number_phone %></td>
+                <td class="project-type"><%= item.type === "BAOTRI" ? "Bảo trì" : "Lắp đặt"
+                  %></td>
+                <td class="warranty">
+                  <%= item.warrantyStart && item.warrantyEnd ?
+                  formatDate(item.warrantyStart) + ' đến ' + formatDate(item.warrantyEnd) :
+                  "Chưa cài đặt" %></td>
+                <td class="maintenance">
+                  <%
+                  let found = false;
+                  let type = 2; // Giá trị mặc định
+                  for (let i = 0; i < item.historyMaintenance.length; i++) {
+                  const element = item.historyMaintenance[i];
+                  if (element.timeStart && element.timeEnd) {
+                  found = true;
+                  %>
+                  <%= element.timeStart + ' đến ' + element.timeEnd %>
+                  <% type = element.free %>
+                  <%
+                  break;
+                  }
+                  }
+                  if (!found) {
+                  %>
+                  Chưa gia hạn bảo trì
+                  <%
+                  }
+                  %>
+                </td>
+                <td class="maintenance-type">
+                  <%if (!found) {
+                  %>
+                  Chưa gia hạn bảo trì
+                  <%
+                  }else{ %>
+                  <%= type == '0' ? 'Mất phí' :'Miễn phí'%>
+                  <% }%></td>
+              </tr>
+              <% } %>
+            <% } else { %>
+              <tr>
+                <td colspan="8" class="text-center py-4">
+                  <div class="text-muted">
+                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                    <p class="mb-0">Chưa có dữ liệu</p>
+                  </div>
+                </td>
+              </tr>
             <% } %>
           </tbody>
         </table>
